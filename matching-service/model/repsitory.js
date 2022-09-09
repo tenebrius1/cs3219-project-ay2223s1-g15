@@ -1,5 +1,11 @@
 import { pendingMatch, match } from './match-model.js'
 import { Op } from 'sequelize'
+import { sequelize } from './match-model.js';
+
+// init database
+sequelize
+  .sync({force: true})
+  .then(() => console.log('db connected'))
 
 export async function createWaitingUser(username, difficultylevel) {
   const waitingUser = pendingMatch.build({ userName: username, difficultyLevel: difficultylevel });

@@ -2,11 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from "socket.io";
-import { sequelize } from './model/match-model.js';
-
-sequelize
-  .sync({force: true})
-  .then(() => console.log('db connected'))
 
 const app = express();
 var PORT = process.env.PORT || 8001;
@@ -26,7 +21,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer);
 
 io.on('connection', (socket) => {
-  console.log('User connected')
+  console.log('User connected');
 
   // create match event
   socket.on('match', async (username) => {
