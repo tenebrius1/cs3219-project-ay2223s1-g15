@@ -1,0 +1,35 @@
+.mainCodingPageBox.MuiBox-root {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.codingSpace.MuiBox-root {
+    width: 75%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-right: 2rem;
+}
+
+.adminArea.MuiBox-root {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-style: solid;
+}
+
+.rightBox.MuiBox-root {
+    width: 25%;
+    height: 75%;
+    display: flex;
+    flex-direction: column;
+}
+
+.endTurnBox.MuiBox-root {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}

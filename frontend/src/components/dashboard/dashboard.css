@@ -1,0 +1,36 @@
+.mainBox {
+    margin-top: 0%;
+    padding: 0 10%;
+}
+
+.topBar {
+    display: flex;
+    justify-content: space-between;
+}
+
+.mainContent {
+    display: flex;
+}
+
+.leftBox {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+}
+
+.rightBox {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+}
+
+.difficultyButton.MuiButton-root {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.queueUpButton.MuiButton-root {
+    margin-top: 4rem;
+}
