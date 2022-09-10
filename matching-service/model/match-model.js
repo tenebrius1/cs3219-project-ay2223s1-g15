@@ -32,5 +32,9 @@ export const match = sequelize.define('match', {
   secondUser: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  roomId: {
+    type: DataTypes.STRING,
+    allowNull: false
   }
 });

@@ -23,15 +23,14 @@ const io = new Server(httpServer);
 io.on('connection', (socket) => {
   console.log('User connected');
 
-  // create match event
+  // listen to match event
   socket.on('match', async (username) => {
-    const resp = await matchWaitingUser(username);
-    if (resp) {
-      // need a way to create a random room name
-      socket.join('room1');
-      io.to('room1').emit('matched succesfully!')
+    const roomId = await matchWaitingUser(username);
+    if (roomId) {
+      socket.emit('matchSuccess', roomId);
+    } else {
+      socket.emit('matchFail')
     }
-    console.log('matched')
   });
 });
 

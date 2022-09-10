@@ -1,4 +1,4 @@
-import { ormCreateWaitingUser as _createWaitingUser, ormPersistMatchedUsers as _persistMatchedUsers } from '../model/match-orm.js'
+import { ormCreateWaitingUser as _createWaitingUser, ormCreateMatchedUsers as _persistMatchedUsers } from '../model/match-orm.js'
 
 export async function createWaitingUser(req, res) {
   try {
@@ -25,7 +25,7 @@ export async function matchWaitingUser(username) {
       console.error(resp.err);
       return false;
     } else {
-      return true;
+      return resp;
     }
   } catch (err) {
     console.error(err);

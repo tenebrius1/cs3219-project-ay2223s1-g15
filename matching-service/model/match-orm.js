@@ -13,11 +13,15 @@ export async function ormCreateWaitingUser(username, difficultylevel) {
   }
 }
 
-export async function ormPersistMatchedUsers(waitingUser) {
+export async function ormCreateMatchedUsers(waitingUser) {
   try {
     const matchedUser = await matchWaitingUser(waitingUser);
-    matchedUser.save();
-    return true;
+    if (matchedUser === null) {
+      return false;
+    } else {
+      matchedUser.save();
+      return matchedUser.roomId;
+    }
   } catch (err) {
     return { err }
   }
