@@ -1,75 +1,107 @@
-import {
-    Avatar,
-    Box,
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    Grid,
-    TextField,
-    Typography
-} from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 import "./dashboard.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import CustomAvatar from "./CustomAvatar";
 
 function Dashboard() {
-    const [buttonToggleEasy, setButtonToggleEasy] = useState(false);
-    const [buttonToggleMedium, setButtonToggleMedium] = useState(false);
-    const [buttonToggleHard, setButtonToggleHard] = useState(false);
+  const [buttonToggleEasy, setButtonToggleEasy] = useState(false);
+  const [buttonToggleMedium, setButtonToggleMedium] = useState(false);
+  const [buttonToggleHard, setButtonToggleHard] = useState(false);
 
-    const toggleButtonEasy = (event) => {
-        event.preventDefault();
-        if (!(buttonToggleEasy || buttonToggleMedium || buttonToggleHard)) {
-            setButtonToggleEasy(true);
-        } else {
-            setButtonToggleEasy(false);
-        }
+  const toggleButtonEasy = (event) => {
+    event.preventDefault();
+    if (buttonToggleMedium) {
+      setButtonToggleMedium(false);
     }
-
-    const toggleButtonMedium = (event) => {
-        event.preventDefault();
-        if (!(buttonToggleEasy || buttonToggleMedium || buttonToggleHard)) {
-            setButtonToggleMedium(true);
-        } else {
-            setButtonToggleMedium(false);
-        }
+    if (buttonToggleHard) {
+      setButtonToggleHard(false);
     }
+    setButtonToggleEasy(!buttonToggleEasy);
+  };
 
-    const toggleButtonHard = (event) => {
-        event.preventDefault();
-        if (!(buttonToggleEasy || buttonToggleMedium || buttonToggleHard)) {
-            setButtonToggleHard(!buttonToggleHard);
-        } else {
-            setButtonToggleHard(false);
-        }
+  const toggleButtonMedium = (event) => {
+    event.preventDefault();
+    if (buttonToggleEasy) {
+      setButtonToggleEasy(false);
     }
+    if (buttonToggleHard) {
+      setButtonToggleHard(false);
+    }
+    setButtonToggleMedium(!buttonToggleMedium);
+  };
 
-    const handleClickEasy = () => buttonToggleEasy ? "contained" : "outlined";
-    const handleClickMedium = () => buttonToggleMedium ? "contained" : "outlined";
-    const handleClickHard = () => buttonToggleHard ? "contained" : "outlined";
+  const toggleButtonHard = (event) => {
+    event.preventDefault();
+    if (buttonToggleEasy) {
+      setButtonToggleEasy(false);
+    }
+    if (buttonToggleMedium) {
+      setButtonToggleMedium(false);
+    }
+    setButtonToggleHard(!buttonToggleHard);
+  };
 
-    return (
-        <Box className="mainBox">
-            <Box className="topBar">
-                <Typography variant={"h3"}>PeerPrep</Typography>
-                <Avatar />
-            </Box>
-            <Box className="mainContent">
-                <Box className="leftBox">
-                    Reprehenderit occaecat nulla ex laboris do. Anim magna laboris ad dolore pariatur ex non aliquip ipsum non nisi. Esse exercitation et voluptate laborum eiusmod id ex magna laborum amet. Sunt nostrud officia enim officia excepteur non deserunt adipisicing amet reprehenderit anim sunt exercitation aute. Minim quis adipisicing laboris proident officia non non fugiat reprehenderit amet. Velit consectetur eiusmod aliquip ea qui ipsum ad veniam reprehenderit pariatur.
-                </Box>
-                <Box className="rightBox">
-                    <Typography className="difficultyButton" variant={"h5"}>Difficulty</Typography>
-                    <Button className="difficultyButton" color={"success"} variant={handleClickEasy()} onClick={toggleButtonEasy}>Easy</Button>
-                    <Button className="difficultyButton" color={"warning"} variant={handleClickMedium()} onClick={toggleButtonMedium}>Medium</Button>
-                    <Button className="difficultyButton" color={"error"} variant={handleClickHard()} onClick={toggleButtonHard}>Hard</Button>
-                    <Button className="queueUpButton" color={"info"} variant={"contained"}>Queue Up</Button>
-                </Box>
-            </Box>
+  const handleClickEasy = () => (buttonToggleEasy ? "contained" : "outlined");
+  const handleClickMedium = () =>
+    buttonToggleMedium ? "contained" : "outlined";
+  const handleClickHard = () => (buttonToggleHard ? "contained" : "outlined");
+
+  return (
+    <Box className="mainDashboardBox">
+      <Box className="topBar">
+        <Typography component={"h3"} variant={"h5"}>
+          PeerPrep
+        </Typography>
+        <CustomAvatar />
+      </Box>
+      <Box className="mainContent">
+        <Box className="leftBox">Practice History</Box>
+        <Box className="rightBox">
+          <Typography
+            className="difficultyButton"
+            component={"h3"}
+            variant={"h5"}
+          >
+            Difficulty
+          </Typography>
+          <Button
+            className="difficultyButton"
+            color={"success"}
+            variant={handleClickEasy()}
+            onClick={toggleButtonEasy}
+          >
+            Easy
+          </Button>
+          <Button
+            className="difficultyButton"
+            color={"warning"}
+            variant={handleClickMedium()}
+            onClick={toggleButtonMedium}
+          >
+            Medium
+          </Button>
+          <Button
+            className="difficultyButton"
+            color={"error"}
+            variant={handleClickHard()}
+            onClick={toggleButtonHard}
+          >
+            Hard
+          </Button>
+          <Button
+            className="queueUpButton"
+            color={"info"}
+            variant={"contained"}
+            component={Link}
+            to="/codingpage"
+          >
+            Practise
+          </Button>
         </Box>
-    )
+      </Box>
+    </Box>
+  );
 }
 
 export default Dashboard;

@@ -1,35 +1,42 @@
 .mainCodingPageBox.MuiBox-root {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    margin: 0;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0 2%;
 }
 
 .codingSpace.MuiBox-root {
-    width: 75%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    margin-right: 2rem;
+  width: 75%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin-right: 2rem;
+}
+
+.adminSpace.MuiBox-root {
+  width: 25%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .adminArea.MuiBox-root {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    border-style: solid;
-}
-
-.rightBox.MuiBox-root {
-    width: 25%;
-    height: 75%;
-    display: flex;
-    flex-direction: column;
+  background-color: #2a2e38;
 }
 
 .endTurnBox.MuiBox-root {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.titleBar.MuiBox-root {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+}
+
+.MuiButtonBase-root.MuiTab-root {
+  color: #4c566a;
 }

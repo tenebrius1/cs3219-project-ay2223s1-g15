@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -9,36 +10,33 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "./../../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "./../../constants";
 import { Link } from "react-router-dom";
-import "./signuppage.css";
-import isEmail from "validator/lib/isEmail";
-import zxcvbn from "zxcvbn";
 
-function SignupPage() {
+function SignInPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogTitle, setDialogTitle] = useState("");
   const [dialogMsg, setDialogMsg] = useState("");
-  const [isSignupSuccess, setIsSignupSuccess] = useState(false);
-  const minPasswordStrength = 1;
+  const [isSigninSuccess, setIsSigninSuccess] = useState(false);
+  const [usernameError, setUsernameError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
-  const handleSignup = async () => {
-    setIsSignupSuccess(false);
-    if (!isEmailValid()) {
-      setErrorDialog("Please enter a valid email address");
+  const handleSignin = async () => {
+    setIsSigninSuccess(false);
+
+    setUsernameError(false);
+    setPasswordError(false);
+
+    if (username === "") {
+      setUsernameError(true);
       return;
     }
-    if (!isPasswordSecure()) {
-      const error = "Your password is not strong enough.".concat(
-        "\n",
-        zxcvbn(password).feedback.suggestions
-      );
-      setErrorDialog(error);
+    if (password === "") {
+      setPasswordError(true);
       return;
     }
     const res = await axios
@@ -52,7 +50,7 @@ function SignupPage() {
       });
     if (res && res.status === STATUS_CODE_CREATED) {
       setSuccessDialog("Account successfully created");
-      setIsSignupSuccess(true);
+      setIsSigninSuccess(true);
     }
   };
 
@@ -70,23 +68,11 @@ function SignupPage() {
     setDialogMsg(msg);
   };
 
-  const isEmailValid = () => {
-    return isEmail(username);
-  };
-
-  const isPasswordSecure = () => {
-    if (zxcvbn(password).score < minPasswordStrength) {
-      return false;
-    } else {
-      return true;
-    }
-  };
-
   return (
     <Box className="mainBox">
-      <Box className="signUpBox">
-        <Typography variant={"h3"} marginBottom={"2rem"}>
-          Sign Up
+      <Box className="signInBox">
+        <Typography variant={"h3"} marginBottom={"2rem"} textAlign={"center"}>
+          Sign In
         </Typography>
       </Box>
       <Box className="textFieldBox">
@@ -100,6 +86,7 @@ function SignupPage() {
           sx={{ marginBottom: "1rem" }}
           autoFocus
           required
+          error={usernameError}
         />
         <TextField
           label="Password"
@@ -109,6 +96,7 @@ function SignupPage() {
           onChange={(e) => setPassword(e.target.value)}
           sx={{ marginBottom: "2rem" }}
           required
+          error={passwordError}
         />
       </Box>
       <Box
@@ -117,16 +105,8 @@ function SignupPage() {
         flexDirection={"row"}
         justifyContent={"flex-end"}
       >
-        <Button
-          component={Link}
-          to="/login"
-          variant="outlined"
-          color="secondary"
-        >
-          Sign In
-        </Button>
-        <Button variant={"outlined"} color={"secondary"} onClick={handleSignup}>
-          Sign up
+        <Button variant={"outlined"} color={"secondary"} onClick={handleSignin}>
+          Sign in
         </Button>
       </Box>
 
@@ -136,7 +116,7 @@ function SignupPage() {
           <DialogContentText>{dialogMsg}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          {isSignupSuccess ? (
+          {isSigninSuccess ? (
             <Button component={Link} to="/login">
               Log in
             </Button>
@@ -149,4 +129,4 @@ function SignupPage() {
   );
 }
 
-export default SignupPage;
+export default SignInPage;
