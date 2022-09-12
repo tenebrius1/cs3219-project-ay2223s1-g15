@@ -1,5 +1,6 @@
 import UserModel from './user-model.js';
 import 'dotenv/config';
+import redis from 'redis';
 
 //Set up mongoose connection
 import mongoose from 'mongoose';
@@ -10,7 +11,16 @@ let mongoDB =
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
 let db = mongoose.connection;
+db.on('connected', () => console.log('connected to MongoDB'));
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+const redisClient = redis.createClient({
+    url: `redis://default:${process.env.REDIS_PW}@redis-14796.c285.us-west-2-2.ec2.cloud.redislabs.com:14796`,
+});
+
+redisClient.on('connect', () => console.log('connected to Redis'));
+redisClient.on('error', console.error);
+await redisClient.connect();
 
 export async function createUser(params) {
     return new UserModel(params);
@@ -22,4 +32,18 @@ export async function exists(userID) {
 
 export async function findUser(userID) {
     return await UserModel.findOne({ username: userID });
+}
+
+export async function deleteUser(userID) {
+    return await UserModel.deleteOne({ username: userID });
+}
+
+export async function isBlacklisted(token) {
+    const inBlacklist = await redisClient.get(`bl_${token}`);
+    return inBlacklist;
+}
+
+export async function blacklist(token) {
+    const token_key = `bl_${token}`;
+    return await redisClient.set(token_key, token);
 }
