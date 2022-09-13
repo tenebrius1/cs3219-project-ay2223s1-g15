@@ -18,7 +18,11 @@ app.get('/', (_, res) => {
 app.post('/', createWaitingUser);
 
 const httpServer = createServer(app);
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*"
+  }
+});
 
 io.on('connection', (socket) => {
   console.log('User connected');
