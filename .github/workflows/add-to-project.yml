@@ -1,9 +1,12 @@
-name: Add opened issues to project
+name: Add opened issues and PRs to project
 
 # Controls when the workflow will run
 on:
   # Triggers on opened issues
   issues:
+    types:
+      - opened
+  pull_request:
     types:
       - opened
 
@@ -17,5 +20,5 @@ jobs:
         with:
           # You can target a repository in a different organization
           # to the issue
-          project-url: https://github.com/orgs/<orgName>/projects/<projectNumber>
+          project-url: https://github.com/orgs/CS3219-AY2223S1/projects/30/views/8
           github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
