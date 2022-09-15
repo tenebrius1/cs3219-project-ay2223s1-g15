@@ -4,6 +4,7 @@ import {
     ormTokenLogin as _tokenLogin,
     ormLogout as _logout,
     ormDeleteUser as _deleteUser,
+    ormAuthorize as _authorize,
 } from '../model/user-orm.js';
 
 export async function createUser(req, res) {
@@ -117,3 +118,7 @@ export async function deleteUser(req, res) {
         return res.status(500).json({ message: 'Failure when deleting account' });
     }
 }
+
+export const authorize = () => {
+    return _authorize;
+};

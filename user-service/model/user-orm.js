@@ -7,6 +7,7 @@ import {
     isBlacklisted,
 } from './repository.js';
 import jwt from 'jsonwebtoken';
+import { expressjwt } from 'express-jwt';
 
 //need to separate orm functions from repository to decouple business logic from persistence
 export async function ormCreateUser(username, password) {
@@ -85,3 +86,13 @@ export async function ormDeleteUser(jwtToken, password) {
         return { err };
     }
 }
+
+export const ormAuthorize = expressjwt({
+    secret: process.env.JWT_TOKEN_KEY,
+    getToken: (req) => req.cookies.token,
+    algorithms: ['HS256'],
+    isRevoked: async (req) => {
+        const revokedToken = await isBlacklisted(req.cookies.token);
+        return revokedToken != null;
+    },
+});
