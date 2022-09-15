@@ -20,8 +20,7 @@ const authorize = expressjwt({
     secret: process.env.JWT_TOKEN_KEY,
     getToken: (req) => req.cookies.token,
     algorithms: ['HS256'],
-    isRevoked: async (req, token) => {
-        console.log('authorized');
+    isRevoked: async (req) => {
         const revokedToken = await isBlacklisted(req.cookies.token);
         return revokedToken != null;
     },
@@ -31,8 +30,6 @@ const authorize = expressjwt({
 router.get('/', (req, res) => res.send('Hello World from user-service'));
 router.post('/', createUser);
 router.post('/login', login);
-//Test route. To be deleted when authorize is used elsewhere
-router.get('/login', authorize, (req, res) => res.send('Auth-ed'));
 router.delete('/', authorize, deleteUser);
 router.delete('/logout', logout);
 

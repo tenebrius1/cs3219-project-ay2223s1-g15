@@ -1,17 +1,16 @@
 import {
     ormCreateUser as _createUser,
-    ormFindUser as _findUser,
+    ormPasswordLogin as _passwordLogin,
+    ormTokenLogin as _tokenLogin,
+    ormLogout as _logout,
     ormDeleteUser as _deleteUser,
 } from '../model/user-orm.js';
-import { blacklist } from '../model/repository.js';
-import jwt from 'jsonwebtoken';
 
 export async function createUser(req, res) {
     try {
         const { username, password } = req.body;
         if (username && password) {
             const resp = await _createUser(username, password);
-            console.log(resp);
             if (resp.err) {
                 return res.status(400).json({ message: 'Could not create a new user!' });
             } else if (!resp) {
@@ -42,6 +41,26 @@ export async function createUser(req, res) {
 
 export async function login(req, res) {
     try {
+        const { token } = req.cookies;
+        // If client has a JWT token. use token login
+        if (token) {
+            const username = await _tokenLogin(token);
+            if (username) {
+                return res.status(200).json({
+                    message: 'Successfully logged in using JWT Token',
+                    username: username,
+                });
+            } else {
+                // Token is invalid. Delete token from user's cookie
+                // so that they can login using username and password
+                res.clearCookie();
+                return res.status(400).json({
+                    message: 'Invalid JWT Token. Try again using username and password',
+                });
+            }
+        }
+
+        // Client does not have JWT token. use username and password login
         const { username, password } = req.body;
         if (!(username && password)) {
             return res
@@ -49,29 +68,28 @@ export async function login(req, res) {
                 .json({ message: 'Username and/or Password are missing!' });
         }
 
-        const user = await _findUser(username);
-
-        if (user && user.password == password) {
-            const token = jwt.sign(
-                { user_id: user._id, username },
-                process.env.JWT_TOKEN_KEY,
-                { expiresIn: '10d' }
-            );
-            res.cookie('token', token, { httpOnly: true });
-
-            return res.status(200).json({ token: token });
+        const userToken = await _passwordLogin(username, password);
+        if (userToken) {
+            // Login is successful. store JWT token in user's cookies.
+            res.cookie('token', userToken, { httpOnly: true });
+            return res.status(200).json({ token: userToken });
+        } else {
+            return res.status(400).json({ message: 'Invalid Credentials!' });
         }
-
-        return res.status(400).json({ message: 'Invalid Credentials!' });
     } catch (err) {
-        return res.status(400).json({ message: 'Login failed!' });
+        return res.status(500).json({ message: 'Login failed!' });
     }
 }
 
 export async function logout(req, res) {
     try {
         const { token } = req.cookies;
-        await blacklist(token);
+        // If user has no JWT token, we can assume that they are not logged in.
+        if (!token) {
+            return res.status(400).json({ message: 'Currently not logged in' });
+        }
+
+        await _logout(token);
         res.clearCookie('token');
         return res.status(200).json({ message: 'Successfully logged out!' });
     } catch (err) {
@@ -81,23 +99,20 @@ export async function logout(req, res) {
 
 export async function deleteUser(req, res) {
     try {
-        const { username } = req.body;
         const { token } = req.cookies;
-        const tokenUsername = jwt.decode(token).username;
-        console.log(tokenUsername);
-        // If request has a username and given username is equals to username in the JWT token
-        if (username && username == tokenUsername) {
-            // Delete user from user database
-            const res = await _deleteUser(username);
-            // Blacklist and clear JWT token
-            await blacklist(token);
+        if (!token) {
+            return res.status(400).json({ message: 'Login is needed to delete account' });
+        }
+        const username = await _deleteUser(token);
+        if (username) {
+            // Clear JWT token from cookies
             res.clearCookie('token');
+            return res
+                .status(200)
+                .json({ message: 'Successfully deleted account ' + username });
         } else {
             return res.status(400).json({ message: 'Unauthorized account deletion.' });
         }
-        return res
-            .status(200)
-            .json({ message: 'Successfully deleted account ' + username });
     } catch (err) {
         return res.status(500).json({ message: 'Failure when deleting account' });
     }
