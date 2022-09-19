@@ -9,14 +9,14 @@ import {
 } from './repository.js';
 import jwt from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
+import bcrypt from 'bcrypt';
 
 // need to separate orm functions from repository to decouple business logic from persistence
 
-//
 export const ormCreateUser = async (username, password) => {
     try {
         const newUser = await createUser({ username, password });
-
+        newUser.password = await hashPassword(newUser);
         // If user already exists, do not save in database
         const existingUser = await exists(username);
         if (existingUser) {
@@ -120,3 +120,8 @@ export const ormAuthorize = expressjwt({
         return revokedToken != null;
     },
 });
+
+async function hashPassword(newUser) {
+    const hashed = await bcrypt.hash(newUser.password, 10);
+    return hashed;
+}

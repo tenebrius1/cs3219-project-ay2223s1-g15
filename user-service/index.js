@@ -29,6 +29,12 @@ router.put('/changePW', changePassword);
 router.delete('/', authorize, deleteUser);
 router.delete('/logout', logout);
 
+// For frontend testing
+router.post('/python', (req, res) => {
+    console.log(req.body);
+    res.send('test');
+});
+
 app.use('/api/user', router).all((_, res) => {
     res.setHeader('content-type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
