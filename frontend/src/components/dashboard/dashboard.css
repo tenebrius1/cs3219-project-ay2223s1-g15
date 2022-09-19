@@ -1,0 +1,37 @@
+.mainDashboardBox.MuiBox-root {
+  margin-top: 2%;
+  padding: 0 10%;
+  justify-content: flex-start;
+}
+
+.topBar.MuiBox-root {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mainContent.MuiBox-root {
+  display: flex;
+  justify-content: space-between;
+}
+
+.leftBox.MuiBox-root {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  margin-right: 2%;
+}
+
+.rightBox.MuiBox-root {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+}
+
+.difficultyButton.MuiButton-root {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.queueUpButton.MuiButton-root {
+  margin-top: 4rem;
+}
