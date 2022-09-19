@@ -11,7 +11,7 @@ import jwt from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
 
 //need to separate orm functions from repository to decouple business logic from persistence
-export async function ormCreateUser(username, password) {
+export const ormCreateUser = async (username, password) => {
     try {
         const newUser = await createUser({ username, password });
         const existingUser = await exists(username);
@@ -25,7 +25,7 @@ export async function ormCreateUser(username, password) {
         console.log('ERROR: Could not create new user');
         return { err };
     }
-}
+};
 
 export const ormPasswordLogin = async (username, password) => {
     try {
@@ -67,7 +67,7 @@ export const ormLogout = async (jwtToken) => {
     }
 };
 
-export async function ormDeleteUser(jwtToken, password) {
+export const ormDeleteUser = async (jwtToken, password) => {
     try {
         const username = jwt.decode(jwtToken).username;
         const user = await findUser(username);
@@ -86,9 +86,9 @@ export async function ormDeleteUser(jwtToken, password) {
     } catch (err) {
         return { err };
     }
-}
+};
 
-export const omrChangePassword = async (jwtToken, currPassword, newPassword) => {
+export const ormChangePassword = async (jwtToken, currPassword, newPassword) => {
     try {
         const username = jwt.decode(jwtToken).username;
         const user = await findUser(username);

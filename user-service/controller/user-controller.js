@@ -4,11 +4,11 @@ import {
     ormTokenLogin as _tokenLogin,
     ormLogout as _logout,
     ormDeleteUser as _deleteUser,
-    omrChangePassword as _updatePassword,
+    ormChangePassword as _updatePassword,
     ormAuthorize as _authorize,
 } from '../model/user-orm.js';
 
-export async function createUser(req, res) {
+export const createUser = async (req, res) => {
     try {
         const { username, password } = req.body;
         if (username && password) {
@@ -39,9 +39,9 @@ export async function createUser(req, res) {
             .status(500)
             .json({ message: 'Database failure when creating new user!' });
     }
-}
+};
 
-export async function login(req, res) {
+export const login = async (req, res) => {
     try {
         const { token } = req.cookies;
         // If client has a JWT token. use token login
@@ -81,9 +81,9 @@ export async function login(req, res) {
     } catch (err) {
         return res.status(500).json({ message: 'Login failed!' });
     }
-}
+};
 
-export async function logout(req, res) {
+export const logout = async (req, res) => {
     try {
         const { token } = req.cookies;
         // If user has no JWT token, we can assume that they are not logged in.
@@ -97,9 +97,9 @@ export async function logout(req, res) {
     } catch (err) {
         return res.status(500).json({ message: 'An error occurred with logout' });
     }
-}
+};
 
-export async function deleteUser(req, res) {
+export const deleteUser = async (req, res) => {
     try {
         const { token } = req.cookies;
         if (!token) {
@@ -119,7 +119,7 @@ export async function deleteUser(req, res) {
     } catch (err) {
         return res.status(500).json({ message: 'Failure when deleting account' });
     }
-}
+};
 
 export const changePassword = async (req, res) => {
     try {
