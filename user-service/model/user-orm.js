@@ -3,6 +3,7 @@ import {
     deleteUser,
     exists,
     findUser,
+    changePassword,
     blacklist,
     isBlacklisted,
 } from './repository.js';
@@ -77,7 +78,7 @@ export async function ormDeleteUser(jwtToken, password) {
             await deleteUser(username);
 
             // Blacklist JWT token
-            await blacklist(token);
+            await blacklist(jwtToken);
             return username;
         } else {
             return null;
@@ -86,6 +87,22 @@ export async function ormDeleteUser(jwtToken, password) {
         return { err };
     }
 }
+
+export const omrChangePassword = async (jwtToken, currPassword, newPassword) => {
+    try {
+        const username = jwt.decode(jwtToken).username;
+        const user = await findUser(username);
+
+        if (user && user.password == currPassword) {
+            await updatePassword(username, newPassword);
+            return true;
+        } else {
+            return false;
+        }
+    } catch (err) {
+        return { err };
+    }
+};
 
 export const ormAuthorize = expressjwt({
     secret: process.env.JWT_TOKEN_KEY,

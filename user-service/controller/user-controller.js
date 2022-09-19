@@ -4,6 +4,7 @@ import {
     ormTokenLogin as _tokenLogin,
     ormLogout as _logout,
     ormDeleteUser as _deleteUser,
+    omrChangePassword as _updatePassword,
     ormAuthorize as _authorize,
 } from '../model/user-orm.js';
 
@@ -75,7 +76,7 @@ export async function login(req, res) {
             res.cookie('token', userToken, { httpOnly: true });
             return res.status(200).json({ token: userToken });
         } else {
-            return res.status(400).json({ message: 'Invalid Credentials!' });
+            return res.status(401).json({ message: 'Invalid Credentials!' });
         }
     } catch (err) {
         return res.status(500).json({ message: 'Login failed!' });
@@ -104,7 +105,8 @@ export async function deleteUser(req, res) {
         if (!token) {
             return res.status(400).json({ message: 'Login is needed to delete account' });
         }
-        const username = await _deleteUser(token);
+        const { password } = req.body;
+        const username = await _deleteUser(token, password);
         if (username) {
             // Clear JWT token from cookies
             res.clearCookie('token');
@@ -112,13 +114,31 @@ export async function deleteUser(req, res) {
                 .status(200)
                 .json({ message: 'Successfully deleted account ' + username });
         } else {
-            return res.status(400).json({ message: 'Unauthorized account deletion.' });
+            return res.status(401).json({ message: 'Unauthorized account deletion.' });
         }
     } catch (err) {
         return res.status(500).json({ message: 'Failure when deleting account' });
     }
 }
 
-export const authorize = () => {
-    return _authorize;
+export const changePassword = async (req, res) => {
+    try {
+        const { token } = req.cookies;
+        if (!token) {
+            return res
+                .status(400)
+                .json({ message: 'Login is needed to change password' });
+        }
+        const { currPassword, newPassword } = req.body;
+        const isChanged = await _updatePassword(token, currPassword, newPassword);
+        if (isChanged) {
+            return res.status(200).json({ message: 'Successfully updated password' });
+        } else {
+            return res.status(401).json({ message: 'Unauthorized password change' });
+        }
+    } catch (err) {
+        return res.status(500).json({ message: 'Failure when changing password' });
+    }
 };
+
+export const authorize = _authorize;

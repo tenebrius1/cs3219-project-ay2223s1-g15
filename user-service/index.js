@@ -1,8 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 
-import { isBlacklisted } from './model/repository.js';
-
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -16,6 +14,7 @@ import {
     deleteUser,
     login,
     logout,
+    changePassword,
     authorize,
 } from './controller/user-controller.js';
 import cookieParser from 'cookie-parser';
@@ -26,6 +25,7 @@ const router = express.Router();
 router.get('/', (req, res) => res.send('Hello World from user-service'));
 router.post('/', createUser);
 router.post('/login', login);
+router.put('/changePW', changePassword);
 router.delete('/', authorize, deleteUser);
 router.delete('/logout', logout);
 

@@ -22,6 +22,7 @@ redisClient.on('connect', () => console.log('connected to Redis'));
 redisClient.on('error', console.error);
 await redisClient.connect();
 
+// Functions that interact with MongoDB (user data)
 export async function createUser(params) {
     return new UserModel(params);
 }
@@ -35,9 +36,17 @@ export async function findUser(userID) {
 }
 
 export async function deleteUser(userID) {
-    return await UserModel.deleteOne({ username: userID });
+    return await UserModel.findOneAndDelete({ username: userID });
 }
 
+export async function changePassword(userID, newPassword) {
+    return await UserModel.findOneAndUpdate(
+        { username: userID },
+        { password: newPassword }
+    );
+}
+
+// Functions that interact with Redis (JWT token blacklist)
 export async function isBlacklisted(token) {
     const inBlacklist = await redisClient.get(`bl_${token}`);
     return inBlacklist;
