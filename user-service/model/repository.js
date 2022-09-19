@@ -15,7 +15,7 @@ let db = mongoose.connection;
 db.on('connected', () => console.log('connected to MongoDB'));
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-// Connect to Redis DB
+// Connect to Redis
 const redisClient = redis.createClient({
     url: `redis://default:${process.env.REDIS_PW}@redis-14796.c285.us-west-2-2.ec2.cloud.redislabs.com:14796`,
 });

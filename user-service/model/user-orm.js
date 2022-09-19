@@ -10,10 +10,14 @@ import {
 import jwt from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
 
-//need to separate orm functions from repository to decouple business logic from persistence
+// need to separate orm functions from repository to decouple business logic from persistence
+
+//
 export const ormCreateUser = async (username, password) => {
     try {
         const newUser = await createUser({ username, password });
+
+        // If user already exists, do not save in database
         const existingUser = await exists(username);
         if (existingUser) {
             return false;
@@ -30,7 +34,8 @@ export const ormCreateUser = async (username, password) => {
 export const ormPasswordLogin = async (username, password) => {
     try {
         const user = await findUser(username);
-        // If given credentials match database document
+
+        // If given credentials match database info, sign new JWT token
         if (user && user.password == password) {
             const token = jwt.sign(
                 { user_id: user._id, username },
@@ -48,6 +53,7 @@ export const ormPasswordLogin = async (username, password) => {
 
 export const ormTokenLogin = async (jwtToken) => {
     try {
+        // If given JWT token is not blacklisted, then verify the token
         if (!(await isBlacklisted(jwtToken))) {
             const decodedToken = jwt.verify(jwtToken, process.env.JWT_TOKEN_KEY);
             return decodedToken.username;
@@ -69,15 +75,14 @@ export const ormLogout = async (jwtToken) => {
 
 export const ormDeleteUser = async (jwtToken, password) => {
     try {
+        // Get client's username from their JWT token and check if the user exists.
         const username = jwt.decode(jwtToken).username;
         const user = await findUser(username);
 
         // If user exists and the given password matches
         if (user && user.password == password) {
-            // Delete user from user database
             await deleteUser(username);
 
-            // Blacklist JWT token
             await blacklist(jwtToken);
             return username;
         } else {
@@ -90,11 +95,13 @@ export const ormDeleteUser = async (jwtToken, password) => {
 
 export const ormChangePassword = async (jwtToken, currPassword, newPassword) => {
     try {
+        // Get client's username from their JWT token and check if the user exists.
         const username = jwt.decode(jwtToken).username;
         const user = await findUser(username);
 
+        // If user exists and the given password matches
         if (user && user.password == currPassword) {
-            await updatePassword(username, newPassword);
+            await changePassword(username, newPassword);
             return true;
         } else {
             return false;

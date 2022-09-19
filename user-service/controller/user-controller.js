@@ -86,6 +86,7 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
     try {
         const { token } = req.cookies;
+
         // If user has no JWT token, we can assume that they are not logged in.
         if (!token) {
             return res.status(400).json({ message: 'Currently not logged in' });
@@ -93,6 +94,7 @@ export const logout = async (req, res) => {
 
         await _logout(token);
         res.clearCookie('token');
+
         return res.status(200).json({ message: 'Successfully logged out!' });
     } catch (err) {
         return res.status(500).json({ message: 'An error occurred with logout' });
@@ -102,14 +104,18 @@ export const logout = async (req, res) => {
 export const deleteUser = async (req, res) => {
     try {
         const { token } = req.cookies;
+
+        // If user has no JWT token, we can assume that they are not logged in.
         if (!token) {
             return res.status(400).json({ message: 'Login is needed to delete account' });
         }
+
         const { password } = req.body;
         const username = await _deleteUser(token, password);
+
         if (username) {
-            // Clear JWT token from cookies
             res.clearCookie('token');
+
             return res
                 .status(200)
                 .json({ message: 'Successfully deleted account ' + username });
@@ -124,13 +130,17 @@ export const deleteUser = async (req, res) => {
 export const changePassword = async (req, res) => {
     try {
         const { token } = req.cookies;
+
+        // If user has no JWT token, we can assume that they are not logged in.
         if (!token) {
             return res
                 .status(400)
                 .json({ message: 'Login is needed to change password' });
         }
+
         const { currPassword, newPassword } = req.body;
         const isChanged = await _updatePassword(token, currPassword, newPassword);
+
         if (isChanged) {
             return res.status(200).json({ message: 'Successfully updated password' });
         } else {
