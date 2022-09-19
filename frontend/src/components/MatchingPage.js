@@ -44,7 +44,7 @@ function MatchingPage() {
 
   const renderTime = ({ remainingTime }) => {
     if (remainingTime === 0) {
-      return <Typography variant={"h5"} color={"#aaa"}>No match found :(</Typography>;
+      return <Typography variant={"h5"} color={"#aaa"}>Do you want to retry?</Typography>;
     }
     return (
       <Box sx={{
@@ -52,13 +52,13 @@ function MatchingPage() {
           flexDirection:'column',
           alignItems:'center',
       }}>
-
         <Typography variant={"h3"}>{remainingTime}</Typography>
         <Typography variant={"h5"} color={"#aaa"}>seconds</Typography>
       </Box>
     );
   };
 
+  
   const handleRetry = () => {
     setIsMatchFail(false);
     setKey(prevKey => prevKey + 1);
@@ -68,57 +68,72 @@ function MatchingPage() {
     // socket.disconnect();
     navigate();
   };
-  if (!isMatchSuccess) {
-    return (
-        <Box sx={{
+
+  return (
+      <Box sx={{
         display: 'flex',
         flexDirection:'column',
         alignItems:'center',
         width:'30%',
+      }}>
+        <Box sx={{
+          display: 'flex',
+          flexDirection:'column',
+          alignItems:'center',
+          width:'100%',
+          marginBottom:"2rem"
         }}>
-          <CountdownCircleTimer
-            key={key}
-            isPlaying={isPlaying}
-            duration={COUNTDOWN_DURATION}
-            size={350}
-            colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
-            colorsTime={[10, 6, 3, 0]}
-            onComplete={() => setIsMatchFail(true)}
-          >
-            {renderTime}
-          </CountdownCircleTimer>
-          <Grid 
-            container
-            display="flex"
-            flexDirection="row"
-            columnGap={4}
-            justifyContent="center"
-            sx={{marginTop: "2rem"}}
-          > 
-          {isMatchFail &&
-            <Zoom
-              in={true}
-              sx={{ transitionDelay: '1500ms' }}
-            >
-              <Grid container item xs={4} justifyContent="center">
-                <Button variant={"outlined"} onClick={handleBack}>Back</Button>
-              </Grid>
-            </Zoom>}
-          {isMatchFail && 
-            <Zoom
-              in={true}
-              sx={{ transitionDelay: '1500ms' }}
-            >
-              <Grid container item xs={4} justifyContent="center">
-                <Button variant={"outlined"} onClick={handleRetry}>Retry</Button>
-              </Grid>
-            </Zoom>}
-          </Grid>
+          {!isMatchFail?
+          <Typography variant={"h4"}>
+            Matching in progress...
+          </Typography>
+          :
+          <Typography variant={"h4"}>
+            No match found :(
+          </Typography>
+          }
         </Box>
-    );
-  } else {
-    
-  }
+        <CountdownCircleTimer
+          key={key}
+          isPlaying={isPlaying}
+          duration={COUNTDOWN_DURATION}
+          size={400}
+          colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
+          colorsTime={[30, 20, 10, 0]}
+          trailColor="#d6d6d6"
+          onComplete={() => setIsMatchFail(true)}
+        >
+          {renderTime}
+        </CountdownCircleTimer>
+        <Grid 
+          container
+          display="flex"
+          flexDirection="row"
+          columnGap={4}
+          justifyContent="center"
+          sx={{marginTop: "2rem"}}
+        > 
+        {isMatchFail &&
+          <Zoom
+            in={true}
+            sx={{ transitionDelay: '1500ms' }}
+          >
+            <Grid container item xs={4} justifyContent="center">
+              <Button variant={"outlined"} onClick={handleBack}>Back</Button>
+            </Grid>
+          </Zoom>}
+        {isMatchFail && 
+          <Zoom
+            in={true}
+            sx={{ transitionDelay: '1500ms' }}
+          >
+            <Grid container item xs={4} justifyContent="center">
+              <Button variant={"outlined"} onClick={handleRetry}>Retry</Button>
+            </Grid>
+          </Zoom>}
+        </Grid>
+      </Box>
+  );
 }
 
 export default MatchingPage;
