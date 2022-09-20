@@ -94,7 +94,7 @@ function Dashboard() {
             color={"info"}
             variant={"contained"}
             component={Link}
-            to="/codingpage"
+            to="/matching"
           >
             Practise
           </Button>
