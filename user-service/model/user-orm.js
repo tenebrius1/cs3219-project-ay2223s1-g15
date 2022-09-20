@@ -36,7 +36,7 @@ export const ormPasswordLogin = async (username, password) => {
         const user = await findUser(username);
 
         // If given credentials match database info, sign new JWT token
-        if (user && user.password == password) {
+        if (user && bcrypt.compare(password, user.password)) {
             const token = jwt.sign(
                 { user_id: user._id, username },
                 process.env.JWT_TOKEN_KEY,
@@ -80,7 +80,7 @@ export const ormDeleteUser = async (jwtToken, password) => {
         const user = await findUser(username);
 
         // If user exists and the given password matches
-        if (user && user.password == password) {
+        if (user && bcrypt.compare(password, user.password)) {
             await deleteUser(username);
 
             await blacklist(jwtToken);
@@ -100,7 +100,7 @@ export const ormChangePassword = async (jwtToken, currPassword, newPassword) => 
         const user = await findUser(username);
 
         // If user exists and the given password matches
-        if (user && user.password == currPassword) {
+        if (user && bcrypt.compare(currPassword, user.password)) {
             await changePassword(username, newPassword);
             return true;
         } else {
