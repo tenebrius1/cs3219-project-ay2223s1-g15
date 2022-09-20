@@ -19,6 +19,7 @@ app.post('/', createWaitingUser);
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
+  // config socket.io cors so that front-end can use
   cors: {
     origin: "*"
   }
@@ -33,7 +34,7 @@ io.on('connection', (socket) => {
     if (roomId) {
       socket.emit('matchSuccess', roomId);
     } else {
-      socket.emit('matchFail')
+      socket.emit('matchFail');
     }
   });
 });
