@@ -6,14 +6,21 @@ import { v4 as uuidv4 } from 'uuid';
 // init database
 sequelize
   .sync({force: true})
-  .then(() => console.log('db connected'))
 
 export const createWaitingUser = async (username, difficultylevel) => {
   const waitingUser = pendingMatch.build({ userName: username, difficultyLevel: difficultylevel });
   return waitingUser;
 }
 
-_deleteWaitingUsers = async (currentUser, matchedUser) => {
+export const deleteWaitingUser = async (username) => {
+  await pendingMatch.destroy({
+    where: {
+      userName: username
+    }
+  });
+}
+
+const _deleteWaitingUsers = async (currentUser, matchedUser) => {
   await pendingMatch.destroy({
     where: {
       userName: currentUser.userName,

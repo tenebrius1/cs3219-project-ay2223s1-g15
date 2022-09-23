@@ -1,4 +1,6 @@
-import { ormCreateWaitingUser as _createWaitingUser, ormCreateMatchedUsers as _persistMatchedUsers } from '../model/match-orm.js'
+import { ormCreateWaitingUser as _createWaitingUser, 
+  ormCreateMatchedUsers as _persistMatchedUsers, 
+  ormDeleteWaitingUser as _deleteWaitingUser } from '../model/match-orm.js'
 
 export const createWaitingUser = async (req, res) => {
   try {
@@ -15,6 +17,21 @@ export const createWaitingUser = async (req, res) => {
     }
   } catch (err) {
     return res.status(500).json({ message: 'Database failure when creating new waiting user!' });
+  }
+}
+
+export const deleteWaitingUser = async (username) => {
+  try {
+    const resp = await _deleteWaitingUser(username);
+    if (resp.err) {
+      console.error(resp.err);
+      return false;
+    } else {
+      return true;
+    }
+  } catch (err) {
+    console.error(err);
+    return false;
   }
 }
 
