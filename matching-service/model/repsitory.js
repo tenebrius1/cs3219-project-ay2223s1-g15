@@ -8,12 +8,12 @@ sequelize
   .sync({force: true})
   .then(() => console.log('db connected'))
 
-export async function createWaitingUser(username, difficultylevel) {
+export const createWaitingUser = async (username, difficultylevel) => {
   const waitingUser = pendingMatch.build({ userName: username, difficultyLevel: difficultylevel });
   return waitingUser;
 }
 
-async function _deleteWaitingUsers(currentUser, matchedUser) {
+_deleteWaitingUsers = async (currentUser, matchedUser) => {
   await pendingMatch.destroy({
     where: {
       userName: currentUser.userName,
@@ -28,7 +28,7 @@ async function _deleteWaitingUsers(currentUser, matchedUser) {
   });
 }
 
-export async function matchWaitingUser(username) {
+export const matchWaitingUser = async (username) => {
   // finds the current user that wants to be matched in the database
   const currentUser = await pendingMatch.findOne({
     where: {

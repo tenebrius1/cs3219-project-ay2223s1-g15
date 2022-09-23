@@ -1,7 +1,7 @@
 import { createWaitingUser, matchWaitingUser } from './repsitory.js'
 
 //need to separate orm functions from repository to decouple business logic from persistence
-export async function ormCreateWaitingUser(username, difficultylevel) {
+export const ormCreateWaitingUser = async (username, difficultylevel) => {
   try {
     const newWaitingUser = await createWaitingUser(username, difficultylevel);
     newWaitingUser.save();
@@ -13,7 +13,7 @@ export async function ormCreateWaitingUser(username, difficultylevel) {
   }
 }
 
-export async function ormCreateMatchedUsers(waitingUser) {
+export const ormCreateMatchedUsers = async (waitingUser) => {
   try {
     const matchedUser = await matchWaitingUser(waitingUser);
     if (matchedUser === null) {
