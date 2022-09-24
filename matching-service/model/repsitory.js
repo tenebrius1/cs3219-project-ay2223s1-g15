@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 sequelize
   .sync({force: true})
 
+const TIMEOUT_DURATION = 30000;
+
 export const createWaitingUser = async (username, difficultylevel) => {
   const waitingUser = pendingMatch.build({ userName: username, difficultyLevel: difficultylevel });
   return waitingUser;
@@ -33,6 +35,16 @@ const _deleteWaitingUsers = async (currentUser, matchedUser) => {
       difficultyLevel: matchedUser.difficultyLevel
     }
   });
+}
+
+const _userStillWaiting = async (username) => {
+  const user = await pendingMatch.findOne({
+    where: {
+      userName: username
+    }
+  });
+
+  return user !== null;
 }
 
 export const matchWaitingUser = async (username) => {
@@ -63,6 +75,11 @@ export const matchWaitingUser = async (username) => {
   // handle scenario where a matched user cannot be found
   if (matchedUser === null) {
     console.log('Could not find a match');
+    const timeout = setTimeout(() => {
+      console.log('Removing user due to timeout.');
+      if (_userStillWaiting(username)) 
+        deleteWaitingUser(username);
+    }, TIMEOUT_DURATION);
     return null;
   }
 
