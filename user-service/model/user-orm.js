@@ -13,12 +13,12 @@ import bcrypt from 'bcrypt';
 
 // need to separate orm functions from repository to decouple business logic from persistence
 
-export const ormCreateUser = async (username, password) => {
+export const ormCreateUser = async (email, username, password) => {
     try {
-        const newUser = await createUser({ username, password });
+        const newUser = await createUser({ email, username, password });
         newUser.password = await hashPassword(newUser);
         // If user already exists, do not save in database
-        const existingUser = await exists(username);
+        const existingUser = await exists(email, username);
         if (existingUser) {
             return false;
         }

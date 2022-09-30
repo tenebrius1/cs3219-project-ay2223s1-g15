@@ -10,14 +10,14 @@ import {
 
 export const createUser = async (req, res) => {
     try {
-        const { username, password } = req.body;
-        if (username && password) {
-            const resp = await _createUser(username, password);
+        const { email, username, password } = req.body;
+        if (username && password && email) {
+            const resp = await _createUser(email, username, password);
             if (resp.err) {
                 return res.status(400).json({ message: 'Could not create a new user!' });
             } else if (!resp) {
                 console.log(
-                    `Failed to create new user. user ${username} already exists.`
+                    `Failed to create new user. user with username ${username} or email ${email} already exists.`
                 );
                 return res.status(409).json({
                     message:
@@ -32,7 +32,7 @@ export const createUser = async (req, res) => {
         } else {
             return res
                 .status(400)
-                .json({ message: 'Username and/or Password are missing!' });
+                .json({ message: 'Email and/or Username and/or Password are missing!' });
         }
     } catch (err) {
         return res
