@@ -17,8 +17,9 @@ import crypto from 'crypto';
 
 export const ormCreateUser = async (email, username, password) => {
     try {
+        password = await hashPassword(password);
         const newUser = await createUser({ email, username, password });
-        newUser.password = await hashPassword(newUser);
+
         // If user already exists, do not save in database
         const existingUser = await exists(email, username);
         if (existingUser) {
@@ -103,7 +104,8 @@ export const ormChangePassword = async (jwtToken, currPassword, newPassword) => 
 
         // If user exists and the given password matches
         if (user && bcrypt.compare(currPassword, user.password)) {
-            await changePassword(username, newPassword);
+            const hashedPassword = hashPassword(newPassword);
+            await changePassword(username, hashedPassword);
             return true;
         } else {
             return false;
@@ -115,23 +117,30 @@ export const ormChangePassword = async (jwtToken, currPassword, newPassword) => 
 
 export const ormRequestPasswordReset = async (username) => {
     try {
+        // Check if user exists
         const user = await findUser(username);
+
+        // If user exists
         if (user) {
+            // Generate a JWT token to be used as a reset token.
             const resetToken = jwt.sign(
                 { user: user._id, username },
                 process.env.JWT_TOKEN_KEY,
                 { expiresIn: '1h' }
             );
+
+            // Connect to admin email account
             var transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                    user: 'cs3219g15@gmail.com',
-                    pass: 'zbizkvbcjvbuygps',
+                    user: process.env.GMAIL,
+                    pass: process.env.GMAIL_PW,
                 },
             });
 
+            // Create the email
             var mailOptions = {
-                from: 'cs3219g15@gmail.com',
+                from: process.env.GMAIL,
                 to: user.email,
                 subject: 'Confirm Password Reset',
                 html:
@@ -154,12 +163,16 @@ export const ormResetPassword = async (jwtToken, username, newPassword) => {
     try {
         const tokenUsername = jwt.decode(jwtToken).username;
         let user;
+
+        // If provided token details match provided username
         if (tokenUsername == username) {
             user = await findUser(username);
         }
         if (user) {
             const hashedPassword = await hashPassword(newPassword);
             await changePassword(username, hashedPassword);
+
+            // Blacklist JWT token so that user cannot reset password with same token again
             await blacklist(jwtToken);
             return true;
         } else {
