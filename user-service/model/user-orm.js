@@ -10,6 +10,8 @@ import {
 import jwt from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
 import bcrypt from 'bcrypt';
+import nodemailer from 'nodemailer';
+import crypto from 'crypto';
 
 // need to separate orm functions from repository to decouple business logic from persistence
 
@@ -111,6 +113,64 @@ export const ormChangePassword = async (jwtToken, currPassword, newPassword) => 
     }
 };
 
+export const ormRequestPasswordReset = async (username) => {
+    try {
+        const user = await findUser(username);
+        if (user) {
+            const resetToken = jwt.sign(
+                { user: user._id, username },
+                process.env.JWT_TOKEN_KEY,
+                { expiresIn: '1h' }
+            );
+            var transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: 'cs3219g15@gmail.com',
+                    pass: 'zbizkvbcjvbuygps',
+                },
+            });
+
+            var mailOptions = {
+                from: 'cs3219g15@gmail.com',
+                to: user.email,
+                subject: 'Confirm Password Reset',
+                html:
+                    `<p>Hi ${username},</p>` +
+                    `<p>You requested to reset your password.</p>` +
+                    `<p> Please, click the link below to reset your password</p>` +
+                    `<a href="http://localhost:8000/confirmPasswordReset?token=${resetToken}&user=${username}">Reset Password</a>`,
+            };
+
+            return { transporter: transporter, mailOptions: mailOptions };
+        } else {
+            return null;
+        }
+    } catch (err) {
+        return { err };
+    }
+};
+
+export const ormResetPassword = async (jwtToken, username, newPassword) => {
+    try {
+        const tokenUsername = jwt.decode(jwtToken).username;
+        let user;
+        if (tokenUsername == username) {
+            user = await findUser(username);
+        }
+        if (user) {
+            const hashedPassword = await hashPassword(newPassword);
+            await changePassword(username, hashedPassword);
+            await blacklist(jwtToken);
+            return true;
+        } else {
+            return false;
+        }
+    } catch (err) {
+        console.log(err);
+        return { err };
+    }
+};
+
 export const ormAuthorize = expressjwt({
     secret: process.env.JWT_TOKEN_KEY,
     getToken: (req) => req.cookies.token,
@@ -121,7 +181,7 @@ export const ormAuthorize = expressjwt({
     },
 });
 
-async function hashPassword(newUser) {
-    const hashed = await bcrypt.hash(newUser.password, 10);
+async function hashPassword(password) {
+    const hashed = await bcrypt.hash(password, 10);
     return hashed;
 }
