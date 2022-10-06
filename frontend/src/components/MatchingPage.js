@@ -32,7 +32,7 @@ function MatchingPage() {
   useEffect(() => {
     console.log(`${fireMatch}`, 'match event sent')
     socket.emit('match', `username`);
-  }, [key, fireMatch]);
+  }, [key]);
 
   useEffect(() => {
     socket.on('matchFail', () => {
@@ -92,7 +92,6 @@ function MatchingPage() {
           colorsTime={[30, 20, 10, 0]}
           trailColor="#d6d6d6"
           onComplete={() => setIsMatchFail(true)}
-          onUpdate={() => setFireMatch(fireMatch => fireMatch + 1)}
         >
           {renderTime}
         </CountdownCircleTimer>
