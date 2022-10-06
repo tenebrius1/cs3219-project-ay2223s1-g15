@@ -29,8 +29,8 @@ export const createUser = async (params) => {
     return new UserModel(params);
 };
 
-export const exists = async (userID) => {
-    return await UserModel.exists({ username: userID });
+export const exists = async (email, userID) => {
+    return await UserModel.exists({ $or: [{ username: userID }, { email: email }] });
 };
 
 export const findUser = async (userID) => {

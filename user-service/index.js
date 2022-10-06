@@ -16,6 +16,8 @@ import {
     logout,
     changePassword,
     authorize,
+    requestPasswordReset,
+    resetPassword,
 } from './controller/user-controller.js';
 import cookieParser from 'cookie-parser';
 
@@ -28,6 +30,9 @@ router.post('/login', login);
 router.put('/changePW', changePassword);
 router.delete('/', authorize, deleteUser);
 router.delete('/logout', logout);
+
+router.post('/requestPasswordReset', requestPasswordReset);
+router.post('/resetPassword', resetPassword);
 
 // For frontend testing
 router.post('/python', (req, res) => {

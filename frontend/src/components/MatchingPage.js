@@ -74,14 +74,16 @@ function MatchingPage() {
         display: 'flex',
         flexDirection:'column',
         alignItems:'center',
-        width:'30%',
+        justifyContent:'center',
+        width: '100%',
+        height:'100%',
       }}>
         <Box sx={{
           display: 'flex',
           flexDirection:'column',
           alignItems:'center',
           width:'100%',
-          marginBottom:"2rem"
+          marginBottom:"3rem"
         }}>
           {!isMatchFail?
           <Typography variant={"h4"}>
@@ -109,7 +111,6 @@ function MatchingPage() {
           container
           display="flex"
           flexDirection="row"
-          columnGap={4}
           justifyContent="center"
           sx={{marginTop: "2rem"}}
         > 
@@ -118,8 +119,8 @@ function MatchingPage() {
             in={true}
             sx={{ transitionDelay: '1500ms' }}
           >
-            <Grid container item xs={4} justifyContent="center">
-              <Button color={"secondary"} variant={"outlined"} onClick={handleBack}>Back</Button>
+            <Grid container item xs={3} justifyContent="center">
+              <Button variant={"outlined"} onClick={handleBack} color={"secondary"}>Back</Button>
             </Grid>
           </Zoom>}
         {isMatchFail && 
@@ -127,8 +128,8 @@ function MatchingPage() {
             in={true}
             sx={{ transitionDelay: '1500ms' }}
           >
-            <Grid container item xs={4} justifyContent="center">
-              <Button color={"secondary"} variant={"outlined"} onClick={handleRetry}>Retry</Button>
+            <Grid container item xs={3} justifyContent="center">
+              <Button variant={"outlined"} onClick={handleRetry} color={"secondary"}>Retry</Button>
             </Grid>
           </Zoom>}
         </Grid>
