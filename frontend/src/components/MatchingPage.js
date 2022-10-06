@@ -119,7 +119,7 @@ function MatchingPage() {
             sx={{ transitionDelay: '1500ms' }}
           >
             <Grid container item xs={4} justifyContent="center">
-              <Button variant={"outlined"} onClick={handleBack}>Back</Button>
+              <Button color={"secondary"} variant={"outlined"} onClick={handleBack}>Back</Button>
             </Grid>
           </Zoom>}
         {isMatchFail && 
@@ -128,7 +128,7 @@ function MatchingPage() {
             sx={{ transitionDelay: '1500ms' }}
           >
             <Grid container item xs={4} justifyContent="center">
-              <Button variant={"outlined"} onClick={handleRetry}>Retry</Button>
+              <Button color={"secondary"} variant={"outlined"} onClick={handleRetry}>Retry</Button>
             </Grid>
           </Zoom>}
         </Grid>

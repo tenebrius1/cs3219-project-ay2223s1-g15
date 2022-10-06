@@ -89,15 +89,25 @@ function Dashboard() {
           >
             Hard
           </Button>
-          <Button
-            className="queueUpButton"
-            color={"info"}
-            variant={"contained"}
-            component={Link}
-            to="/codingpage"
-          >
-            Practise
-          </Button>
+          {
+            (buttonToggleEasy || buttonToggleMedium || buttonToggleHard) ?
+            (<Button
+              className="queueUpButton"
+              color={"info"}
+              variant={"contained"}
+              component={Link}
+              to="/codingpage"
+            >
+              Practise
+            </Button>) :
+            (<Button
+              className="queueUpButton"
+              color={"info"} 
+              variant={"contained"} 
+            >
+              Practise
+            </Button>)
+          }
         </Box>
       </Box>
     </Box>
