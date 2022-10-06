@@ -16,6 +16,7 @@ import {
 import {useState, useEffect} from "react";
 import {COUNTDOWN_DURATION} from "../constants";
 import {CountdownCircleTimer} from "react-countdown-circle-timer";
+import "./matchingpage.css";
 
 var PORT = 8001;
 
@@ -69,21 +70,8 @@ function MatchingPage() {
   };
 
   return (
-      <Box sx={{
-        display: 'flex',
-        flexDirection:'column',
-        alignItems:'center',
-        justifyContent:'center',
-        width: '100%',
-        height:'100%',
-      }}>
-        <Box sx={{
-          display: 'flex',
-          flexDirection:'column',
-          alignItems:'center',
-          width:'100%',
-          marginBottom:"3rem"
-        }}>
+      <Box className="mainBox">
+        <Box className="statusBox">
           {!isMatchFail
             ?
             <Typography variant={"h4"}>
@@ -110,9 +98,7 @@ function MatchingPage() {
         </CountdownCircleTimer>
         <Grid 
           container
-          display="flex"
-          flexDirection="row"
-          justifyContent="center"
+          className="mainGrid"
           sx={{marginTop: "2rem"}}
         > 
           <Zoom
