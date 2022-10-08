@@ -8,7 +8,7 @@ export const createWaitingUser = async (req, res) => {
     if (username && difficultylevel) {
       const resp = await _createWaitingUser(username, difficultylevel);
       if (resp.err) {
-        res.status(400).json({ message: 'Could not create a new waiting user!' });
+        return res.status(400).json({ message: 'Could not create a new waiting user!' });
       } else {
         return res.status(201).json({ message: `Created new waiting user ${username} successfully!` });
       }
