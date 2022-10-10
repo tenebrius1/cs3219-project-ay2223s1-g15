@@ -1,7 +1,7 @@
-import { createWaitingUser, matchWaitingUser } from './repsitory.js'
+import { createWaitingUser, matchWaitingUser, deleteWaitingUser } from './repsitory.js'
 
 //need to separate orm functions from repository to decouple business logic from persistence
-export async function ormCreateWaitingUser(username, difficultylevel) {
+export const ormCreateWaitingUser = async (username, difficultylevel) => {
   try {
     const newWaitingUser = await createWaitingUser(username, difficultylevel);
     newWaitingUser.save();
@@ -13,7 +13,16 @@ export async function ormCreateWaitingUser(username, difficultylevel) {
   }
 }
 
-export async function ormCreateMatchedUsers(waitingUser) {
+export const ormDeleteWaitingUser = async (username) => {
+  try {
+    await deleteWaitingUser(username);
+    return true;
+  } catch (err) {
+    return { err };
+  }
+}
+
+export const ormCreateMatchedUsers = async (waitingUser) => {
   try {
     const matchedUser = await matchWaitingUser(waitingUser);
     if (matchedUser === null) {
@@ -23,6 +32,6 @@ export async function ormCreateMatchedUsers(waitingUser) {
       return matchedUser.roomId;
     }
   } catch (err) {
-    return { err }
+    return { err };
   }
 }
