@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
   Box,
   Button,
@@ -14,9 +14,10 @@ import axios from "axios";
 import { URL_USER_SVC } from "./../../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "./../../constants";
 import { Link } from "react-router-dom";
+import UserContext from "../../contexts/UserContext";
 
 function SignInPage() {
-  const [username, setUsername] = useState("");
+  const { username, setUsername } = useContext(UserContext);
   const [password, setPassword] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogTitle, setDialogTitle] = useState("");

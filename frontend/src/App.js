@@ -13,6 +13,9 @@ import { Box } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import "./styles.css";
+import DifficultyContext from "./contexts/DifficultyContext";
+import UserContext from "./contexts/UserContext";
+import { useState } from 'react';
 
 export const theme = createTheme({
   palette: {
@@ -34,27 +37,36 @@ export const theme = createTheme({
   },
 });
 
+
 function App() {
+
+  const [currentDifficulty, setCurrentDifficulty] = useState("None")
+  const [username, setUsername] = useState("")
+  
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Box className="App">
-        <Router>
-          <Routes>
-            <Route
-              exact
-              path="/"
-              element={<Navigate replace to="/signup" />}
-            ></Route>
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/codingpage" element={<CodingPage />} />
-            <Route path="/login" element={<SignInPage />} />
-            <Route path="/matching" element={<MatchingPage />} />
-          </Routes>
-        </Router>
-      </Box>
-    </ThemeProvider>
+    <UserContext.Provider value={{ username, setUsername }}>
+      <DifficultyContext.Provider value={{ currentDifficulty, setCurrentDifficulty }}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Box className="App">
+            <Router>
+              <Routes>
+                <Route
+                  exact
+                  path="/"
+                  element={<Navigate replace to="/signup" />}
+                ></Route>
+                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/codingpage" element={<CodingPage />} />
+                <Route path="/login" element={<SignInPage />} />
+                <Route path="/matching" element={<MatchingPage />} />
+              </Routes>
+            </Router>
+          </Box>
+        </ThemeProvider>
+      </DifficultyContext.Provider>
+    </UserContext.Provider>
   );
 }
 
