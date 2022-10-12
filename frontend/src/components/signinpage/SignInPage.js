@@ -30,22 +30,21 @@ function SignInPage() {
 
   const handleSignin = async () => {
     await auth.login(username, password)
-
   };
 
-  const closeDialog = () => setIsDialogOpen(false);
+    const closeDialog = () => setIsDialogOpen(false);
 
-  const setSuccessDialog = (msg) => {
-    setIsDialogOpen(true);
-    setDialogTitle("Success");
-    setDialogMsg(msg);
-  };
+    const setSuccessDialog = (msg) => {
+        setIsDialogOpen(true);
+        setDialogTitle('Success');
+        setDialogMsg(msg);
+    };
 
-  const setErrorDialog = (msg) => {
-    setIsDialogOpen(true);
-    setDialogTitle("Error");
-    setDialogMsg(msg);
-  };
+    const setErrorDialog = (msg) => {
+        setIsDialogOpen(true);
+        setDialogTitle('Error');
+        setDialogMsg(msg);
+    };
 
   if (auth.user) {
     return <Navigate to="/dashboard" />
@@ -93,23 +92,23 @@ function SignInPage() {
         </Button>
       </Box>
 
-      <Dialog open={isDialogOpen} onClose={closeDialog}>
-        <DialogTitle>{dialogTitle}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>{dialogMsg}</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          {isSigninSuccess ? (
-            <Button component={Link} to="/login">
-              Log in
-            </Button>
-          ) : (
-            <Button onClick={closeDialog}>Done</Button>
-          )}
-        </DialogActions>
-      </Dialog>
-    </Box>
-  );
+            <Dialog open={isDialogOpen} onClose={closeDialog}>
+                <DialogTitle>{dialogTitle}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>{dialogMsg}</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    {isSigninSuccess ? (
+                        <Button component={Link} to='/login'>
+                            Log in
+                        </Button>
+                    ) : (
+                        <Button onClick={closeDialog}>Done</Button>
+                    )}
+                </DialogActions>
+            </Dialog>
+        </Box>
+    );
 }
 
 export default SignInPage;
