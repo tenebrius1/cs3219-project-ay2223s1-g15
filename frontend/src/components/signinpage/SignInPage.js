@@ -31,6 +31,7 @@ function SignInPage() {
   const handleSignin = async () => {
     await auth.login(username, password)
   };
+
     const closeDialog = () => setIsDialogOpen(false);
 
     const setSuccessDialog = (msg) => {
@@ -44,7 +45,7 @@ function SignInPage() {
         setDialogTitle('Error');
         setDialogMsg(msg);
     };
-    
+
   if (auth.user) {
     return <Navigate to="/dashboard" />
   }
