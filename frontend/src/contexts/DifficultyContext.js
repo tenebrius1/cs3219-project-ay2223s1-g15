@@ -1,8 +1,10 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 
 const DifficultyContext = createContext({
-    currentDifficulty: "",
-    setCurrentDifficulty: (difficulty) => {}
-})
+  currentDifficulty: '',
+  setCurrentDifficulty: (difficulty) => {},
+  roomID: '',
+  setRoomID: (roomID) => {},
+});
 
 export default DifficultyContext;
