@@ -6,14 +6,23 @@ import { v4 as uuidv4 } from 'uuid';
 // init database
 sequelize
   .sync({force: true})
-  .then(() => console.log('db connected'))
 
-export async function createWaitingUser(username, difficultylevel) {
+const TIMEOUT_DURATION = 30000;
+
+export const createWaitingUser = async (username, difficultylevel) => {
   const waitingUser = pendingMatch.build({ userName: username, difficultyLevel: difficultylevel });
   return waitingUser;
 }
 
-async function _deleteWaitingUsers(currentUser, matchedUser) {
+export const deleteWaitingUser = async (username) => {
+  await pendingMatch.destroy({
+    where: {
+      userName: username
+    }
+  });
+}
+
+const _deleteWaitingUsers = async (currentUser, matchedUser) => {
   await pendingMatch.destroy({
     where: {
       userName: currentUser.userName,
@@ -28,7 +37,17 @@ async function _deleteWaitingUsers(currentUser, matchedUser) {
   });
 }
 
-export async function matchWaitingUser(username) {
+const _userStillWaiting = async (username) => {
+  const user = await pendingMatch.findOne({
+    where: {
+      userName: username
+    }
+  });
+
+  return user !== null;
+}
+
+export const matchWaitingUser = async (username) => {
   // finds the current user that wants to be matched in the database
   const currentUser = await pendingMatch.findOne({
     where: {
@@ -56,6 +75,11 @@ export async function matchWaitingUser(username) {
   // handle scenario where a matched user cannot be found
   if (matchedUser === null) {
     console.log('Could not find a match');
+    const timeout = setTimeout(() => {
+      console.log('Removing user due to timeout.');
+      if (_userStillWaiting(username)) 
+        deleteWaitingUser(username);
+    }, TIMEOUT_DURATION);
     return null;
   }
 

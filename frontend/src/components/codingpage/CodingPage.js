@@ -15,6 +15,8 @@ function a11yProps(index) {
 
 function CodingPage() {
   const [value, setValue] = useState(0);
+  const [currentLanguage, setCurrentLanguage] = useState("python");
+  const [output, setOutput] = useState('Output');
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -24,7 +26,7 @@ function CodingPage() {
     <Box className="mainCodingPageBox">
       <Box className="codingSpace">
         <Box className="titleBar">
-          <CodingLanguageSelector />
+          <CodingLanguageSelector currentLanguage={currentLanguage} setCurrentLanguage={setCurrentLanguage} />
           <Button
             component={Link}
             to="/dashboard"
@@ -34,10 +36,10 @@ function CodingPage() {
             End Interview
           </Button>
         </Box>
-        <CodePad />
+        <CodePad currentLanguage={currentLanguage} setOutput={setOutput} />
       </Box>
       <Box className="adminSpace">
-        <BasicTab />
+        <BasicTab output={output} />
       </Box>
     </Box>
   );

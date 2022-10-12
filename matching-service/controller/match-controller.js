@@ -1,6 +1,8 @@
-import { ormCreateWaitingUser as _createWaitingUser, ormCreateMatchedUsers as _persistMatchedUsers } from '../model/match-orm.js'
+import { ormCreateWaitingUser as _createWaitingUser, 
+  ormCreateMatchedUsers as _persistMatchedUsers, 
+  ormDeleteWaitingUser as _deleteWaitingUser } from '../model/match-orm.js'
 
-export async function createWaitingUser(req, res) {
+export const createWaitingUser = async (req, res) => {
   try {
     const { username, difficultylevel } = req.body;
     if (username && difficultylevel) {
@@ -18,7 +20,22 @@ export async function createWaitingUser(req, res) {
   }
 }
 
-export async function matchWaitingUser(username) {
+export const deleteWaitingUser = async (username) => {
+  try {
+    const resp = await _deleteWaitingUser(username);
+    if (resp.err) {
+      console.error(resp.err);
+      return false;
+    } else {
+      return true;
+    }
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
+
+export const matchWaitingUser = async (username) => {
   try {
     const resp = await _persistMatchedUsers(username);
     if (resp.err) {

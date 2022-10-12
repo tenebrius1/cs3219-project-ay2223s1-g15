@@ -21,6 +21,7 @@ import zxcvbn from "zxcvbn";
 function SignupPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogTitle, setDialogTitle] = useState("");
   const [dialogMsg, setDialogMsg] = useState("");
@@ -42,7 +43,7 @@ function SignupPage() {
       return;
     }
     const res = await axios
-      .post(URL_USER_SVC, { username, password })
+      .post(URL_USER_SVC, { email, username, password })
       .catch((err) => {
         if (err.response.status === STATUS_CODE_CONFLICT) {
           setErrorDialog("This username already exists");
@@ -71,7 +72,7 @@ function SignupPage() {
   };
 
   const isEmailValid = () => {
-    return isEmail(username);
+    return isEmail(email);
   };
 
   const isPasswordSecure = () => {
@@ -90,6 +91,17 @@ function SignupPage() {
         </Typography>
       </Box>
       <Box className="textFieldBox">
+        <TextField
+          className="TextField"
+          label="Email"
+          variant="standard"
+          color="primary"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          sx={{ marginBottom: "1rem" }}
+          autoFocus
+          required
+        />
         <TextField
           className="TextField"
           label="Username"

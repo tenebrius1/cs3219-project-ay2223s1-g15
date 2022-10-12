@@ -1,13 +1,15 @@
 import { Box, Button, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import "./dashboard.css";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import CustomAvatar from "./CustomAvatar";
+import DifficultyContext from "../../contexts/DifficultyContext";
 
 function Dashboard() {
   const [buttonToggleEasy, setButtonToggleEasy] = useState(false);
   const [buttonToggleMedium, setButtonToggleMedium] = useState(false);
   const [buttonToggleHard, setButtonToggleHard] = useState(false);
+  const { setCurrentDifficulty } = useContext(DifficultyContext);
 
   const toggleButtonEasy = (event) => {
     event.preventDefault();
@@ -16,6 +18,11 @@ function Dashboard() {
     }
     if (buttonToggleHard) {
       setButtonToggleHard(false);
+    }
+    if (buttonToggleEasy) {
+      setCurrentDifficulty("")
+    } else {
+      setCurrentDifficulty("Easy")
     }
     setButtonToggleEasy(!buttonToggleEasy);
   };
@@ -28,6 +35,11 @@ function Dashboard() {
     if (buttonToggleHard) {
       setButtonToggleHard(false);
     }
+    if (buttonToggleMedium) {
+      setCurrentDifficulty("")
+    } else {
+      setCurrentDifficulty("Medium")
+    }
     setButtonToggleMedium(!buttonToggleMedium);
   };
 
@@ -39,12 +51,16 @@ function Dashboard() {
     if (buttonToggleMedium) {
       setButtonToggleMedium(false);
     }
+    if (buttonToggleHard) {
+      setCurrentDifficulty("")
+    } else {
+      setCurrentDifficulty("Hard")
+    }
     setButtonToggleHard(!buttonToggleHard);
   };
 
   const handleClickEasy = () => (buttonToggleEasy ? "contained" : "outlined");
-  const handleClickMedium = () =>
-    buttonToggleMedium ? "contained" : "outlined";
+  const handleClickMedium = () => (buttonToggleMedium ? "contained" : "outlined");
   const handleClickHard = () => (buttonToggleHard ? "contained" : "outlined");
 
   return (
@@ -89,15 +105,25 @@ function Dashboard() {
           >
             Hard
           </Button>
-          <Button
-            className="queueUpButton"
-            color={"info"}
-            variant={"contained"}
-            component={Link}
-            to="/codingpage"
-          >
-            Practise
-          </Button>
+          {
+            (buttonToggleEasy || buttonToggleMedium || buttonToggleHard) ?
+            (<Button
+              className="queueUpButton"
+              color={"info"}
+              variant={"contained"}
+              component={Link}
+              to="/matching"
+            >
+              Practise
+            </Button>) :
+            (<Button
+              className="queueUpButton"
+              color={"info"} 
+              variant={"contained"} 
+            >
+              Practise
+            </Button>)
+          }
         </Box>
       </Box>
     </Box>

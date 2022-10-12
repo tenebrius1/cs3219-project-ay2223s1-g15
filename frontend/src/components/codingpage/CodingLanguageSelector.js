@@ -4,21 +4,23 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
-function CodingLanguageSelector() {
+function CodingLanguageSelector({ currentLanguage, setCurrentLanguage }) {
   const [anchorElement, setAnchorElement] = useState(null);
-  const open = anchorElement;
-  const [currentLanguage, setCurrentLanguage] = useState("python");
+  const [open, setOpen] = useState(false);
 
   const handleClick = (event) => {
     setAnchorElement(event.currentTarget);
+    setOpen(true);
   };
   const handleClose = () => {
     setAnchorElement(null);
+    setOpen(false);
   };
 
   const handleLanguageChange = (language) => {
     setCurrentLanguage(language);
     setAnchorElement(null);
+    setOpen(false)
   };
 
   return (

@@ -1,0 +1,1 @@
+const Automerge = require("automerge")
