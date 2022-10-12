@@ -3,7 +3,7 @@ import { Box, Button, Tab, Tabs, TextField } from "@mui/material";
 import TabPanel from "./TabPanel";
 import "./codingpage.css";
 
-function BasicTab() {
+function BasicTab({ output }) {
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
@@ -50,15 +50,17 @@ function BasicTab() {
               focused={true}
               InputProps={{
                 disableUnderline: true,
+                sx: {
+                  height: '70vh'
+                }
               }}
               margin="none"
-              rows={10}
             />
           }
           value={value}
           index={1}
         />
-        <TabPanel children={"Output"} value={value} index={2} />
+        <TabPanel children={output} value={value} index={2} />
       </Box>
       <Box className="endTurnBox">
         <Button variant="outlined" color="error">

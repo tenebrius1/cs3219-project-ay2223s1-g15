@@ -13,6 +13,11 @@ import { Box } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import "./styles.css";
+import DifficultyContext from "./contexts/DifficultyContext";
+import UserContext from "./contexts/UserContext";
+import { AuthProvider } from "./contexts/AuthContext";
+import { useState } from 'react';
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 
 export const theme = createTheme({
   palette: {
@@ -34,27 +39,59 @@ export const theme = createTheme({
   },
 });
 
+
 function App() {
+
+  const [currentDifficulty, setCurrentDifficulty] = useState("")
+  const [username, setUsername] = useState("") 
+  
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Box className="App">
-        <Router>
-          <Routes>
-            <Route
-              exact
-              path="/"
-              element={<Navigate replace to="/signup" />}
-            ></Route>
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/codingpage" element={<CodingPage />} />
-            <Route path="/login" element={<SignInPage />} />
-            <Route path="/matching" element={<MatchingPage />} />
-          </Routes>
-        </Router>
-      </Box>
-    </ThemeProvider>
+    <AuthProvider>
+      <UserContext.Provider value={{ username, setUsername }}>
+        <DifficultyContext.Provider value={{ currentDifficulty, setCurrentDifficulty }}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Box className="App">
+              <Router>
+                <Routes>
+                  <Route
+                    exact
+                    path="/"
+                    element={<Navigate replace to="/signup" />}
+                  />
+                  <Route path="/signup" element={<SignupPage />} />
+                  <Route path="/login" element={<SignInPage />} />
+                  <Route 
+                    path="/dashboard"
+                    element={
+                      <PrivateRoute>
+                        <Dashboard />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/codingpage"
+                    element={
+                      <PrivateRoute>
+                        <CodingPage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/matching"
+                    element={
+                      <PrivateRoute>
+                        <MatchingPage />
+                      </PrivateRoute>
+                    }
+                  />
+                </Routes>
+              </Router>
+            </Box>
+          </ThemeProvider>
+        </DifficultyContext.Provider>
+      </UserContext.Provider>
+    </AuthProvider>
   );
 }
 

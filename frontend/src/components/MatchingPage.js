@@ -13,10 +13,11 @@ import {
     Typography,
     Zoom,
 } from "@mui/material";
-import {useState, useEffect} from "react";
+import {useState, useEffect, useContext} from "react";
 import {COUNTDOWN_DURATION} from "../constants";
 import {CountdownCircleTimer} from "react-countdown-circle-timer";
 import "./matchingpage.css";
+import DifficultyContext from "../contexts/DifficultyContext";
 
 var PORT = 8001;
 
@@ -28,6 +29,11 @@ function MatchingPage() {
   const [fireMatch, setFireMatch] = useState(0);
   const navigate = useNavigate();
   const socket = io.connect(`http://localhost:${PORT}`) 
+  const { currentDifficulty } = useContext(DifficultyContext)
+  
+  useEffect(() => {
+    console.log(currentDifficulty)
+  }, [currentDifficulty])
 
   useEffect(() => {
     console.log(`${fireMatch}`, 'match event sent')
