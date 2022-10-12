@@ -12,9 +12,10 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { URL_USER_SVC } from "./../../configs";
-import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "./../../constants";
-import { Link } from "react-router-dom";
+import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED, STATUS_CODE_LOGGED_IN } from "./../../constants";
+import { Link, Navigate } from "react-router-dom";
 import UserContext from "../../contexts/UserContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 function SignInPage() {
   const { username, setUsername } = useContext(UserContext);
@@ -25,34 +26,11 @@ function SignInPage() {
   const [isSigninSuccess, setIsSigninSuccess] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const auth = useAuth();
 
   const handleSignin = async () => {
-    setIsSigninSuccess(false);
+    await auth.login(username, password)
 
-    setUsernameError(false);
-    setPasswordError(false);
-
-    if (username === "") {
-      setUsernameError(true);
-      return;
-    }
-    if (password === "") {
-      setPasswordError(true);
-      return;
-    }
-    const res = await axios
-      .post(URL_USER_SVC, { username, password })
-      .catch((err) => {
-        if (err.response.status === STATUS_CODE_CONFLICT) {
-          setErrorDialog("This username already exists");
-        } else {
-          setErrorDialog("Please try again later");
-        }
-      });
-    if (res && res.status === STATUS_CODE_CREATED) {
-      setSuccessDialog("Account successfully created");
-      setIsSigninSuccess(true);
-    }
   };
 
   const closeDialog = () => setIsDialogOpen(false);
@@ -68,6 +46,10 @@ function SignInPage() {
     setDialogTitle("Error");
     setDialogMsg(msg);
   };
+
+  if (auth.user) {
+    return <Navigate to="/dashboard" />
+  }
 
   return (
     <Box className="mainBox">

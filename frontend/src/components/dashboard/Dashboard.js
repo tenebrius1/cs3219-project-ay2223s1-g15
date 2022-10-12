@@ -20,7 +20,7 @@ function Dashboard() {
       setButtonToggleHard(false);
     }
     if (buttonToggleEasy) {
-      setCurrentDifficulty("None")
+      setCurrentDifficulty("")
     } else {
       setCurrentDifficulty("Easy")
     }
@@ -36,7 +36,7 @@ function Dashboard() {
       setButtonToggleHard(false);
     }
     if (buttonToggleMedium) {
-      setCurrentDifficulty("None")
+      setCurrentDifficulty("")
     } else {
       setCurrentDifficulty("Medium")
     }
@@ -52,7 +52,7 @@ function Dashboard() {
       setButtonToggleMedium(false);
     }
     if (buttonToggleHard) {
-      setCurrentDifficulty("None")
+      setCurrentDifficulty("")
     } else {
       setCurrentDifficulty("Hard")
     }
