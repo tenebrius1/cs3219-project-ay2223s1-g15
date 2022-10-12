@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 
 const app = express();
+app.use(cookieParser());
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
@@ -10,8 +12,6 @@ app.use(
         credentials: true,
     })
 ); // config cors so that front-end can use
-
-app.use(cookieParser());
 
 app.options('*', cors());
 import {

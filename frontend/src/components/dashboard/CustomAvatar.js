@@ -7,12 +7,14 @@ import { Avatar } from "@mui/material";
 
 function CustomAvatar() {
   const [anchorElement, setAnchorElement] = useState(null);
-  const open = anchorElement;
+  const [open, setOpen] = useState(false);
   const handleClick = (event) => {
     setAnchorElement(event.currentTarget);
+    setOpen(true);
   };
   const handleClose = () => {
     setAnchorElement(null);
+    setOpen(false);
   };
 
   return (
