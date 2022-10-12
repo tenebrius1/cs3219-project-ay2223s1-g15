@@ -92,22 +92,22 @@ function SignInPage() {
         </Button>
       </Box>
 
-            <Dialog open={isDialogOpen} onClose={closeDialog}>
-                <DialogTitle>{dialogTitle}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>{dialogMsg}</DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    {isSigninSuccess ? (
-                        <Button component={Link} to='/login'>
-                            Log in
-                        </Button>
-                    ) : (
-                        <Button onClick={closeDialog}>Done</Button>
-                    )}
-                </DialogActions>
-            </Dialog>
-        </Box>
+      <Dialog open={isDialogOpen} onClose={closeDialog}>
+          <DialogTitle>{dialogTitle}</DialogTitle>
+          <DialogContent>
+              <DialogContentText>{dialogMsg}</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+              {isSigninSuccess ? (
+                  <Button component={Link} to='/login'>
+                      Log in
+                  </Button>
+              ) : (
+                  <Button onClick={closeDialog}>Done</Button>
+              )}
+          </DialogActions>
+      </Dialog>
+    </Box>
     );
 }
 
