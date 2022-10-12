@@ -58,7 +58,7 @@ export const login = async (req, res) => {
                 // Token is invalid. Delete token from user's cookie
                 // so that they can login using username and password
                 res.clearCookie();
-                return res.status(400).json({
+                return res.status(403).json({
                     message: 'Invalid JWT Token. Try again using username and password',
                 });
             }
@@ -68,14 +68,18 @@ export const login = async (req, res) => {
         const { username, password } = req.body;
         if (!(username && password)) {
             return res
-                .status(400)
+                .status(401)
                 .json({ message: 'Username and/or Password are missing!' });
         }
 
         const userToken = await _passwordLogin(username, password);
         if (userToken) {
             // Login is successful. store JWT token in user's cookies.
-            res.cookie('token', userToken, { httpOnly: true });
+            res.cookie('token', userToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none',
+            });
             return res.status(200).json({ token: userToken });
         } else {
             return res.status(401).json({ message: 'Invalid Credentials!' });
