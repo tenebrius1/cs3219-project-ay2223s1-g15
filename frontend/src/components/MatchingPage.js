@@ -19,9 +19,7 @@ import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import './matchingpage.css';
 import DifficultyContext from '../contexts/DifficultyContext';
 import { useAuth } from '../contexts/AuthContext';
-import { SocketContext } from '../contexts/SocketContext';
-
-var PORT = 8001;
+import SocketContext from '../contexts/SocketContext';
 
 function MatchingPage() {
   const [isMatchFail, setIsMatchFail] = useState(false);

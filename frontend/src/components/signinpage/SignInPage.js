@@ -28,6 +28,7 @@ function SignInPage() {
   const handleSignin = async () => {
     await auth.login(username, password);
   };
+
   const closeDialog = () => setIsDialogOpen(false);
 
   const setSuccessDialog = (msg) => {
