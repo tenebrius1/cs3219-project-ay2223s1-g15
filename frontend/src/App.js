@@ -8,7 +8,7 @@ import { Box } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import './styles.css';
-import DifficultyContext from './contexts/DifficultyContext';
+import { RoomContextProvider } from './contexts/RoomContext';
 import UserContext from './contexts/UserContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { useState } from 'react';
@@ -35,16 +35,12 @@ export const theme = createTheme({
 });
 
 function App() {
-  const [currentDifficulty, setCurrentDifficulty] = useState('');
-  const [roomID, setRoomID] = useState('');
   const [username, setUsername] = useState('');
 
   return (
     <AuthProvider>
       <UserContext.Provider value={{ username, setUsername }}>
-        <DifficultyContext.Provider
-          value={{ currentDifficulty, setCurrentDifficulty, roomID, setRoomID }}
-        >
+        <RoomContextProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <Box className='App'>
@@ -69,12 +65,19 @@ function App() {
                       </PrivateRoute>
                     }
                   />
-                  <Route path='/matching' element={<MatchingPage />} />
+                  <Route
+                    path='/matching'
+                    element={
+                      <PrivateRoute>
+                        <MatchingPage />
+                      </PrivateRoute>
+                    }
+                  />
                 </Routes>
               </Router>
             </Box>
           </ThemeProvider>
-        </DifficultyContext.Provider>
+        </RoomContextProvider>
       </UserContext.Provider>
     </AuthProvider>
   );

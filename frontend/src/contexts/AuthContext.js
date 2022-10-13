@@ -23,7 +23,6 @@ const useProvideAuth = () => {
   const [user, setUser] = useState(null);
 
   const passwordLogin = async (username, password) => {
-    console.log('hi');
     const res = await axios
       .post(
         URL_USER_SVC + '/passwordLogin',

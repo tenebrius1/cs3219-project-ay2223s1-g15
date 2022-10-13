@@ -1,15 +1,37 @@
-import { Box, Button, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
-import "./dashboard.css";
-import { useState, useContext } from "react";
-import CustomAvatar from "./CustomAvatar";
-import DifficultyContext from "../../contexts/DifficultyContext";
+import { Box, Button, Typography } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import './dashboard.css';
+import { useState, useContext } from 'react';
+import CustomAvatar from './CustomAvatar';
+import RoomContext from '../../contexts/RoomContext';
+import { useAuth } from '../../contexts/AuthContext';
+import axios from 'axios';
+import { STATUS_CODE_BAD_REQ, STATUS_CODE_CREATED } from '../../constants';
 
 function Dashboard() {
   const [buttonToggleEasy, setButtonToggleEasy] = useState(false);
   const [buttonToggleMedium, setButtonToggleMedium] = useState(false);
   const [buttonToggleHard, setButtonToggleHard] = useState(false);
-  const { setCurrentDifficulty } = useContext(DifficultyContext);
+
+  const navigate = useNavigate();
+  const { difficulty, setDifficulty } = useContext(RoomContext);
+  const { user } = useAuth();
+
+  const startMatch = async () => {
+    console.log('user', user);
+    console.log('difficulty', difficulty);
+    const res = await axios.post('http://localhost:8001', {
+      username: user,
+      difficultylevel: difficulty,
+    });
+    if (res && res.status === STATUS_CODE_CREATED) {
+      navigate('/matching');
+    } else if (res.status === STATUS_CODE_BAD_REQ) {
+      console.log('start match bad request');
+    } else {
+      console.log('start match error');
+    }
+  };
 
   const toggleButtonEasy = (event) => {
     event.preventDefault();
@@ -20,9 +42,9 @@ function Dashboard() {
       setButtonToggleHard(false);
     }
     if (buttonToggleEasy) {
-      setCurrentDifficulty("")
+      setDifficulty('');
     } else {
-      setCurrentDifficulty("Easy")
+      setDifficulty('Easy');
     }
     setButtonToggleEasy(!buttonToggleEasy);
   };
@@ -36,9 +58,9 @@ function Dashboard() {
       setButtonToggleHard(false);
     }
     if (buttonToggleMedium) {
-      setCurrentDifficulty("")
+      setDifficulty('');
     } else {
-      setCurrentDifficulty("Medium")
+      setDifficulty('Medium');
     }
     setButtonToggleMedium(!buttonToggleMedium);
   };
@@ -52,78 +74,69 @@ function Dashboard() {
       setButtonToggleMedium(false);
     }
     if (buttonToggleHard) {
-      setCurrentDifficulty("")
+      setDifficulty('');
     } else {
-      setCurrentDifficulty("Hard")
+      setDifficulty('Hard');
     }
     setButtonToggleHard(!buttonToggleHard);
   };
 
-  const handleClickEasy = () => (buttonToggleEasy ? "contained" : "outlined");
-  const handleClickMedium = () => (buttonToggleMedium ? "contained" : "outlined");
-  const handleClickHard = () => (buttonToggleHard ? "contained" : "outlined");
+  const handleClickEasy = () => (buttonToggleEasy ? 'contained' : 'outlined');
+  const handleClickMedium = () => (buttonToggleMedium ? 'contained' : 'outlined');
+  const handleClickHard = () => (buttonToggleHard ? 'contained' : 'outlined');
 
   return (
-    <Box className="mainDashboardBox">
-      <Box className="topBar">
-        <Typography component={"h3"} variant={"h5"}>
+    <Box className='mainDashboardBox'>
+      <Box className='topBar'>
+        <Typography component={'h3'} variant={'h5'}>
           PeerPrep
         </Typography>
         <CustomAvatar />
       </Box>
-      <Box className="mainContent">
-        <Box className="leftBox">Practice History</Box>
-        <Box className="rightBox">
-          <Typography
-            className="difficultyButton"
-            component={"h3"}
-            variant={"h5"}
-          >
+      <Box className='mainContent'>
+        <Box className='leftBox'>Practice History</Box>
+        <Box className='rightBox'>
+          <Typography className='difficultyButton' component={'h3'} variant={'h5'}>
             Difficulty
           </Typography>
           <Button
-            className="difficultyButton"
-            color={"success"}
+            className='difficultyButton'
+            color={'success'}
             variant={handleClickEasy()}
             onClick={toggleButtonEasy}
           >
             Easy
           </Button>
           <Button
-            className="difficultyButton"
-            color={"warning"}
+            className='difficultyButton'
+            color={'warning'}
             variant={handleClickMedium()}
             onClick={toggleButtonMedium}
           >
             Medium
           </Button>
           <Button
-            className="difficultyButton"
-            color={"error"}
+            className='difficultyButton'
+            color={'error'}
             variant={handleClickHard()}
             onClick={toggleButtonHard}
           >
             Hard
           </Button>
-          {
-            (buttonToggleEasy || buttonToggleMedium || buttonToggleHard) ?
-            (<Button
-              className="queueUpButton"
-              color={"info"}
-              variant={"contained"}
-              component={Link}
-              to="/matching"
+          {buttonToggleEasy || buttonToggleMedium || buttonToggleHard ? (
+            <Button
+              className='queueUpButton'
+              color={'info'}
+              variant={'contained'}
+              onClick={startMatch}
             >
               Practise
-            </Button>) :
-            (<Button
-              className="queueUpButton"
-              color={"info"} 
-              variant={"contained"} 
-            >
+            </Button>
+          ) : (
+            <Button className='queueUpButton' color={'info'} variant={'contained'}>
               Practise
-            </Button>)
-          }
+            </Button>
+          )}
         </Box>
       </Box>
     </Box>

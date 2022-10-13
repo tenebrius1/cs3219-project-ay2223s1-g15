@@ -6,7 +6,7 @@ import { Button, Box } from '@mui/material';
 import { historyField } from '@codemirror/commands';
 import { loadLanguage } from '@uiw/codemirror-extensions-langs';
 import SocketContext from '../../contexts/SocketContext';
-import DifficultyContext from '../../contexts/DifficultyContext';
+import RoomContext from '../../contexts/RoomContext';
 
 const stateFields = { history: historyField };
 
@@ -23,7 +23,7 @@ function CodePad({ currentLanguage, setOutput }) {
   };
 
   const { codingSocket } = useContext(SocketContext);
-  const { roomId } = useContext(DifficultyContext);
+  const { roomId } = useContext(RoomContext);
 
   var reqBody = {
     source_code: `${code}`,

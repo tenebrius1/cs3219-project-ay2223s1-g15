@@ -1,5 +1,4 @@
 import React from 'react';
-import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -17,7 +16,7 @@ import { useState, useEffect, useContext } from 'react';
 import { COUNTDOWN_DURATION } from '../constants';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import './matchingpage.css';
-import DifficultyContext from '../contexts/DifficultyContext';
+import RoomContext from '../contexts/RoomContext';
 import { useAuth } from '../contexts/AuthContext';
 import SocketContext from '../contexts/SocketContext';
 
@@ -29,18 +28,23 @@ function MatchingPage() {
   const [fireMatch, setFireMatch] = useState(0);
   const navigate = useNavigate();
 
-  const { currentDifficulty } = useContext(DifficultyContext);
+  const { difficulty } = useContext(RoomContext);
   const auth = useAuth();
   const { matchingSocket, codingSocket } = useContext(SocketContext);
 
   useEffect(() => {
-    console.log(currentDifficulty);
-  }, [currentDifficulty]);
+    console.log(difficulty);
+  }, [difficulty]);
 
+  //Check with server if there is match every second
   useEffect(() => {
-    console.log(`${fireMatch}`, 'match event sent');
-    matchingSocket.emit('match', `${auth.user}`);
-  }, [key]);
+    const interval = setInterval(() => {
+      console.log(`${fireMatch}`, 'match event sent');
+      matchingSocket.emit('match', `${auth.user}`);
+    }, 5000);
+
+    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+  }, [auth.user, fireMatch, matchingSocket]);
 
   useEffect(() => {
     matchingSocket.on('matchFail', () => {
@@ -49,6 +53,7 @@ function MatchingPage() {
     matchingSocket.on('matchSuccess', (arg) => {
       setIsMatchSuccess(true);
       codingSocket.emit('connectedToRoom', arg);
+      navigate('/codingpage');
     });
   }, [codingSocket, matchingSocket]);
 
@@ -82,7 +87,7 @@ function MatchingPage() {
   };
 
   const handleBack = () => {
-    matchingSocket.emit('matchCancel', `username`);
+    matchingSocket.emit('matchCancel', `${auth.user}`);
     navigate('/dashboard');
   };
 
