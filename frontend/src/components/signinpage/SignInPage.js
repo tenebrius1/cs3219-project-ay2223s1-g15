@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -10,7 +10,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -24,9 +24,15 @@ function SignInPage() {
   const [usernameError, setUsernameError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const auth = useAuth();
+  const navigate = useNavigate();
 
   const handleSignin = async () => {
-    await auth.login(username, password);
+    const isLoginSuccess = await auth.passwordLogin(username, password);
+    if (isLoginSuccess) {
+      navigate('/dashboard');
+    } else {
+      setErrorDialog('Invalid credentials');
+    }
   };
 
   const closeDialog = () => setIsDialogOpen(false);
@@ -43,9 +49,23 @@ function SignInPage() {
     setDialogMsg(msg);
   };
 
-  if (auth.user) {
-    return <Navigate to='/dashboard' />;
-  }
+  // On sign in page load
+  // 1. Check if auth context already has username. If exists, go to dashboard
+  // 2. Carry out token login. If succeed, go to dashboard.
+  // 3. Else, stay on sign in page
+  useEffect(() => {
+    if (auth.user) {
+      navigate('/dashboard');
+    } else {
+      const loginWithToken = async () => {
+        const res = await auth.tokenLogin();
+        if (res) {
+          navigate('/dashboard');
+        }
+      };
+      loginWithToken();
+    }
+  }, [auth, navigate]);
 
   return (
     <Box className='mainBox'>
@@ -95,13 +115,7 @@ function SignInPage() {
           <DialogContentText>{dialogMsg}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          {isSigninSuccess ? (
-            <Button component={Link} to='/login'>
-              Log in
-            </Button>
-          ) : (
-            <Button onClick={closeDialog}>Done</Button>
-          )}
+          <Button onClick={closeDialog}>Done</Button>
         </DialogActions>
       </Dialog>
     </Box>

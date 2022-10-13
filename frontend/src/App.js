@@ -69,14 +69,7 @@ function App() {
                       </PrivateRoute>
                     }
                   />
-                  <Route
-                    path='/matching'
-                    element={
-                      <PrivateRoute>
-                        <MatchingPage />
-                      </PrivateRoute>
-                    }
-                  />
+                  <Route path='/matching' element={<MatchingPage />} />
                 </Routes>
               </Router>
             </Box>

@@ -5,9 +5,9 @@ import { STATUS_CODE_OK } from '../constants';
 
 const AuthContext = createContext({
   user: null,
-  login: async () => {},
+  passwordLogin: async () => {},
+  tokenLogin: async () => {},
   logout: async () => {},
-  verifyJwt: async () => {},
 });
 
 const AuthProvider = ({ children }) => {
@@ -22,50 +22,55 @@ const useAuth = () => {
 const useProvideAuth = () => {
   const [user, setUser] = useState(null);
 
-  const login = async (username, password) => {
+  const passwordLogin = async (username, password) => {
     console.log('hi');
     const res = await axios
-      .post(URL_USER_SVC + '/login', { username, password }, { withCredentials: true })
+      .post(
+        URL_USER_SVC + '/passwordLogin',
+        { username, password },
+        { withCredentials: true }
+      )
       .catch((err) => {
         console.log(err);
       });
     if (res && res.status === STATUS_CODE_OK) {
       setUser(res.data.username);
+      return true;
       // window.localStorage.setItem('isAuth', true);
       // return error code then check in useeFect of each protected page if got error when log in
     } else {
       setUser(null);
+      return false;
+    }
+  };
+
+  const tokenLogin = async () => {
+    const res = await axios
+      .post(URL_USER_SVC + '/tokenLogin', {}, { withCredentials: true })
+      .catch((err) => {
+        console.log(err);
+      });
+    if (res && res.status === STATUS_CODE_OK) {
+      setUser(res.data.username);
+      return true;
+    } else {
+      setUser(null);
+      return false;
     }
   };
 
   const logout = async () => {
     const res = await axios.delete(URL_USER_SVC + '/logout');
-    if (res && res === STATUS_CODE_OK) {
+    if (res && res.status === STATUS_CODE_OK) {
       setUser(null);
-    }
-  };
-
-  const verifyJwt = async () => {
-    const res = await axios
-      .post(URL_USER_SVC + '/verifyJwt', {}, { withCredentials: true })
-      .catch((err) => console.log(err));
-    console.log('hi2');
-    console.log(res);
-    if (res && res === STATUS_CODE_OK) {
-      console.log(res.data.username);
-      setUser(res.data.username);
-      return res;
-    } else {
-      setUser(null);
-      return res;
     }
   };
 
   return {
     user,
-    login,
+    passwordLogin,
+    tokenLogin,
     logout,
-    verifyJwt,
   };
 };
 
