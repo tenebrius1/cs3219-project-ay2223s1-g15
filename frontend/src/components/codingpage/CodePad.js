@@ -1,54 +1,66 @@
-import { useState } from "react";
-import axios from "axios";
-import CodeMirror from "@uiw/react-codemirror";
-import { githubDark } from "@uiw/codemirror-theme-github";
-import { Button, Box } from "@mui/material";
-import { historyField } from "@codemirror/commands";
-import { loadLanguage } from "@uiw/codemirror-extensions-langs";
+import { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
+import CodeMirror from '@uiw/react-codemirror';
+import { githubDark } from '@uiw/codemirror-theme-github';
+import { Button, Box } from '@mui/material';
+import { historyField } from '@codemirror/commands';
+import { loadLanguage } from '@uiw/codemirror-extensions-langs';
+import SocketContext from '../../contexts/SocketContext';
+import RoomContext from '../../contexts/RoomContext';
 
 const stateFields = { history: historyField };
 
-function CodePad( { currentLanguage, setOutput } ) {
-  const serializedState = localStorage.getItem("myEditorState");
-  const value = localStorage.getItem("myValue") || "";
+function CodePad({ currentLanguage, setOutput }) {
+  const serializedState = localStorage.getItem('myEditorState');
+  const value = localStorage.getItem('myValue') || '';
   const [code, setCode] = useState(value);
   const judgeURL = 'http://localhost:2358';
   const [codeStatus, setCodeStatus] = useState('');
   const availableLanguages = {
-    'python': '70',
-    'java': '62',
-    'c': '50',
-  }
+    python: '70',
+    java: '62',
+    c: '50',
+  };
+
+  const { codingSocket } = useContext(SocketContext);
+  const { roomId } = useContext(RoomContext);
 
   var reqBody = {
-    "source_code": `${code}`,
-    "language_id": `${availableLanguages[currentLanguage]}`,
-    "number_of_runs": null,
-    "stdin": "Judge0",
-    "expected_output": null,
-    "cpu_time_limit": null,
-    "cpu_extra_time": null,
-    "wall_time_limit": null,
-    "memory_limit": null,
-    "stack_limit": null,
-    "max_processes_and_or_threads": null,
-    "enable_per_process_and_thread_time_limit": null,
-    "enable_per_process_and_thread_memory_limit": null,
-    "max_file_size": null,
-    "enable_network": null
-  }
+    source_code: `${code}`,
+    language_id: `${availableLanguages[currentLanguage]}`,
+    number_of_runs: null,
+    stdin: 'Judge0',
+    expected_output: null,
+    cpu_time_limit: null,
+    cpu_extra_time: null,
+    wall_time_limit: null,
+    memory_limit: null,
+    stack_limit: null,
+    max_processes_and_or_threads: null,
+    enable_per_process_and_thread_time_limit: null,
+    enable_per_process_and_thread_memory_limit: null,
+    max_file_size: null,
+    enable_network: null,
+  };
+
+  useEffect(() => {
+    codingSocket.on('codeChanged', (value) => {
+      setCode(value);
+    });
+  }, [codingSocket]);
 
   const submitCode = async () => {
-    await axios.post(`${judgeURL}/submissions/?wait=true`, reqBody)
-              .then((res) => {
-                console.log(res)
-                if (res.data.stdout === null) {
-                  setOutput(res.data.message)
-                } else {
-                  setOutput(res.data.stdout)
-                }
-              })
-              .catch((err) => console.log('err', err));
+    await axios
+      .post(`${judgeURL}/submissions/?wait=true`, reqBody)
+      .then((res) => {
+        console.log(res);
+        if (res.data.stdout === null) {
+          setOutput(res.data.message);
+        } else {
+          setOutput(res.data.stdout);
+        }
+      })
+      .catch((err) => console.log('err', err));
   };
 
   return (
@@ -56,26 +68,29 @@ function CodePad( { currentLanguage, setOutput } ) {
       <CodeMirror
         value={value}
         theme={githubDark}
-        height={"70vh"}
+        height={'70vh'}
         extensions={[loadLanguage(currentLanguage)]}
         initialState={
           serializedState
             ? {
-                json: JSON.parse(serializedState || ""),
+                json: JSON.parse(serializedState || ''),
                 fields: stateFields,
               }
             : undefined
         }
         onChange={(value, viewUpdate) => {
-          localStorage.setItem("myValue", value);
-
+          localStorage.setItem('myValue', value);
           const state = viewUpdate.state.toJSON(stateFields);
-          localStorage.setItem("myEditorState", JSON.stringify(state));
+          localStorage.setItem('myEditorState', JSON.stringify(state));
           setCode(value);
+          codingSocket.emit('codeChanged', {
+            value: value,
+            roomId: roomId,
+          });
         }}
       />
-      <Box display={"flex"} justifyContent={"flex-end"} marginTop={"1rem"}>
-        <Button variant={"outlined"} color={"secondary"} onClick={submitCode}>
+      <Box display={'flex'} justifyContent={'flex-end'} marginTop={'1rem'}>
+        <Button variant={'outlined'} color={'secondary'} onClick={submitCode}>
           Run code
         </Button>
       </Box>
