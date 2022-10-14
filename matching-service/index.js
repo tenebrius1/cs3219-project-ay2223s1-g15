@@ -10,12 +10,10 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors()) // config cors so that front-end can use
 app.options('*', cors())
-import { createWaitingUser } from './controller/match-controller.js'
 
 app.get('/', (_, res) => {
   res.send('Hello World from matching-service');
 });
-app.post('/', createWaitingUser);
 
 export const httpServer = createServer(app);
 // connect socket.io to httpServer
