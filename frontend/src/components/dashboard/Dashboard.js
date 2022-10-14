@@ -20,17 +20,7 @@ function Dashboard() {
   const startMatch = async () => {
     console.log('user', user);
     console.log('difficulty', difficulty);
-    const res = await axios.post('http://localhost:8001', {
-      username: user,
-      difficultylevel: difficulty,
-    });
-    if (res && res.status === STATUS_CODE_CREATED) {
-      navigate('/matching');
-    } else if (res.status === STATUS_CODE_BAD_REQ) {
-      console.log('start match bad request');
-    } else {
-      console.log('start match error');
-    }
+    navigate('/matching');
   };
 
   const toggleButtonEasy = (event) => {
