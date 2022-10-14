@@ -22,7 +22,9 @@ export const startServer = () => {
         if (roomId) {
           io.to(firstUserSocketId).to(secondUserSocketId).emit('matchSuccess');
         } else {
-          socket.emit('matchFail');
+          setTimeout(()=> {
+            socket.emit('matchFail');
+          }, 30000);
         }
       } else {
         socket.emit('Couldn\'t create user');
