@@ -39,11 +39,25 @@ function SignInPage() {
     setDialogMsg(msg);
   };
 
-    const setErrorDialog = (msg) => {
-        setIsDialogOpen(true);
-        setDialogTitle('Error');
-        setDialogMsg(msg);
-    };
+  const setErrorDialog = (msg) => {
+      setIsDialogOpen(true);
+      setDialogTitle('Error');
+      setDialogMsg(msg);
+  };
+
+  useEffect(() => {
+    if (auth.user) {
+      navigate('/dashboard');
+    } else {
+      const loginWithToken = async () => {
+        const res = await auth.tokenLogin();
+        if (res) {
+          navigate('/dashboard');
+        }
+      };
+      loginWithToken();
+    }
+  }, [auth, navigate]);
   
   return (
     (auth.user) ? (

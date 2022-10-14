@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { STATUS_CODE_OK } from '../../constants';
 
 const PrivateRoute = ({ redirectPath = '/', children }) => {
   const [isPageLoad, setIsPageLoad] = useState(true);
@@ -8,7 +9,7 @@ const PrivateRoute = ({ redirectPath = '/', children }) => {
 
   useEffect(() => {
     const login = async () => {
-        await auth.verifyJwt()
+        await auth.tokenLogin()
                 .then(res => {
                     if (res && res.status === STATUS_CODE_OK) {
                         setIsPageLoad(true);

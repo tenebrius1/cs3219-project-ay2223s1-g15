@@ -27,7 +27,6 @@ function CustomAvatar() {
   const handleLogout = async () => {
     await auth.logout().then(res => {
       if (res && res.status === STATUS_CODE_OK) {
-        console.log('hello' + res.status)
         setIsLogout(true)
       } else {
         setIsLogout(false)
