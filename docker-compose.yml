@@ -43,6 +43,19 @@ services:
     environment:
       <<: *common-variables
       DB_CLOUD_URI: 'mongodb+srv://cs3219-g15:cs3219-g15@cs3219-g15.ryvsrmt.mongodb.net/?retryWrites=true&w=majority'
+  
+  coding:
+    container_name: coding_service
+    build:
+      dockerfile: Dockerfile
+      context: ./coding-service
+    volumes:
+      - ./matching-service:/home/node/app/coding-service
+    ports:
+      - 8002:8002
+    restart: on-failure
+    environment:
+      <<: *common-variables
 
   # Used for local dev
   # mongo:

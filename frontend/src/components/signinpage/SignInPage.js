@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -9,37 +9,35 @@ import {
   DialogTitle,
   TextField,
   Typography,
-} from "@mui/material";
-import axios from "axios";
-import { URL_USER_SVC } from "./../../configs";
-import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED, STATUS_CODE_LOGGED_IN } from "./../../constants";
-import { Link, Navigate } from "react-router-dom";
-import UserContext from "../../contexts/UserContext";
-import { useAuth } from "../../contexts/AuthContext";
+} from '@mui/material';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import UserContext from '../../contexts/UserContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 function SignInPage() {
   const [username, setUsername] = useState("")
   const { contextUsername, setContextUsername } = useContext(UserContext);
   const [password, setPassword] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [dialogTitle, setDialogTitle] = useState("");
-  const [dialogMsg, setDialogMsg] = useState("");
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogMsg, setDialogMsg] = useState('');
   const [isSigninSuccess, setIsSigninSuccess] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const auth = useAuth();
+  const navigate = useNavigate();
 
   const handleSignin = async () => {
-    await auth.login(username, password);
+    await auth.passwordLogin(username, password);
   };
 
-    const closeDialog = () => setIsDialogOpen(false);
+  const closeDialog = () => setIsDialogOpen(false);
 
-    const setSuccessDialog = (msg) => {
-        setIsDialogOpen(true);
-        setDialogTitle('Success');
-        setDialogMsg(msg);
-    };
+  const setSuccessDialog = (msg) => {
+    setIsDialogOpen(true);
+    setDialogTitle('Success');
+    setDialogMsg(msg);
+  };
 
     const setErrorDialog = (msg) => {
         setIsDialogOpen(true);
