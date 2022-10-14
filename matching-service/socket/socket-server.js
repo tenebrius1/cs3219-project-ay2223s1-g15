@@ -1,14 +1,14 @@
-import { Server } from "socket.io";
-import { matchWaitingUser, deleteWaitingUser } from '../controller/match-controller.js'
-import { httpServer } from "../index.js";
-import { createWaitingUser } from '../controller/match-controller.js'
+import { Server } from 'socket.io';
+import { matchWaitingUser, deleteWaitingUser } from '../controller/match-controller.js';
+import { httpServer } from '../index.js';
+import { createWaitingUser } from '../controller/match-controller.js';
 
 export const startServer = () => {
   const io = new Server(httpServer, {
     // config socket.io cors so that front-end can use
     cors: {
-      origin: "*"
-    }
+      origin: '*',
+    },
   });
 
   io.on('connection', (socket) => {
@@ -18,16 +18,18 @@ export const startServer = () => {
     socket.on('match', async (username, difficulty) => {
       // puts user in queue and tries to match user
       if (await createWaitingUser(username, difficulty, socket.id)) {
-        const { roomId, firstUserSocketId, secondUserSocketId } = await matchWaitingUser(username);
+        const { roomId, firstUserSocketId, secondUserSocketId } = await matchWaitingUser(
+          username
+        );
         if (roomId) {
-          io.to(firstUserSocketId).to(secondUserSocketId).emit('matchSuccess');
+          io.to(firstUserSocketId).to(secondUserSocketId).emit('matchSuccess', roomId);
         } else {
-          setTimeout(()=> {
+          setTimeout(() => {
             socket.emit('matchFail');
           }, 30000);
         }
       } else {
-        socket.emit('Couldn\'t create user');
+        socket.emit("Couldn't create user");
       }
     });
 
@@ -36,4 +38,4 @@ export const startServer = () => {
       deleteWaitingUser(username);
     });
   });
-}
+};
