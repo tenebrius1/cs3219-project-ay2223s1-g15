@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -9,48 +9,29 @@ import {
   DialogTitle,
   TextField,
   Typography,
-} from "@mui/material";
-import axios from "axios";
-import { URL_USER_SVC } from "./../../configs";
-import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "./../../constants";
-import { Link } from "react-router-dom";
+} from '@mui/material';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import UserContext from '../../contexts/UserContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 function SignInPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const { username, setUsername } = useContext(UserContext);
+  const [password, setPassword] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [dialogTitle, setDialogTitle] = useState("");
-  const [dialogMsg, setDialogMsg] = useState("");
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogMsg, setDialogMsg] = useState('');
   const [isSigninSuccess, setIsSigninSuccess] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const auth = useAuth();
+  const navigate = useNavigate();
 
   const handleSignin = async () => {
-    setIsSigninSuccess(false);
-
-    setUsernameError(false);
-    setPasswordError(false);
-
-    if (username === "") {
-      setUsernameError(true);
-      return;
-    }
-    if (password === "") {
-      setPasswordError(true);
-      return;
-    }
-    const res = await axios
-      .post(URL_USER_SVC, { username, password })
-      .catch((err) => {
-        if (err.response.status === STATUS_CODE_CONFLICT) {
-          setErrorDialog("This username already exists");
-        } else {
-          setErrorDialog("Please try again later");
-        }
-      });
-    if (res && res.status === STATUS_CODE_CREATED) {
-      setSuccessDialog("Account successfully created");
-      setIsSigninSuccess(true);
+    const isLoginSuccess = await auth.passwordLogin(username, password);
+    if (isLoginSuccess) {
+      navigate('/dashboard');
+    } else {
+      setErrorDialog('Invalid credentials');
     }
   };
 
@@ -58,54 +39,72 @@ function SignInPage() {
 
   const setSuccessDialog = (msg) => {
     setIsDialogOpen(true);
-    setDialogTitle("Success");
+    setDialogTitle('Success');
     setDialogMsg(msg);
   };
 
   const setErrorDialog = (msg) => {
     setIsDialogOpen(true);
-    setDialogTitle("Error");
+    setDialogTitle('Error');
     setDialogMsg(msg);
   };
 
+  // On sign in page load
+  // 1. Check if auth context already has username. If exists, go to dashboard
+  // 2. Carry out token login. If succeed, go to dashboard.
+  // 3. Else, stay on sign in page
+  useEffect(() => {
+    if (auth.user) {
+      navigate('/dashboard');
+    } else {
+      const loginWithToken = async () => {
+        const res = await auth.tokenLogin();
+        if (res) {
+          navigate('/dashboard');
+        }
+      };
+      loginWithToken();
+    }
+  }, [auth, navigate]);
+
   return (
-    <Box className="mainBox">
-      <Box className="signInBox">
-        <Typography variant={"h3"} marginBottom={"2rem"} textAlign={"center"}>
+    <Box className='mainBox'>
+      <Box className='signInBox'>
+        <Typography variant={'h3'} marginBottom={'2rem'} textAlign={'center'}>
           Sign In
         </Typography>
       </Box>
-      <Box className="textFieldBox">
+      <Box className='textFieldBox'>
         <TextField
-          className="TextField"
-          label="Username"
-          variant="standard"
-          color="primary"
+          className='TextField'
+          label='Username'
+          variant='standard'
+          color='primary'
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          sx={{ marginBottom: "1rem" }}
+          sx={{ marginBottom: '1rem' }}
           autoFocus
           required
           error={usernameError}
         />
         <TextField
-          label="Password"
-          variant="standard"
-          type="password"
+          label='Password'
+          variant='standard'
+          type='password'
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          sx={{ marginBottom: "2rem" }}
+          sx={{ marginBottom: '2rem' }}
           required
           error={passwordError}
         />
       </Box>
       <Box
-        className="normalButton"
-        display={"flex"}
-        flexDirection={"row"}
-        justifyContent={"flex-end"}
+        className='normalButton'
+        display={'flex'}
+        flexDirection={'row'}
+        justifyContent={'flex-end'}
       >
-        <Button variant={"outlined"} color={"secondary"} onClick={handleSignin}>
+        <Button variant={'outlined'} color={'secondary'} onClick={handleSignin}>
           Sign in
         </Button>
       </Box>
@@ -116,13 +115,7 @@ function SignInPage() {
           <DialogContentText>{dialogMsg}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          {isSigninSuccess ? (
-            <Button component={Link} to="/login">
-              Log in
-            </Button>
-          ) : (
-            <Button onClick={closeDialog}>Done</Button>
-          )}
+          <Button onClick={closeDialog}>Done</Button>
         </DialogActions>
       </Dialog>
     </Box>
