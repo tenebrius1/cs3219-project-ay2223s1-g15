@@ -38,8 +38,6 @@ router.put('/changePW', changePassword);
 router.delete('/', authorize, deleteUser);
 router.delete('/logout', logout);
 
-router.post('/verifyJwt', verifyJwt);
-
 router.post('/requestPasswordReset', requestPasswordReset);
 router.post('/resetPassword', resetPassword);
 
