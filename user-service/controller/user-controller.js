@@ -85,7 +85,7 @@ export const passwordLogin = async (req, res) => {
         secure: true,
         sameSite: 'none',
       });
-      return res.status(200).json({ token: userToken });
+      return res.status(200).json({ username: username, token: userToken });
     } else {
       return res.status(401).json({ message: 'Invalid Credentials!' });
     }

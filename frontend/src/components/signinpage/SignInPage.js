@@ -15,8 +15,9 @@ import UserContext from '../../contexts/UserContext';
 import { useAuth } from '../../contexts/AuthContext';
 
 function SignInPage() {
-  const { username, setUsername } = useContext(UserContext);
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("")
+  const { contextUsername, setContextUsername } = useContext(UserContext);
+  const [password, setPassword] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogTitle, setDialogTitle] = useState('');
   const [dialogMsg, setDialogMsg] = useState('');
@@ -27,12 +28,7 @@ function SignInPage() {
   const navigate = useNavigate();
 
   const handleSignin = async () => {
-    const isLoginSuccess = await auth.passwordLogin(username, password);
-    if (isLoginSuccess) {
-      navigate('/dashboard');
-    } else {
-      setErrorDialog('Invalid credentials');
-    }
+    await auth.passwordLogin(username, password);
   };
 
   const closeDialog = () => setIsDialogOpen(false);
@@ -44,15 +40,11 @@ function SignInPage() {
   };
 
   const setErrorDialog = (msg) => {
-    setIsDialogOpen(true);
-    setDialogTitle('Error');
-    setDialogMsg(msg);
+      setIsDialogOpen(true);
+      setDialogTitle('Error');
+      setDialogMsg(msg);
   };
 
-  // On sign in page load
-  // 1. Check if auth context already has username. If exists, go to dashboard
-  // 2. Carry out token login. If succeed, go to dashboard.
-  // 3. Else, stay on sign in page
   useEffect(() => {
     if (auth.user) {
       navigate('/dashboard');
@@ -66,60 +58,70 @@ function SignInPage() {
       loginWithToken();
     }
   }, [auth, navigate]);
-
+  
   return (
-    <Box className='mainBox'>
-      <Box className='signInBox'>
-        <Typography variant={'h3'} marginBottom={'2rem'} textAlign={'center'}>
-          Sign In
-        </Typography>
-      </Box>
-      <Box className='textFieldBox'>
-        <TextField
-          className='TextField'
-          label='Username'
-          variant='standard'
-          color='primary'
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          sx={{ marginBottom: '1rem' }}
-          autoFocus
-          required
-          error={usernameError}
-        />
-        <TextField
-          label='Password'
-          variant='standard'
-          type='password'
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          sx={{ marginBottom: '2rem' }}
-          required
-          error={passwordError}
-        />
-      </Box>
-      <Box
-        className='normalButton'
-        display={'flex'}
-        flexDirection={'row'}
-        justifyContent={'flex-end'}
-      >
-        <Button variant={'outlined'} color={'secondary'} onClick={handleSignin}>
-          Sign in
-        </Button>
-      </Box>
+    (auth.user) ? (
+      <Navigate to="/dashboard" />
+    ) : (
+      <Box className="mainBox">
+        <Box className="signInBox">
+          <Typography variant={"h3"} marginBottom={"2rem"} textAlign={"center"}>
+            Sign In
+          </Typography>
+        </Box>
+        <Box className="textFieldBox">
+          <TextField
+            className="TextField"
+            label="Username"
+            variant="standard"
+            color="primary"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            sx={{ marginBottom: "1rem" }}
+            autoFocus
+            required
+            error={usernameError}
+          />
+          <TextField
+            label="Password"
+            variant="standard"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            sx={{ marginBottom: "2rem" }}
+            required
+            error={passwordError}
+          />
+        </Box>
+        <Box
+          className="normalButton"
+          display={"flex"}
+          flexDirection={"row"}
+          justifyContent={"flex-end"}
+        >
+          <Button variant={"outlined"} color={"secondary"} onClick={handleSignin}>
+            Sign in
+          </Button>
+        </Box>
 
-      <Dialog open={isDialogOpen} onClose={closeDialog}>
-        <DialogTitle>{dialogTitle}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>{dialogMsg}</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeDialog}>Done</Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
-  );
+        <Dialog open={isDialogOpen} onClose={closeDialog}>
+            <DialogTitle>{dialogTitle}</DialogTitle>
+            <DialogContent>
+                <DialogContentText>{dialogMsg}</DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                {isSigninSuccess ? (
+                    <Button component={Link} to='/login'>
+                        Log in
+                    </Button>
+                ) : (
+                    <Button onClick={closeDialog}>Done</Button>
+                )}
+            </DialogActions>
+        </Dialog>
+      </Box>
+    )
+    );
 }
 
 export default SignInPage;
