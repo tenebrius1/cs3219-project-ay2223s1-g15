@@ -18,7 +18,8 @@ import UserContext from "../../contexts/UserContext";
 import { useAuth } from "../../contexts/AuthContext";
 
 function SignInPage() {
-  const { username, setUsername } = useContext(UserContext);
+  const [username, setUsername] = useState("")
+  const { contextUsername, setContextUsername } = useContext(UserContext);
   const [password, setPassword] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogTitle, setDialogTitle] = useState("");
@@ -29,7 +30,7 @@ function SignInPage() {
   const auth = useAuth();
 
   const handleSignin = async () => {
-    await auth.login(username, password)
+    await auth.login(username, password);
   };
 
     const closeDialog = () => setIsDialogOpen(false);
@@ -45,69 +46,69 @@ function SignInPage() {
         setDialogTitle('Error');
         setDialogMsg(msg);
     };
-
-  if (auth.user) {
-    return <Navigate to="/dashboard" />
-  }
-
+  
   return (
-    <Box className="mainBox">
-      <Box className="signInBox">
-        <Typography variant={"h3"} marginBottom={"2rem"} textAlign={"center"}>
-          Sign In
-        </Typography>
-      </Box>
-      <Box className="textFieldBox">
-        <TextField
-          className="TextField"
-          label="Username"
-          variant="standard"
-          color="primary"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          sx={{ marginBottom: "1rem" }}
-          autoFocus
-          required
-          error={usernameError}
-        />
-        <TextField
-          label="Password"
-          variant="standard"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          sx={{ marginBottom: "2rem" }}
-          required
-          error={passwordError}
-        />
-      </Box>
-      <Box
-        className="normalButton"
-        display={"flex"}
-        flexDirection={"row"}
-        justifyContent={"flex-end"}
-      >
-        <Button variant={"outlined"} color={"secondary"} onClick={handleSignin}>
-          Sign in
-        </Button>
-      </Box>
+    (auth.user) ? (
+      <Navigate to="/dashboard" />
+    ) : (
+      <Box className="mainBox">
+        <Box className="signInBox">
+          <Typography variant={"h3"} marginBottom={"2rem"} textAlign={"center"}>
+            Sign In
+          </Typography>
+        </Box>
+        <Box className="textFieldBox">
+          <TextField
+            className="TextField"
+            label="Username"
+            variant="standard"
+            color="primary"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            sx={{ marginBottom: "1rem" }}
+            autoFocus
+            required
+            error={usernameError}
+          />
+          <TextField
+            label="Password"
+            variant="standard"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            sx={{ marginBottom: "2rem" }}
+            required
+            error={passwordError}
+          />
+        </Box>
+        <Box
+          className="normalButton"
+          display={"flex"}
+          flexDirection={"row"}
+          justifyContent={"flex-end"}
+        >
+          <Button variant={"outlined"} color={"secondary"} onClick={handleSignin}>
+            Sign in
+          </Button>
+        </Box>
 
-      <Dialog open={isDialogOpen} onClose={closeDialog}>
-          <DialogTitle>{dialogTitle}</DialogTitle>
-          <DialogContent>
-              <DialogContentText>{dialogMsg}</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-              {isSigninSuccess ? (
-                  <Button component={Link} to='/login'>
-                      Log in
-                  </Button>
-              ) : (
-                  <Button onClick={closeDialog}>Done</Button>
-              )}
-          </DialogActions>
-      </Dialog>
-    </Box>
+        <Dialog open={isDialogOpen} onClose={closeDialog}>
+            <DialogTitle>{dialogTitle}</DialogTitle>
+            <DialogContent>
+                <DialogContentText>{dialogMsg}</DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                {isSigninSuccess ? (
+                    <Button component={Link} to='/login'>
+                        Log in
+                    </Button>
+                ) : (
+                    <Button onClick={closeDialog}>Done</Button>
+                )}
+            </DialogActions>
+        </Dialog>
+      </Box>
+    )
     );
 }
 

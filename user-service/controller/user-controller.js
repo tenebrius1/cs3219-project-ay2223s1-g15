@@ -43,6 +43,33 @@ export const createUser = async (req, res) => {
     }
 };
 
+export const verifyJwt = async (req, res) => {
+    try {
+        const { token } = req.cookies;
+        if (token) {
+            const username = await _tokenLogin(token);
+            if (username) {
+                return res.status(200).json({
+                    message: 'JWT Token successfully verified',
+                    username: username,
+                })
+            } else {
+                return res.status(403).json({
+                    message: 'Invalid JWT Token'
+                })
+            }
+        } else {
+            return res.status(401).json({
+                message: 'Not logged in'
+            })
+        }
+    } catch (err) {
+        return res.status(500).json({
+            message: 'Login failed!'
+        })
+    }
+}
+
 export const login = async (req, res) => {
     try {
         const { token } = req.cookies;
@@ -80,7 +107,7 @@ export const login = async (req, res) => {
                 secure: true,
                 sameSite: 'none',
             });
-            return res.status(200).json({ token: userToken });
+            return res.status(200).json({ token: userToken, username: username });
         } else {
             return res.status(401).json({ message: 'Invalid Credentials!' });
         }
@@ -100,7 +127,6 @@ export const logout = async (req, res) => {
 
         await _logout(token);
         res.clearCookie('token');
-
         return res.status(200).json({ message: 'Successfully logged out!' });
     } catch (err) {
         return res.status(500).json({ message: 'An error occurred with logout' });

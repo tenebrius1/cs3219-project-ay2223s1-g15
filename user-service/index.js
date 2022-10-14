@@ -23,6 +23,7 @@ import {
     authorize,
     requestPasswordReset,
     resetPassword,
+    verifyJwt,
 } from './controller/user-controller.js';
 import cookieParser from 'cookie-parser';
 
@@ -35,6 +36,8 @@ router.post('/login', login);
 router.put('/changePW', changePassword);
 router.delete('/', authorize, deleteUser);
 router.delete('/logout', logout);
+
+router.post('/verifyJwt', verifyJwt);
 
 router.post('/requestPasswordReset', requestPasswordReset);
 router.post('/resetPassword', resetPassword);
