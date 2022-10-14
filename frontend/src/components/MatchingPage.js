@@ -25,7 +25,6 @@ function MatchingPage() {
   const [isMatchSuccess, setIsMatchSuccess] = useState(false);
   const [isPlaying, setIsPlaying] = useState(true);
   const [key, setKey] = useState(0);
-  const [fireMatch, setFireMatch] = useState(0);
   const navigate = useNavigate();
 
   const { difficulty } = useContext(RoomContext);
@@ -36,19 +35,16 @@ function MatchingPage() {
     console.log(difficulty);
   }, [difficulty]);
 
-  //Check with server if there is match every second
+  //Send match event when countdown timer starts 
   useEffect(() => {
-    const interval = setInterval(() => {
-      console.log(`${fireMatch}`, 'match event sent');
+      console.log('match event sent');
       matchingSocket.emit('match', `${auth.user}`);
-    }, 5000);
-
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-  }, [auth.user, fireMatch, matchingSocket]);
+  }, [key]);
 
   useEffect(() => {
     matchingSocket.on('matchFail', () => {
       console.log('matchfail');
+      setIsMatchFail(true);
     });
     matchingSocket.on('matchSuccess', (arg) => {
       setIsMatchSuccess(true);
