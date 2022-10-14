@@ -29,41 +29,48 @@ const useProvideAuth = () => {
         { username, password },
         { withCredentials: true }
       )
+      .then(res => {
+        if (res && res.status === STATUS_CODE_OK) {
+          setUser(res.data.username);
+        } else {
+          setUser(null);
+        }
+        return res
+      })
       .catch((err) => {
         console.log(err);
       });
-    if (res && res.status === STATUS_CODE_OK) {
-      setUser(res.data.username);
-      return true;
-      // window.localStorage.setItem('isAuth', true);
-      // return error code then check in useeFect of each protected page if got error when log in
-    } else {
-      setUser(null);
-      return false;
-    }
+    return res;
   };
 
   const tokenLogin = async () => {
     const res = await axios
       .post(URL_USER_SVC + '/tokenLogin', {}, { withCredentials: true })
+      .then(res => {
+        if (res && res.status === STATUS_CODE_OK) {
+          setUser(res.data.username);
+        } else {
+          setUser(null);
+        }
+        return res;
+      })
       .catch((err) => {
         console.log(err);
       });
-    if (res && res.status === STATUS_CODE_OK) {
-      setUser(res.data.username);
-      return true;
-    } else {
-      setUser(null);
-      return false;
-    }
+    return res
   };
 
   const logout = async () => {
-    const res = await axios.delete(URL_USER_SVC + '/logout');
-    if (res && res.status === STATUS_CODE_OK) {
-      setUser(null);
-    }
-  };
+    const res = await axios.delete(URL_USER_SVC + "/logout", { withCredentials: true })
+                        .then(res => {
+                            if (res) {
+                                setUser(null);
+                            }
+                            return res
+                        })
+                        .catch(err => console.log(err))
+    return res
+};
 
   return {
     user,
