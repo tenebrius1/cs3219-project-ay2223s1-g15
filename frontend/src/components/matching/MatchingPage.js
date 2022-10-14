@@ -3,22 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Grid,
   Typography,
   Zoom,
 } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
-import { COUNTDOWN_DURATION } from '../constants';
+import { COUNTDOWN_DURATION } from '../../constants';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import './matchingpage.css';
-import RoomContext from '../contexts/RoomContext';
-import { useAuth } from '../contexts/AuthContext';
-import SocketContext from '../contexts/SocketContext';
+import RoomContext from '../../contexts/RoomContext';
+import { useAuth } from '../../contexts/AuthContext';
+import SocketContext from '../../contexts/SocketContext';
 
 function MatchingPage() {
   const [isMatchFail, setIsMatchFail] = useState(false);
@@ -38,7 +33,7 @@ function MatchingPage() {
   //Send match event when countdown timer starts 
   useEffect(() => {
       console.log('match event sent');
-      matchingSocket.emit('match', `${auth.user}`);
+      matchingSocket.emit('match', auth.user, difficulty);
   }, [key]);
 
   useEffect(() => {
@@ -83,7 +78,7 @@ function MatchingPage() {
   };
 
   const handleBack = () => {
-    matchingSocket.emit('matchCancel', `${auth.user}`);
+    matchingSocket.emit('matchCancel', auth.user);
     navigate('/dashboard');
   };
 
