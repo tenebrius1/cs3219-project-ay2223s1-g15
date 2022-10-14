@@ -8,8 +8,8 @@ sequelize
 
 const TIMEOUT_DURATION = 30000;
 
-export const createWaitingUser = async (username, difficultylevel) => {
-  const waitingUser = pendingMatch.build({ userName: username, difficultyLevel: difficultylevel });
+export const createWaitingUser = async (username, difficultylevel, socketId) => {
+  const waitingUser = pendingMatch.build({ userName: username, difficultyLevel: difficultylevel, socketId: socketId });
   return waitingUser;
 }
 
@@ -74,7 +74,7 @@ export const matchWaitingUser = async (username) => {
   // handle scenario where a matched user cannot be found
   if (matchedUser === null) {
     console.log('Could not find a match');
-    const timeout = setTimeout(() => {
+    setTimeout(() => {
       console.log('Removing user due to timeout.');
       if (_userStillWaiting(username)) 
         deleteWaitingUser(username);
@@ -83,7 +83,14 @@ export const matchWaitingUser = async (username) => {
   }
 
   // remove the 2 users from the pending list and add them to the matched list
-  const matchedUsers = match.build({ firstUser: currentUser.userName, secondUser: matchedUser.userName, roomId: uuidv4() });
+  const matchUserObject = { 
+    firstUser: currentUser.userName,
+    secondUser: matchedUser.userName,
+    firstUserSocketId: currentUser.socketId,
+    secondUserSocketId: matchedUser.socketId,
+    roomId: uuidv4()
+  }
+  const matchedUsers = match.build(matchUserObject);
   _deleteWaitingUsers(currentUser, matchedUser);
 
   return matchedUsers;

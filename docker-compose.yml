@@ -1,0 +1,64 @@
+version: '3.8'
+
+x-common-variables: &common-variables
+  ENV: PROD
+
+services:
+  frontend: 
+    container_name: frontend
+    build: 
+      dockerfile: Dockerfile
+      context: ./frontend
+    volumes:
+      - ./frontend:/home/node/app/frontend
+    ports:
+      - 3000:3000
+    restart: on-failure
+    environment:
+      <<: *common-variables
+
+  matching:
+    container_name: matching_service
+    build:
+      dockerfile: Dockerfile
+      context: ./matching-service
+    volumes:
+      - ./matching-service:/home/node/app/matching
+    ports:
+      - 8001:8001
+    restart: on-failure
+    environment:
+      <<: *common-variables
+
+  user:
+    container_name: user_service
+    build:
+      dockerfile: Dockerfile
+      context: ./user-service
+    volumes:
+      - ./user-service:/home/node/app/user-service
+    ports: 
+      - 8000:8000
+    restart: on-failure
+    environment:
+      <<: *common-variables
+      DB_CLOUD_URI: 'mongodb+srv://cs3219-g15:cs3219-g15@cs3219-g15.ryvsrmt.mongodb.net/?retryWrites=true&w=majority'
+  
+  coding:
+    container_name: coding_service
+    build:
+      dockerfile: Dockerfile
+      context: ./coding-service
+    volumes:
+      - ./matching-service:/home/node/app/coding-service
+    ports:
+      - 8002:8002
+    restart: on-failure
+    environment:
+      <<: *common-variables
+
+  # Used for local dev
+  # mongo:
+  #   container_name: mongo
+  #   image: mongo
+  #   restart: always

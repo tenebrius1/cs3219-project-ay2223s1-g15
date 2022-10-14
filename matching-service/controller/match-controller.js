@@ -1,22 +1,22 @@
-import { ormCreateWaitingUser as _createWaitingUser, 
-  ormCreateMatchedUsers as _persistMatchedUsers, 
-  ormDeleteWaitingUser as _deleteWaitingUser } from '../model/match-orm.js'
+import {
+  ormCreateWaitingUser as _createWaitingUser,
+  ormCreateMatchedUsers as _persistMatchedUsers,
+  ormDeleteWaitingUser as _deleteWaitingUser
+} from '../model/match-orm.js'
 
-export const createWaitingUser = async (req, res) => {
+export const createWaitingUser = async (username, difficulty, socketId) => {
   try {
-    const { username, difficultylevel } = req.body;
-    if (username && difficultylevel) {
-      const resp = await _createWaitingUser(username, difficultylevel);
-      if (resp.err) {
-        return res.status(400).json({ message: 'Could not create a new waiting user!' });
-      } else {
-        return res.status(201).json({ message: `Created new waiting user ${username} successfully!` });
-      }
+    const resp = await _createWaitingUser(username, difficulty, socketId);
+    if (resp.err) {
+      console.error(err);
+      return false;
     } else {
-      return res.status(400).json({ message: 'Username and/or Difficulty Level are missing!' });
+      return true;
     }
-  } catch (err) {
-    return res.status(500).json({ message: 'Database failure when creating new waiting user!' });
+  }
+  catch (err) {
+    console.error(err);
+    return false;
   }
 }
 
