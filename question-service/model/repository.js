@@ -8,7 +8,6 @@ sequelize.sync().then(() => {
 });
 
 export const createQuestion = async (title, difficulty, description, example, constraint) => {
-  console.log(difficulty);
   var newQuestion;
   switch(difficulty) {
     case 'Easy':
@@ -27,8 +26,8 @@ export const createQuestion = async (title, difficulty, description, example, co
 
 export const getRandomQuestion = async (difficulty) => {
   var randomQuestion;
-  switch(difficulty) {
-    case 'Easy':
+  switch(difficulty.toLowerCase()) {
+    case 'easy':
       randomQuestion = await Question.findAll({
         where: {
           difficulty: 'Easy'
@@ -36,7 +35,7 @@ export const getRandomQuestion = async (difficulty) => {
         order: Sequelize.literal('rand()'), limit: 1
       })
       break;
-    case 'Medium':
+    case 'medium':
       randomQuestion = await Question.findAll({
         where: {
           difficulty: 'Medium'
@@ -44,7 +43,7 @@ export const getRandomQuestion = async (difficulty) => {
         order: Sequelize.literal('rand()'), limit: 1
       })
       break;
-    case 'Hard':
+    case 'hard':
       randomQuestion = await Question.findAll({
         where: {
           difficulty: 'Hard'
@@ -53,8 +52,6 @@ export const getRandomQuestion = async (difficulty) => {
       })
       break;
   }
-
-  console.log(randomQuestion);
 
   return JSON.stringify(randomQuestion[0]);
 }

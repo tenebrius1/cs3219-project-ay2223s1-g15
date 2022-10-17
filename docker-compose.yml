@@ -56,6 +56,19 @@ services:
     restart: on-failure
     environment:
       <<: *common-variables
+    
+  question:
+    container_name: question_serive
+    build:
+      dockerfile: Dockerfile
+      context: ./question-service
+    volumes:
+      - ./matching-service:/home/node/app/coding-service
+    ports:
+      - 8004:8004
+    restart: on-failure
+    environment:
+      <<: *common-variables
 
   # Used for local dev
   # mongo:

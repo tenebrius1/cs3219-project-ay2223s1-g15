@@ -1,4 +1,3 @@
-import { json } from 'sequelize';
 import {
   ormCreateNewQuestion as _createNewQuestion,
   ormGetRandomQuestion as _getRandomQuestion
