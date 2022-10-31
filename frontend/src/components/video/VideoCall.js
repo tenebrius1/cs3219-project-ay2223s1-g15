@@ -17,8 +17,8 @@ export default function VideoCall(props) {
     const [start, setStart] = useState(false);
     const client = useClient();
     const { ready, tracks } = useMicrophoneAndCameraTracks();
-    const { roomId } = useContext(RoomContext);
     const { user } = useAuth();
+    const { roomId } = useContext(RoomContext);
 
     const getToken = async (roomId) => {
         const res = 
@@ -36,7 +36,7 @@ export default function VideoCall(props) {
         if (!appId) {
             return;
         }
-        let init = async (name) => {
+        let init = async (channelName) => {
           client.on("user-published", async (user, mediaType) => {
             await client.subscribe(user, mediaType);
             if (mediaType === "video") {
@@ -67,8 +67,8 @@ export default function VideoCall(props) {
         });
     
         try {
-            const token = await getToken(roomId);
-            await client.join(appId, roomId, token, null);
+            const token = await getToken(channelName);
+            await client.join(appId, channelName, token, null);
         } catch (error) {
             console.log("error");
         }
@@ -82,12 +82,12 @@ export default function VideoCall(props) {
     
         if (ready && tracks) {
           try {
-            init(channelName);
+            init(roomId);
           } catch (error) {
             console.log(error);
           }
         }
-      }, [channelName, client, ready, tracks]);
+      }, [roomId, client, ready, tracks]);
 
       if (!client || !user) {
         return null;
