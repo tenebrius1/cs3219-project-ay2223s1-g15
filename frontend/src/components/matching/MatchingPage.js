@@ -1,12 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Button,
-  Grid,
-  Typography,
-  Zoom,
-} from '@mui/material';
+import { Box, Button, Grid, Typography, Zoom } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
 import { COUNTDOWN_DURATION } from '../../constants';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
@@ -22,7 +16,7 @@ function MatchingPage() {
   const [key, setKey] = useState(0);
   const navigate = useNavigate();
 
-  const { difficulty } = useContext(RoomContext);
+  const { difficulty, setRoomId } = useContext(RoomContext);
   const auth = useAuth();
   const { matchingSocket, codingSocket } = useContext(SocketContext);
 
@@ -30,10 +24,10 @@ function MatchingPage() {
     console.log(difficulty);
   }, [difficulty]);
 
-  //Send match event when countdown timer starts 
+  //Send match event when countdown timer starts
   useEffect(() => {
-      console.log('match event sent');
-      matchingSocket.emit('match', auth.user, difficulty);
+    console.log('match event sent');
+    matchingSocket.emit('match', auth.user, difficulty);
   }, [key]);
 
   useEffect(() => {
@@ -41,9 +35,10 @@ function MatchingPage() {
       console.log('matchfail');
       setIsMatchFail(true);
     });
-    matchingSocket.on('matchSuccess', (arg) => {
+    matchingSocket.on('matchSuccess', (roomId) => {
       setIsMatchSuccess(true);
-      codingSocket.emit('connectedToRoom', arg);
+      codingSocket.emit('connectedToRoom', roomId);
+      setRoomId(roomId);
       navigate('/codingpage');
     });
   }, [codingSocket, matchingSocket]);
