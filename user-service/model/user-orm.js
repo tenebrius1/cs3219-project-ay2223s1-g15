@@ -67,23 +67,17 @@ export const ormTokenLogin = async (jwtToken) => {
 };
 
 export const ormLogout = async (jwtToken) => {
-  try {
-    await blacklist(jwtToken);
-  } catch (err) {
-    return { err };
-  }
+  await blacklist(jwtToken);
 };
 
-export const ormDeleteUser = async (jwtToken, password) => {
+export const ormDeleteUser = async (jwtToken, username, password) => {
   try {
-    // Get client's username from their JWT token and check if the user exists.
-    const username = jwt.decode(jwtToken).username;
+    // Check if the user exists.
     const user = await findUser(username);
 
     // If user exists and the given password matches
     if (user && bcrypt.compare(password, user.password)) {
       await deleteUser(username);
-
       await blacklist(jwtToken);
       return username;
     } else {
@@ -94,10 +88,9 @@ export const ormDeleteUser = async (jwtToken, password) => {
   }
 };
 
-export const ormChangePassword = async (jwtToken, currPassword, newPassword) => {
+export const ormChangePassword = async (username, currPassword, newPassword) => {
   try {
-    // Get client's username from their JWT token and check if the user exists.
-    const username = jwt.decode(jwtToken).username;
+    // Check if the user exists.
     const user = await findUser(username);
 
     // If user exists and the given password matches
@@ -157,9 +150,13 @@ export const ormRequestPasswordReset = async (username) => {
   }
 };
 
-export const ormResetPassword = async (jwtToken, username, newPassword) => {
+export const ormResetPassword = async (
+  username,
+  newPassword,
+  tokenUsername,
+  jwtToken
+) => {
   try {
-    const tokenUsername = jwt.decode(jwtToken).username;
     let user;
 
     // If provided token details match provided username
@@ -182,15 +179,18 @@ export const ormResetPassword = async (jwtToken, username, newPassword) => {
   }
 };
 
-export const ormAuthorize = expressjwt({
-  secret: process.env.JWT_TOKEN_KEY,
-  getToken: (req) => req.cookies.token,
-  algorithms: ['HS256'],
-  isRevoked: async (req) => {
-    const revokedToken = await isBlacklisted(req.cookies.token);
-    return revokedToken != null;
-  },
-});
+export const ormAuthToken = async (jwtToken) => {
+  try {
+    if ((await isBlacklisted(jwtToken)) === null) {
+      const decodedToken = jwt.verify(jwtToken, process.env.JWT_TOKEN_KEY);
+      return decodedToken.username;
+    } else {
+      return null;
+    }
+  } catch (err) {
+    return { err };
+  }
+};
 
 async function hashPassword(password) {
   const hashed = await bcrypt.hash(password, 10);
