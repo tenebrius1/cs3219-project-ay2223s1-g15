@@ -1,9 +1,8 @@
-import { pendingMatch, match } from './match-model.js'
+import { sequelize, pendingMatch, match } from './match-model.js'
 import { Op } from 'sequelize'
-import { sequelize } from './match-model.js';
 import { v4 as uuidv4 } from 'uuid';
 
-// init database
+// init database, remember to set force: false on production server!
 sequelize
   .sync({force: true})
 
