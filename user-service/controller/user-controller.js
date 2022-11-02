@@ -7,7 +7,7 @@ import {
   ormChangePassword as _updatePassword,
   ormRequestPasswordReset as _requestPasswordReset,
   ormResetPassword as _resetPassword,
-  ormAuthorize as _authorize,
+  ormAuthToken as _authToken,
 } from '../model/user-orm.js';
 
 export const createUser = async (req, res) => {
@@ -41,32 +41,12 @@ export const createUser = async (req, res) => {
 };
 
 export const tokenLogin = async (req, res) => {
-  try {
-    const { token } = req.cookies;
-    // If client has a JWT token. use token login
-    if (token) {
-      const username = await _tokenLogin(token);
-      if (username) {
-        return res.status(200).json({
-          message: 'Successfully logged in using JWT Token',
-          username: username,
-        });
-      } else {
-        // Token is invalid. Delete token from user's cookie
-        // so that they can login using username and password
-        res.clearCookie('token');
-        return res.status(401).json({
-          message: 'Invalid JWT Token. Try again using username and password',
-        });
-      }
-    } else {
-      return res.status(403).json({
-        message: 'Login token does not exist.',
-      });
-    }
-  } catch (err) {
-    return res.status(500).json({ message: 'Token login failed!' });
-  }
+  const { tokenUsername } = req.body;
+
+  return res.status(200).json({
+    message: 'Successfully logged in using JWT Token',
+    username: tokenUsername,
+  });
 };
 
 export const passwordLogin = async (req, res) => {
@@ -98,11 +78,6 @@ export const logout = async (req, res) => {
   try {
     const { token } = req.cookies;
 
-    // If user has no JWT token, we can assume that they are not logged in.
-    if (!token) {
-      return res.status(400).json({ message: 'Currently not logged in' });
-    }
-
     await _logout(token);
     res.clearCookie('token');
 
@@ -115,14 +90,8 @@ export const logout = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { token } = req.cookies;
-
-    // If user has no JWT token, we can assume that they are not logged in.
-    if (!token) {
-      return res.status(400).json({ message: 'Login is needed to delete account' });
-    }
-
-    const { password } = req.body;
-    const username = await _deleteUser(token, password);
+    const { tokenUsername, password } = req.body;
+    const username = await _deleteUser(token, tokenUsername, password);
 
     if (username) {
       res.clearCookie('token');
@@ -140,15 +109,8 @@ export const deleteUser = async (req, res) => {
 
 export const changePassword = async (req, res) => {
   try {
-    const { token } = req.cookies;
-
-    // If user has no JWT token, we can assume that they are not logged in.
-    if (!token) {
-      return res.status(400).json({ message: 'Login is needed to change password' });
-    }
-
-    const { currPassword, newPassword } = req.body;
-    const isChanged = await _updatePassword(token, currPassword, newPassword);
+    const { tokenUsername, currPassword, newPassword } = req.body;
+    const isChanged = await _updatePassword(tokenUsername, currPassword, newPassword);
 
     if (isChanged) {
       return res.status(200).json({ message: 'Successfully updated password' });
@@ -195,9 +157,10 @@ export const requestPasswordReset = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
   try {
-    const { token, username, newPassword } = req.body;
-    if (token && username && newPassword) {
-      const resp = await _resetPassword(token, username, newPassword);
+    const { token } = req.cookies;
+    const { username, newPassword, tokenUsername } = req.body;
+    if (username && newPassword) {
+      const resp = await _resetPassword(username, newPassword, tokenUsername, token);
       if (resp.err) {
         return res.status(500).json({ message: 'Unable to reset password' });
       }
@@ -214,4 +177,25 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-export const authorize = _authorize;
+export const authToken = async (req, res) => {
+  try {
+    const { token } = req.cookies;
+    if (token) {
+      const tokenUsername = await _authToken(token);
+      if (tokenUsername.err) {
+        return res.status(401).json({ message: 'Invalid JWT token' });
+      }
+      if (tokenUsername === null) {
+        return res.status(401).json({ message: 'JWT token provided was blacklisted' });
+      }
+      return res.status(200).json({
+        message: 'Successfully authenticated',
+        tokenUsername: tokenUsername,
+      });
+    } else {
+      return res.status(400).json({ message: 'Missing JWT token' });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: 'Failure when authenticating' });
+  }
+};

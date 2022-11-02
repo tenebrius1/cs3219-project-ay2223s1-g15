@@ -29,24 +29,7 @@ const useProvideAuth = () => {
         { username, password },
         { withCredentials: true }
       )
-      .then(res => {
-        if (res && res.status === STATUS_CODE_OK) {
-          setUser(res.data.username);
-        } else {
-          setUser(null);
-        }
-        return res
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    return res;
-  };
-
-  const tokenLogin = async () => {
-    const res = await axios
-      .post(URL_USER_SVC + '/tokenLogin', {}, { withCredentials: true })
-      .then(res => {
+      .then((res) => {
         if (res && res.status === STATUS_CODE_OK) {
           setUser(res.data.username);
         } else {
@@ -57,20 +40,38 @@ const useProvideAuth = () => {
       .catch((err) => {
         console.log(err);
       });
-    return res
+    return res;
+  };
+
+  const tokenLogin = async () => {
+    const res = await axios
+      .post(URL_USER_SVC + '/auth/tokenLogin', {}, { withCredentials: true })
+      .then((res) => {
+        if (res && res.status === STATUS_CODE_OK) {
+          setUser(res.data.username);
+        } else {
+          setUser(null);
+        }
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    return res;
   };
 
   const logout = async () => {
-    const res = await axios.delete(URL_USER_SVC + "/logout", { withCredentials: true })
-                        .then(res => {
-                            if (res) {
-                                setUser(null);
-                            }
-                            return res
-                        })
-                        .catch(err => console.log(err))
-    return res
-};
+    const res = await axios
+      .delete(URL_USER_SVC + '/auth/logout', { withCredentials: true })
+      .then((res) => {
+        if (res) {
+          setUser(null);
+        }
+        return res;
+      })
+      .catch((err) => console.log(err));
+    return res;
+  };
 
   return {
     user,
