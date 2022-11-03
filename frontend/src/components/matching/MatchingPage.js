@@ -44,7 +44,7 @@ function MatchingPage() {
     matchingSocket.on('matchSuccess', (arg) => {
       setIsMatchSuccess(true);
       codingSocket.emit('connectedToRoom', arg);
-      navigate('/codingpage');
+      navigate('/codingpage', { replace: true });
     });
   }, [codingSocket, matchingSocket]);
 
@@ -79,7 +79,7 @@ function MatchingPage() {
 
   const handleBack = () => {
     matchingSocket.emit('matchCancel', auth.user);
-    navigate('/dashboard');
+    navigate('/dashboard', { replace: true });
   };
 
   return (

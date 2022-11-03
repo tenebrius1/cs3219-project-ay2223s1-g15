@@ -3,7 +3,7 @@ import "./codingpage.css";
 import { useState } from "react";
 import BasicTab from "./BasicTab";
 import CodePad from "./CodePad";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CodingLanguageSelector from "./CodingLanguageSelector";
 
 function a11yProps(index) {
@@ -17,10 +17,15 @@ function CodingPage() {
   const [value, setValue] = useState(0);
   const [currentLanguage, setCurrentLanguage] = useState("python");
   const [output, setOutput] = useState('Output');
+  const navigate = useNavigate();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  const handleEndClick = () => {
+    navigate('/dashboard', { replace: true })
+  }
 
   return (
     <Box className="mainCodingPageBox">
@@ -28,8 +33,7 @@ function CodingPage() {
         <Box className="titleBar">
           <CodingLanguageSelector currentLanguage={currentLanguage} setCurrentLanguage={setCurrentLanguage} />
           <Button
-            component={Link}
-            to="/dashboard"
+            onClick={handleEndClick}
             variant="outlined"
             color="error"
           >

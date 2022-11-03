@@ -4,6 +4,7 @@ import Dashboard from './components/dashboard/Dashboard';
 import CodingPage from './components/codingpage/CodingPage';
 import SignInPage from './components/signinpage/SignInPage';
 import MatchingPage from './components/matching/MatchingPage';
+import ProfilePage from './components/profilepage/ProfilePage';
 import { Box } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';

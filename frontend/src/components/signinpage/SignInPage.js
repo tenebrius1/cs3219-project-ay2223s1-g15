@@ -47,12 +47,12 @@ function SignInPage() {
 
   useEffect(() => {
     if (auth.user) {
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     } else {
       const loginWithToken = async () => {
         const res = await auth.tokenLogin();
         if (res) {
-          navigate('/dashboard');
+          navigate('/dashboard', { replace: true });
         }
       };
       loginWithToken();
@@ -61,7 +61,7 @@ function SignInPage() {
   
   return (
     (auth.user) ? (
-      <Navigate to="/dashboard" />
+      <Navigate to="/dashboard" replace />
     ) : (
       <Box className="mainBox">
         <Box className="signInBox">
