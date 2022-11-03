@@ -37,14 +37,9 @@ function MatchingPage() {
     });
     matchingSocket.on('matchSuccess', (roomId) => {
       setIsMatchSuccess(true);
-<<<<<<< HEAD
-      codingSocket.emit('connectedToRoom', arg);
-      navigate('/codingpage', { replace: true });
-=======
       codingSocket.emit('connectedToRoom', roomId);
       setRoomId(roomId);
-      navigate('/codingpage');
->>>>>>> 4f3113e36328c1ddefa1d2d9e14d2e69a308d673
+      navigate('/codingpage', { replace: true });
     });
   }, [codingSocket, matchingSocket]);
 

@@ -43,6 +43,10 @@ function SignInPage() {
     setDialogMsg(msg);
   };
 
+  const onSignUpClick = () => {
+    navigate('/signup')
+  }
+
   useEffect(() => {
     if (auth.user) {
       navigate('/dashboard', { replace: true });
@@ -92,11 +96,14 @@ function SignInPage() {
           />
         </Box>
         <Box
-          className="normalButton"
-          display={"flex"}
-          flexDirection={"row"}
-          justifyContent={"flex-end"}
+          className="normalButtons"
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-evenly'
+          }}
         >
+          <Button variant={'outlined'} color={'secondary'} onClick={onSignUpClick}>Sign up</Button>
           <Button variant={"outlined"} color={"secondary"} onClick={handleSignin}>
             Sign in
           </Button>
