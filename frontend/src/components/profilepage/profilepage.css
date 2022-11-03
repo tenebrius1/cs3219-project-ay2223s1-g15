@@ -1,0 +1,47 @@
+.mainProfilePageBox.MuiBox-root {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profilePageVerticalBox.MuiBox-root {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profilePageConfirmationBox.MuiBox-root {
+    display: flex;
+    justify-content: space-between;
+}
+
+.changePasswordBox.MuiBox-root {
+    display: flex;
+    flex-direction: column;
+}
+
+.avatarButtonSection {
+    position: relative;
+    transform: translate(-100px, 32px);
+    cursor: pointer;
+}
+
+.avatarButton.MuiAvatar-root {
+    position: absolute;
+    width: 230px;
+    height: 230px;
+}
+
+.editAvatarButton.MuiButton-root {
+    position: absolute;
+    transform: translate(8px, 186px);
+}
+
+.editAvatarButton.MuiButton-root:hover {
+    background-color: #3B4252;
+}
+
+.profilePageAdminPage {
+    transform: translate(10px, 290px);
+}

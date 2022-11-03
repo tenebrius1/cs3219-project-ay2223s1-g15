@@ -110,7 +110,6 @@ function SignupPage() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           sx={{ marginBottom: "1rem" }}
-          autoFocus
           required
         />
         <TextField

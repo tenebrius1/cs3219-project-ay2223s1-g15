@@ -1,19 +1,23 @@
 import { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { Avatar } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import { Avatar, DialogTitle } from "@mui/material";
 import { useAuth } from "../../contexts/AuthContext";
 import { URL_USER_SVC } from "../../configs";
 import { STATUS_CODE_OK } from "../../constants";
 import axios from "axios";
+import ProfilePage from "../profilepage/ProfilePage";
 
 function CustomAvatar() {
   const [anchorElement, setAnchorElement] = useState(null);
   const [open, setOpen] = useState(false);
   const auth = useAuth();
   const [isLogout, setIsLogout] = useState(false)
+  const navgiate = useNavigate();
+  const [isProfileClick, setIsProfileClick] = useState(false);
 
   const handleClick = (event) => {
     setAnchorElement(event.currentTarget);
@@ -32,6 +36,15 @@ function CustomAvatar() {
         setIsLogout(false)
       }
     });
+  }
+
+  const handleProfileClick = () => {
+    // navgiate('/profile')
+    setIsProfileClick(true);
+  }
+
+  const handleProfileClose = () => {
+    setIsProfileClick(false);
   }
 
   return (
@@ -59,12 +72,25 @@ function CustomAvatar() {
               "aria-labelledby": "basic-button",
             }}
           >
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={handleClose}>My account</MenuItem>
+            <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
             <MenuItem onClick={handleLogout}>
               Logout
             </MenuItem>
           </Menu>
+          <Dialog
+            open={isProfileClick}
+            onClose={handleProfileClose}
+            fullWidth
+            PaperProps={{
+              sx: {
+                height: '90%',
+                maxHeight: '90%'
+              }
+            }}
+          >
+            <DialogTitle>Profile</DialogTitle>
+            <ProfilePage />
+          </Dialog>
       </>
       )
   );
