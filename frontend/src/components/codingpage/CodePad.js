@@ -12,8 +12,7 @@ const stateFields = { history: historyField };
 
 function CodePad({ currentLanguage, setOutput }) {
   const serializedState = localStorage.getItem('myEditorState');
-  const value = localStorage.getItem('myValue') || '';
-  const [code, setCode] = useState(value);
+  const [code, setCode] = useState('');
   const judgeURL = 'http://localhost:2358';
   const [codeStatus, setCodeStatus] = useState('');
   const availableLanguages = {
@@ -45,6 +44,7 @@ function CodePad({ currentLanguage, setOutput }) {
 
   useEffect(() => {
     codingSocket.on('codeChanged', (value) => {
+      console.log('codeChanged', value);
       setCode(value);
     });
   }, [codingSocket]);
@@ -66,7 +66,7 @@ function CodePad({ currentLanguage, setOutput }) {
   return (
     <>
       <CodeMirror
-        value={value}
+        value={code}
         theme={githubDark}
         height={'70vh'}
         extensions={[loadLanguage(currentLanguage)]}
@@ -79,9 +79,6 @@ function CodePad({ currentLanguage, setOutput }) {
             : undefined
         }
         onChange={(value, viewUpdate) => {
-          localStorage.setItem('myValue', value);
-          const state = viewUpdate.state.toJSON(stateFields);
-          localStorage.setItem('myEditorState', JSON.stringify(state));
           setCode(value);
           codingSocket.emit('codeChanged', {
             value: value,

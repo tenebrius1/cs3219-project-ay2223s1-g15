@@ -11,13 +11,11 @@ import {
   Typography,
 } from '@mui/material';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import UserContext from '../../contexts/UserContext';
 import { useAuth } from '../../contexts/AuthContext';
 
 function SignInPage() {
-  const [username, setUsername] = useState("")
-  const { contextUsername, setContextUsername } = useContext(UserContext);
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogTitle, setDialogTitle] = useState('');
   const [dialogMsg, setDialogMsg] = useState('');
@@ -40,9 +38,9 @@ function SignInPage() {
   };
 
   const setErrorDialog = (msg) => {
-      setIsDialogOpen(true);
-      setDialogTitle('Error');
-      setDialogMsg(msg);
+    setIsDialogOpen(true);
+    setDialogTitle('Error');
+    setDialogMsg(msg);
   };
 
   useEffect(() => {
@@ -104,24 +102,24 @@ function SignInPage() {
           </Button>
         </Box>
 
-        <Dialog open={isDialogOpen} onClose={closeDialog}>
-            <DialogTitle>{dialogTitle}</DialogTitle>
-            <DialogContent>
-                <DialogContentText>{dialogMsg}</DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                {isSigninSuccess ? (
-                    <Button component={Link} to='/login'>
-                        Log in
-                    </Button>
-                ) : (
-                    <Button onClick={closeDialog}>Done</Button>
-                )}
-            </DialogActions>
-        </Dialog>
-      </Box>
+      <Dialog open={isDialogOpen} onClose={closeDialog}>
+        <DialogTitle>{dialogTitle}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{dialogMsg}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          {isSigninSuccess ? (
+            <Button component={Link} to='/login'>
+              Log in
+            </Button>
+          ) : (
+            <Button onClick={closeDialog}>Done</Button>
+          )}
+        </DialogActions>
+      </Dialog>
+    </Box>
     )
-    );
+  );
 }
 
 export default SignInPage;
