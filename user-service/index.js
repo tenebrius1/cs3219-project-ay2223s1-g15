@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import morgan from 'morgan';
 import {
   createUser,
   deleteUser,
@@ -22,12 +23,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
   cors({
+    //replace with deployed endpoint
     origin: 'http://localhost:3000',
     credentials: true,
   })
 ); // config cors so that front-end can use
 
 app.options('*', cors());
+app.use(morgan('combined'));
 
 const router = express.Router();
 const authRouter = express.Router();
@@ -44,10 +47,7 @@ router.post('/python', (req, res) => {
   res.send('test');
 });
 
-app.use('/user', router).all((_, res) => {
-  res.setHeader('content-type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-});
+app.use('/user', router);
 
 authRouter.post('/tokenLogin', tokenLogin);
 authRouter.put('/changePW', changePassword);
@@ -55,11 +55,8 @@ authRouter.delete('/', deleteUser);
 authRouter.delete('/logout', logout);
 authRouter.post('/resetPassword', resetPassword);
 
-app.use('/user/auth', authenticate, authRouter).all((_, res) => {
-  res.setHeader('content-type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-});
+app.use('/user/auth', authenticate, authRouter);
 
-app.use('/auth', authToken);
+app.get('/auth', authToken);
 
 app.listen(8000, () => console.log('user-service listening on port 8000'));

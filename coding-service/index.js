@@ -18,11 +18,11 @@ const io = new Server(server, {
 
 var PORT = process.env.PORT || 8002;
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+app.get('/coding', (req, res) => {
+  res.send('Hello World from coding-service');
 });
 
-io.on('connection', (socket) => {
+io.of('/coding').on('connection', (socket) => {
   console.log('a user connected to coding-service');
 
   socket.on('connectedToRoom', (roomId) => {

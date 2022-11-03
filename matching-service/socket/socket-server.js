@@ -11,18 +11,22 @@ export const startServer = () => {
     },
   });
 
-  io.on('connection', (socket) => {
-    console.log('User connected');
+  io.of('/matching').on('connection', (socket) => {
+    console.log('User connected to matching-service');
 
     // listen to match event
     socket.on('match', async (username, difficulty) => {
       // puts user in queue and tries to match user
+      console.log('match received');
       if (await createWaitingUser(username, difficulty, socket.id)) {
         const { roomId, firstUserSocketId, secondUserSocketId } = await matchWaitingUser(
           username
         );
         if (roomId) {
-          io.to(firstUserSocketId).to(secondUserSocketId).emit('matchSuccess', roomId);
+          io.of('/matching')
+            .to(firstUserSocketId)
+            .to(secondUserSocketId)
+            .emit('matchSuccess', roomId);
         } else {
           setTimeout(() => {
             socket.emit('matchFail');

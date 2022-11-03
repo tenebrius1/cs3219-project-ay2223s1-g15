@@ -8,7 +8,7 @@ export const authenticate = async (req, res, next) => {
       res.clearCookie('token');
       return res.status(401).json({ message: 'Invalid JWT token' });
     }
-    req.tokenUsername = tokenUsername;
+    req.body.tokenUsername = tokenUsername;
     next();
   } else {
     return res.status(401).json({ message: 'Missing JWT token' });
