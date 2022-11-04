@@ -42,7 +42,7 @@ export const ormPasswordLogin = async (username, password) => {
       const token = jwt.sign({ user_id: user._id, username }, process.env.JWT_TOKEN_KEY, {
         expiresIn: '10d',
       });
-      return token;
+      return { user: user, userToken: token };
     } else {
       return null;
     }
@@ -54,14 +54,15 @@ export const ormPasswordLogin = async (username, password) => {
 export const ormTokenLogin = async (jwtToken) => {
   try {
     // If given JWT token is not blacklisted, then verify the token
-    if (!(await isBlacklisted(jwtToken))) {
+    if ((await isBlacklisted(jwtToken)) === null) {
       const decodedToken = jwt.verify(jwtToken, process.env.JWT_TOKEN_KEY);
-      return decodedToken.username;
+      const user = await findUser(decodedToken.username);
+      return { user: user };
     } else {
       null;
     }
   } catch (err) {
-    return null;
+    return { err };
   }
 };
 

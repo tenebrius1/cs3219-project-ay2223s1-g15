@@ -10,7 +10,6 @@ import uploadAvatarImage from '../../api/user/uploadAvatarImage';
 import UserContext from '../../contexts/UserContext';
 
 const ProfilePage = () => {
-  const { user } = useContext(UserContext);
   const [changePassword, setChangePassword] = useState(false);
   const [currPassword, setCurrPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -20,6 +19,8 @@ const ProfilePage = () => {
   const [imgCrop, setImgCrop] = useState(null);
   const [storeImg, setStoreImg] = useState(null);
   const navigate = useNavigate();
+
+  const { user, imageUrl, setImageUrl } = useContext(UserContext);
 
   const onClickDeleteAccount = async () => {
     await axios.delete('/');
@@ -61,8 +62,8 @@ const ProfilePage = () => {
   };
 
   const saveImage = async () => {
-    const imageUrl = await uploadAvatarImage(imgCrop);
-    setStoreImg(imageUrl);
+    const uploadedImageUrl = await uploadAvatarImage(imgCrop);
+    setImageUrl(uploadedImageUrl);
     setIsEditAvatar(false);
   };
 
@@ -79,7 +80,7 @@ const ProfilePage = () => {
           <Avatar
             id='basic-button'
             className='avatarButton'
-            src={storeImg}
+            src={imageUrl}
             width={500}
             margin={'2%'}
           />

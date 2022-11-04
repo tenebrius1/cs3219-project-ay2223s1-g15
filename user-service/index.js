@@ -40,6 +40,7 @@ const authRouter = express.Router();
 router.get('/', (req, res) => res.send('Hello World from user-service'));
 router.post('/', createUser);
 router.post('/passwordLogin', passwordLogin);
+router.post('/tokenLogin', tokenLogin);
 router.post('/requestPasswordReset', requestPasswordReset);
 
 // For frontend testing
@@ -50,7 +51,6 @@ router.post('/python', (req, res) => {
 
 app.use('/user', router);
 
-authRouter.post('/tokenLogin', tokenLogin);
 authRouter.put('/changePW', changePassword);
 authRouter.delete('/', deleteUser);
 authRouter.delete('/logout', logout);

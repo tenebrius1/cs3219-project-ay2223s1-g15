@@ -24,7 +24,7 @@ export const passwordLogin = async (username, password) => {
 
 export const tokenLogin = async () => {
   const res = await axios
-    .post(URL_USER_SVC + '/auth/tokenLogin', {}, { withCredentials: true })
+    .post(URL_USER_SVC + '/tokenLogin', {}, { withCredentials: true })
     .then((res) => {
       if ((res && res.status) === STATUS_CODE_OK) {
         return res.data.user;

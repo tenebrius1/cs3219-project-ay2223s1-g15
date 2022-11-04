@@ -6,8 +6,8 @@ export const UserContext = createContext({
 });
 
 export const UserContextProvider = ({ children }) => {
-  const [user, setUser] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [user, setUser] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
   return (
     <UserContext.Provider value={{ user, setUser, imageUrl, setImageUrl }}>
       {children}

@@ -42,12 +42,27 @@ export const createUser = async (req, res) => {
 };
 
 export const tokenLogin = async (req, res) => {
-  const { tokenUsername } = req.body;
-  console.log(tokenUsername);
-  return res.status(200).json({
-    message: 'Successfully logged in using JWT Token',
-    username: tokenUsername,
-  });
+  try {
+    const { token } = req.cookies;
+    if (token) {
+      const { user } = await _tokenLogin(token);
+      if (user.err) {
+        return res.status(401).json({ message: 'Invalid JWT token' });
+      }
+      if (user === null) {
+        return res.status(401).json({ message: 'JWT token provided was blacklisted' });
+      }
+      return res.status(200).json({
+        message: 'Successfully authenticated',
+        user: user,
+      });
+    } else {
+      return res.status(400).json({ message: 'Missing JWT token' });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: 'Failure when authenticating' });
+  }
 };
 
 export const passwordLogin = async (req, res) => {
@@ -57,7 +72,7 @@ export const passwordLogin = async (req, res) => {
       return res.status(401).json({ message: 'Username and/or Password are missing!' });
     }
 
-    const userToken = await _passwordLogin(username, password);
+    const { user, userToken } = await _passwordLogin(username, password);
     if (userToken) {
       // Login is successful. Clear previous token if exist store JWT token in user's cookies.
       res.clearCookie('token');
@@ -66,7 +81,7 @@ export const passwordLogin = async (req, res) => {
         secure: true,
         sameSite: 'none',
       });
-      return res.status(200).json({ username: username, token: userToken });
+      return res.status(200).json({ user: user, token: userToken });
     } else {
       return res.status(401).json({ message: 'Invalid Credentials!' });
     }

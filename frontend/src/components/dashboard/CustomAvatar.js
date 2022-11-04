@@ -1,13 +1,10 @@
-import { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import Button from '@mui/material/Button';
+import { useContext, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Dialog from '@mui/material/Dialog';
 import { Avatar, DialogTitle } from '@mui/material';
-import { URL_USER_SVC } from '../../configs';
-import { STATUS_CODE_OK } from '../../constants';
-import axios from 'axios';
+import UserContext from '../../contexts/UserContext';
 import ProfilePage from '../profilepage/ProfilePage';
 import { logout } from '../../api/user/auth';
 
@@ -15,8 +12,9 @@ function CustomAvatar() {
   const [anchorElement, setAnchorElement] = useState(null);
   const [open, setOpen] = useState(false);
   const [isLogout, setIsLogout] = useState(false);
-  const navgiate = useNavigate();
   const [isProfileClick, setIsProfileClick] = useState(false);
+
+  const { imageUrl } = useContext(UserContext);
 
   const handleClick = (event) => {
     setAnchorElement(event.currentTarget);
@@ -49,7 +47,6 @@ function CustomAvatar() {
   ) : (
     <>
       <Avatar
-        component={Button}
         id='basic-button'
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup='true'
@@ -58,6 +55,7 @@ function CustomAvatar() {
         sx={{
           minWidth: 0,
         }}
+        src={imageUrl}
       />
       <Menu
         id='basic-menu'

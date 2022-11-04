@@ -31,7 +31,11 @@ function SignInPage() {
     const userInfo = await passwordLogin(username, password);
     if (userInfo) {
       setUser(userInfo.username);
+      console.log(user);
       setImageUrl(userInfo.imageUrl);
+    } else {
+      setUser(null);
+      setImageUrl(null);
     }
   };
 
@@ -58,9 +62,14 @@ function SignInPage() {
       navigate('/dashboard', { replace: true });
     } else {
       const loginWithToken = async () => {
-        const res = await tokenLogin();
-        if (res) {
+        const userInfo = await tokenLogin();
+        if (userInfo) {
+          setUser(userInfo.username);
+          setImageUrl(userInfo.imageUrl);
           navigate('/dashboard', { replace: true });
+        } else {
+          setUser(null);
+          setImageUrl(null);
         }
       };
       loginWithToken();
