@@ -8,7 +8,11 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import './profilepage.css';
 import AvatarSelectDialog from './AvatarSelectDialog';
 import { URL_USER_SVC } from '../../configs';
-import { changePassword, uploadAvatarImage } from '../../api/user/user';
+import {
+  changePassword,
+  removeAvatarImage,
+  uploadAvatarImage,
+} from '../../api/user/user';
 import UserContext from '../../contexts/UserContext';
 
 const ProfilePage = () => {
@@ -69,8 +73,9 @@ const ProfilePage = () => {
     setIsEditAvatar(false);
   };
 
-  const restoreDefault = () => {
-    setStoreImg(null);
+  const restoreDefault = async () => {
+    const isRemovalSuccess = await removeAvatarImage();
+    setImageUrl(null);
     setImgCrop(null);
     setIsEditAvatar(false);
   };

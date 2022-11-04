@@ -65,3 +65,15 @@ export const uploadAvatarImage = async (imageURI) => {
     });
   return imageUrl;
 };
+
+export const removeAvatarImage = async () => {
+  const success = await axios
+    .delete(URL_USER_SVC + '/auth/removeImage', { withCredentials: true })
+    .then((res) => {
+      if (res.status === STATUS_CODE_OK) return true;
+    })
+    .catch((err) => {
+      return false;
+    });
+  return success;
+};
