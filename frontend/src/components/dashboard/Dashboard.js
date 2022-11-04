@@ -1,10 +1,19 @@
-import { Box, Button, Card, List, ListItemText, Divider, ListItem, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  List,
+  ListItemText,
+  Divider,
+  ListItem,
+  Typography,
+} from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import './dashboard.css';
 import { useState, useContext } from 'react';
 import CustomAvatar from './CustomAvatar';
 import RoomContext from '../../contexts/RoomContext';
-import { useAuth } from '../../contexts/AuthContext';
+import UserContext from '../../contexts/UserContext';
 import axios from 'axios';
 import { STATUS_CODE_BAD_REQ, STATUS_CODE_CREATED } from '../../constants';
 
@@ -15,7 +24,7 @@ function Dashboard() {
 
   const navigate = useNavigate();
   const { difficulty, setDifficulty } = useContext(RoomContext);
-  const { user } = useAuth();
+  const { user } = useContext(UserContext);
 
   const startMatch = async () => {
     console.log('user', user);
@@ -85,20 +94,18 @@ function Dashboard() {
       </Box>
       <Box className='mainContent'>
         <Box className='leftBox'>
-          <Typography>
-            Practice History
-          </Typography>
-          <List component="nav" aria-label="mailbox folders">
+          <Typography>Practice History</Typography>
+          <List component='nav' aria-label='mailbox folders'>
             <Divider />
             <ListItem button>
               <Card>test</Card>
             </ListItem>
             <Divider />
             <ListItem button divider>
-              <ListItemText primary="Drafts" />
+              <ListItemText primary='Drafts' />
             </ListItem>
             <ListItem button>
-              <ListItemText primary="Trash" />
+              <ListItemText primary='Trash' />
             </ListItem>
           </List>
         </Box>

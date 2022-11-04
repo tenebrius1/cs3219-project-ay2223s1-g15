@@ -11,7 +11,8 @@ import {
   Typography,
 } from '@mui/material';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import UserContext from '../../contexts/UserContext';
+import { passwordLogin, tokenLogin } from '../../api/user/auth';
 
 function SignInPage() {
   const [username, setUsername] = useState('');
@@ -22,11 +23,16 @@ function SignInPage() {
   const [isSigninSuccess, setIsSigninSuccess] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const auth = useAuth();
+
+  const { user, setUser, setImageUrl } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleSignin = async () => {
-    await auth.passwordLogin(username, password);
+    const userInfo = await passwordLogin(username, password);
+    if (userInfo) {
+      setUser(userInfo.username);
+      setImageUrl(userInfo.imageUrl);
+    }
   };
 
   const closeDialog = () => setIsDialogOpen(false);
@@ -44,70 +50,71 @@ function SignInPage() {
   };
 
   const onSignUpClick = () => {
-    navigate('/signup')
-  }
+    navigate('/signup');
+  };
 
   useEffect(() => {
-    if (auth.user) {
+    if (user) {
       navigate('/dashboard', { replace: true });
     } else {
       const loginWithToken = async () => {
-        const res = await auth.tokenLogin();
+        const res = await tokenLogin();
         if (res) {
           navigate('/dashboard', { replace: true });
         }
       };
       loginWithToken();
     }
-  }, [auth, navigate]);
-  
-  return (
-    (auth.user) ? (
-      <Navigate to="/dashboard" replace />
-    ) : (
-      <Box className="mainBox">
-        <Box className="signInBox">
-          <Typography variant={"h3"} marginBottom={"2rem"} textAlign={"center"}>
-            Sign In
-          </Typography>
-        </Box>
-        <Box className="textFieldBox">
-          <TextField
-            className="TextField"
-            label="Username"
-            variant="standard"
-            color="primary"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            sx={{ marginBottom: "1rem" }}
-            autoFocus
-            required
-            error={usernameError}
-          />
-          <TextField
-            label="Password"
-            variant="standard"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            sx={{ marginBottom: "2rem" }}
-            required
-            error={passwordError}
-          />
-        </Box>
-        <Box
-          className="normalButtons"
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-evenly'
-          }}
-        >
-          <Button variant={'outlined'} color={'secondary'} onClick={onSignUpClick}>Sign up</Button>
-          <Button variant={"outlined"} color={"secondary"} onClick={handleSignin}>
-            Sign in
-          </Button>
-        </Box>
+  }, [user]);
+
+  return user ? (
+    <Navigate to='/dashboard' replace />
+  ) : (
+    <Box className='mainBox'>
+      <Box className='signInBox'>
+        <Typography variant={'h3'} marginBottom={'2rem'} textAlign={'center'}>
+          Sign In
+        </Typography>
+      </Box>
+      <Box className='textFieldBox'>
+        <TextField
+          className='TextField'
+          label='Username'
+          variant='standard'
+          color='primary'
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          sx={{ marginBottom: '1rem' }}
+          autoFocus
+          required
+          error={usernameError}
+        />
+        <TextField
+          label='Password'
+          variant='standard'
+          type='password'
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          sx={{ marginBottom: '2rem' }}
+          required
+          error={passwordError}
+        />
+      </Box>
+      <Box
+        className='normalButtons'
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+        }}
+      >
+        <Button variant={'outlined'} color={'secondary'} onClick={onSignUpClick}>
+          Sign up
+        </Button>
+        <Button variant={'outlined'} color={'secondary'} onClick={handleSignin}>
+          Sign in
+        </Button>
+      </Box>
 
       <Dialog open={isDialogOpen} onClose={closeDialog}>
         <DialogTitle>{dialogTitle}</DialogTitle>
@@ -125,7 +132,6 @@ function SignInPage() {
         </DialogActions>
       </Dialog>
     </Box>
-    )
   );
 }
 

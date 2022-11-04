@@ -1,21 +1,20 @@
-import { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import Button from "@mui/material/Button";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Dialog from "@mui/material/Dialog";
-import { Avatar, DialogTitle } from "@mui/material";
-import { useAuth } from "../../contexts/AuthContext";
-import { URL_USER_SVC } from "../../configs";
-import { STATUS_CODE_OK } from "../../constants";
-import axios from "axios";
-import ProfilePage from "../profilepage/ProfilePage";
+import { useState } from 'react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Dialog from '@mui/material/Dialog';
+import { Avatar, DialogTitle } from '@mui/material';
+import { URL_USER_SVC } from '../../configs';
+import { STATUS_CODE_OK } from '../../constants';
+import axios from 'axios';
+import ProfilePage from '../profilepage/ProfilePage';
+import { logout } from '../../api/user/auth';
 
 function CustomAvatar() {
   const [anchorElement, setAnchorElement] = useState(null);
   const [open, setOpen] = useState(false);
-  const auth = useAuth();
-  const [isLogout, setIsLogout] = useState(false)
+  const [isLogout, setIsLogout] = useState(false);
   const navgiate = useNavigate();
   const [isProfileClick, setIsProfileClick] = useState(false);
 
@@ -29,70 +28,64 @@ function CustomAvatar() {
   };
 
   const handleLogout = async () => {
-    await auth.logout().then(res => {
-      if (res && res.status === STATUS_CODE_OK) {
-        setIsLogout(true)
-      } else {
-        setIsLogout(false)
-      }
-    });
-  }
+    if (await logout()) {
+      setIsLogout(true);
+    } else {
+      setIsLogout(false);
+    }
+  };
 
   const handleProfileClick = () => {
     // navgiate('/profile')
     setIsProfileClick(true);
-  }
+  };
 
   const handleProfileClose = () => {
     setIsProfileClick(false);
-  }
+  };
 
-  return (
-    (isLogout) ? (
-      <Navigate to={"/"} replace />
-      ) : (
-        <>
-          <Avatar
-            component={Button}
-            id="basic-button"
-            aria-controls={open ? "basic-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            onClick={handleClick}
-            sx={{
-              minWidth: 0,
-            }}
-          />
-          <Menu
-            id="basic-menu"
-            anchorEl={anchorElement}
-            open={open}
-            onClose={handleClose}
-            MenuListProps={{
-              "aria-labelledby": "basic-button",
-            }}
-          >
-            <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
-            <MenuItem onClick={handleLogout}>
-              Logout
-            </MenuItem>
-          </Menu>
-          <Dialog
-            open={isProfileClick}
-            onClose={handleProfileClose}
-            fullWidth
-            PaperProps={{
-              sx: {
-                height: '90%',
-                maxHeight: '90%'
-              }
-            }}
-          >
-            <DialogTitle>Profile</DialogTitle>
-            <ProfilePage />
-          </Dialog>
-      </>
-      )
+  return isLogout ? (
+    <Navigate to={'/'} replace />
+  ) : (
+    <>
+      <Avatar
+        component={Button}
+        id='basic-button'
+        aria-controls={open ? 'basic-menu' : undefined}
+        aria-haspopup='true'
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+        sx={{
+          minWidth: 0,
+        }}
+      />
+      <Menu
+        id='basic-menu'
+        anchorEl={anchorElement}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      </Menu>
+      <Dialog
+        open={isProfileClick}
+        onClose={handleProfileClose}
+        fullWidth
+        PaperProps={{
+          sx: {
+            height: '90%',
+            maxHeight: '90%',
+          },
+        }}
+      >
+        <DialogTitle>Profile</DialogTitle>
+        <ProfilePage />
+      </Dialog>
+    </>
   );
 }
 

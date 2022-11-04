@@ -1,16 +1,16 @@
 import { Avatar, Box, Button, TextField, Typography } from '@mui/material';
 import axios from 'axios';
-import { useAuth } from '../../contexts/AuthContext';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import './profilepage.css';
 import AvatarSelectDialog from './AvatarSelectDialog';
 import { URL_USER_SVC } from '../../configs';
 import uploadAvatarImage from '../../api/user/uploadAvatarImage';
+import UserContext from '../../contexts/UserContext';
 
 const ProfilePage = () => {
-  const { user } = useAuth();
+  const { user } = useContext(UserContext);
   const [changePassword, setChangePassword] = useState(false);
   const [currPassword, setCurrPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
