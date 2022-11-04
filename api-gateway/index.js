@@ -33,5 +33,3 @@ app.use('/history', historyProxy);
 const server = app.listen(8080, () => {
   console.log('api gateway running on port 8080');
 });
-
-server.on('upgrade', () => console.log('upgrade to ws'));

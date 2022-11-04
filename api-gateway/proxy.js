@@ -20,17 +20,14 @@ export const codingProxy = createProxyMiddleware('/coding', {
 export const videoProxy = createProxyMiddleware({
   target: process.env.VIDEO_URL,
   changeOrigin: true,
-  ws: true,
 });
 
 export const questionProxy = createProxyMiddleware({
   target: process.env.QUESTION_URL,
   changeOrigin: true,
-  ws: true,
 });
 
 export const historyProxy = createProxyMiddleware({
   target: process.env.HISTORY_URL,
   changeOrigin: true,
-  ws: true,
 });

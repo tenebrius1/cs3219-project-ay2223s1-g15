@@ -8,10 +8,8 @@ import {
   isBlacklisted,
 } from './repository.js';
 import jwt from 'jsonwebtoken';
-import { expressjwt } from 'express-jwt';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
-import crypto from 'crypto';
 
 // need to separate orm functions from repository to decouple business logic from persistence
 
