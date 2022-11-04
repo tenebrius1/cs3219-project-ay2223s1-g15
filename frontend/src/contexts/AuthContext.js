@@ -33,6 +33,7 @@ const useProvideAuth = () => {
         if (res && res.status === STATUS_CODE_OK) {
           setUser(res.data.username);
         } else {
+          console.log('invalid login');
           setUser(null);
         }
         return res;
