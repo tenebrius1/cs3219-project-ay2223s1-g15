@@ -1,21 +1,18 @@
-import {
-  Box,
-  Button,
-  Card,
-  List,
-  ListItemText,
-  Divider,
-  ListItem,
-  Typography,
-} from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import List from '@mui/material/List';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import Typography from '@mui/material/Typography';
+
+import { useNavigate } from 'react-router-dom';
 import './dashboard.css';
 import { useState, useContext } from 'react';
 import CustomAvatar from './CustomAvatar';
 import RoomContext from '../../contexts/RoomContext';
 import UserContext from '../../contexts/UserContext';
-import axios from 'axios';
-import { STATUS_CODE_BAD_REQ, STATUS_CODE_CREATED } from '../../constants';
 
 function Dashboard() {
   const [buttonToggleEasy, setButtonToggleEasy] = useState(false);

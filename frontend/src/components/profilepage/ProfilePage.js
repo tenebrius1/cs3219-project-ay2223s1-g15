@@ -1,7 +1,10 @@
-import { Avatar, Box, Button, TextField, Typography } from '@mui/material';
-import axios from 'axios';
 import { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Avatar from '@mui/material/Avatar';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import axios from 'axios';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import './profilepage.css';
 import AvatarSelectDialog from './AvatarSelectDialog';
@@ -18,7 +21,6 @@ const ProfilePage = () => {
   const [selectedValue, setSelectedValue] = useState(null);
   const [imgCrop, setImgCrop] = useState(null);
   const [storeImg, setStoreImg] = useState(null);
-  const navigate = useNavigate();
 
   const { user, imageUrl, setImageUrl } = useContext(UserContext);
 

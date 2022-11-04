@@ -1,6 +1,7 @@
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import { Box, Button } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Avatar from 'react-avatar-edit';
 
 const AvatarSelectDialog = ({
