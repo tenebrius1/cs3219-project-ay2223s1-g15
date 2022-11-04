@@ -4,19 +4,20 @@ import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import axios from 'axios';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import './profilepage.css';
 import AvatarSelectDialog from './AvatarSelectDialog';
 import { URL_USER_SVC } from '../../configs';
-import uploadAvatarImage from '../../api/user/uploadAvatarImage';
+import { changePassword, uploadAvatarImage } from '../../api/user/user';
 import UserContext from '../../contexts/UserContext';
 
 const ProfilePage = () => {
-  const [changePassword, setChangePassword] = useState(false);
+  const [isChangePassword, setIsChangePassword] = useState(false);
   const [currPassword, setCurrPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [pwChangeFail, setPwChangeFail] = useState(false);
+  const [pwChangeFailMsg, setPwChangeFailMsg] = useState('');
   const [isEditAvatar, setIsEditAvatar] = useState(false);
   const [selectedValue, setSelectedValue] = useState(null);
   const [imgCrop, setImgCrop] = useState(null);
@@ -24,26 +25,25 @@ const ProfilePage = () => {
 
   const { user, imageUrl, setImageUrl } = useContext(UserContext);
 
-  const onClickDeleteAccount = async () => {
-    await axios.delete('/');
-  };
+  const onClickDeleteAccount = async () => {};
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
+      setPwChangeFailMsg('New passwords do not match');
       return;
     }
-    await axios
-      .put(
-        URL_USER_SVC + '/changePW',
-        { currPassword, newPassword },
-        { withCredentials: true }
-      )
-      .catch((e) => console.log(e));
-    setChangePassword(false);
+    const changeResp = await changePassword(currPassword, confirmPassword);
+    if (!changeResp.isSuccess) {
+      setPwChangeFail(true);
+      setPwChangeFailMsg(changeResp.message);
+      return;
+    }
+
+    setIsChangePassword(false);
   };
 
   const onClickChangePassword = () => {
-    setChangePassword(!changePassword);
+    setIsChangePassword(!isChangePassword);
   };
 
   const onClickProfile = () => {
@@ -101,27 +101,34 @@ const ProfilePage = () => {
           <Typography variant='h4' sx={{ textAlign: 'center' }}>
             {user}
           </Typography>
-          {changePassword ? (
+          {isChangePassword ? (
             <>
               <Box className='changePasswordBox'>
                 <TextField
                   label='Current password'
                   variant='outlined'
                   type='password'
+                  size='small'
+                  margin='dense'
                   onChange={(e) => setCurrPassword(e.target.value)}
                 />
                 <TextField
                   label='New password'
                   variant='outlined'
                   type='password'
+                  size='small'
+                  margin='dense'
                   onChange={(e) => setNewPassword(e.target.value)}
                 />
                 <TextField
                   label='Confirm new password'
                   variant='outlined'
                   type='password'
+                  size='small'
+                  margin='dense'
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
+                {pwChangeFail && <div className='pwChangeFailMsg'>{pwChangeFailMsg}</div>}
                 <Box className='profilePageConfirmationBox'>
                   <Button
                     variant='outlined'

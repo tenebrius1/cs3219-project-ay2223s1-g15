@@ -127,7 +127,6 @@ export const changePassword = async (req, res) => {
   try {
     const { tokenUsername, currPassword, newPassword } = req.body;
     const isChanged = await _updatePassword(tokenUsername, currPassword, newPassword);
-
     if (isChanged) {
       return res.status(200).json({ message: 'Successfully updated password' });
     } else {

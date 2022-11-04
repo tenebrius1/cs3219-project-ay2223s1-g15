@@ -14,6 +14,7 @@
 .profilePageConfirmationBox.MuiBox-root {
     display: flex;
     justify-content: space-between;
+    margin-top: 10px;
 }
 
 .changePasswordBox.MuiBox-root {
@@ -44,4 +45,9 @@
 
 .profilePageAdminPage {
     transform: translate(10px, 290px);
+}
+
+.pwChangeFailMsg {
+    color:red;
+    font-size: 12px;
 }

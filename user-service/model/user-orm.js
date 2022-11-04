@@ -92,10 +92,9 @@ export const ormChangePassword = async (username, currPassword, newPassword) => 
   try {
     // Check if the user exists.
     const user = await findUser(username);
-
     // If user exists and the given password matches
     if (user && (await bcrypt.compare(currPassword, user.password))) {
-      const hashedPassword = hashPassword(newPassword);
+      const hashedPassword = await hashPassword(newPassword);
       const updateResp = await changePassword(username, hashedPassword);
       return updateResp !== null;
     } else {
