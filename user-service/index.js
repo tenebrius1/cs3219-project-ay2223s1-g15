@@ -11,6 +11,7 @@ import {
   requestPasswordReset,
   resetPassword,
   authToken,
+  uploadPicture,
 } from './controller/user-controller.js';
 
 import authenticate from './middleware/auth.js';
@@ -54,6 +55,7 @@ authRouter.put('/changePW', changePassword);
 authRouter.delete('/', deleteUser);
 authRouter.delete('/logout', logout);
 authRouter.post('/resetPassword', resetPassword);
+authRouter.post('/uploadImage', uploadPicture);
 
 app.use('/user/auth', authenticate, authRouter);
 

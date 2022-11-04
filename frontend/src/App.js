@@ -13,6 +13,7 @@ import { RoomContextProvider } from './contexts/RoomContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { useState } from 'react';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import { UserContextProvider } from './contexts/UserContext';
 
 export const theme = createTheme({
   palette: {
@@ -37,44 +38,46 @@ export const theme = createTheme({
 function App() {
   return (
     <AuthProvider>
-      <RoomContextProvider>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Box className='App'>
-            <Router>
-              <Routes>
-                <Route exact path='/' element={<Navigate replace to='/login' />} />
-                <Route path='/signup' element={<SignupPage />} />
-                <Route path='/login' element={<SignInPage />} />
-                <Route
-                  path='/dashboard'
-                  element={
-                    <PrivateRoute>
-                      <Dashboard />
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path='/codingpage'
-                  element={
-                    <PrivateRoute>
-                      <CodingPage />
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path='/matching'
-                  element={
-                    <PrivateRoute>
-                      <MatchingPage />
-                    </PrivateRoute>
-                  }
-                />
-              </Routes>
-            </Router>
-          </Box>
-        </ThemeProvider>
-      </RoomContextProvider>
+      <UserContextProvider>
+        <RoomContextProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Box className='App'>
+              <Router>
+                <Routes>
+                  <Route exact path='/' element={<Navigate replace to='/login' />} />
+                  <Route path='/signup' element={<SignupPage />} />
+                  <Route path='/login' element={<SignInPage />} />
+                  <Route
+                    path='/dashboard'
+                    element={
+                      <PrivateRoute>
+                        <Dashboard />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path='/codingpage'
+                    element={
+                      <PrivateRoute>
+                        <CodingPage />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path='/matching'
+                    element={
+                      <PrivateRoute>
+                        <MatchingPage />
+                      </PrivateRoute>
+                    }
+                  />
+                </Routes>
+              </Router>
+            </Box>
+          </ThemeProvider>
+        </RoomContextProvider>
+      </UserContextProvider>
     </AuthProvider>
   );
 }

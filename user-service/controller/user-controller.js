@@ -8,6 +8,7 @@ import {
   ormRequestPasswordReset as _requestPasswordReset,
   ormResetPassword as _resetPassword,
   ormAuthToken as _authToken,
+  ormUploadImage as _uploadImage,
 } from '../model/user-orm.js';
 
 export const createUser = async (req, res) => {
@@ -177,6 +178,7 @@ export const resetPassword = async (req, res) => {
   }
 };
 
+// For API gateway auth
 export const authToken = async (req, res) => {
   try {
     const { token } = req.cookies;
@@ -197,5 +199,18 @@ export const authToken = async (req, res) => {
     }
   } catch (err) {
     return res.status(500).json({ message: 'Failure when authenticating' });
+  }
+};
+
+export const uploadPicture = async (req, res) => {
+  try {
+    const { tokenUsername, imageURI } = req.body;
+    const resp = await _uploadImage(tokenUsername, imageURI);
+    if (resp === null || resp.err) {
+      return res.status(400).json({ message: 'Image upload failed' });
+    }
+    return res.status(200).json({ message: 'Image upload success', imageUrl: resp });
+  } catch (err) {
+    return res.status(500).json({ message: 'Failure when uploading image' });
   }
 };

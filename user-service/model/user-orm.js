@@ -6,6 +6,7 @@ import {
   changePassword,
   blacklist,
   isBlacklisted,
+  uploadImage,
 } from './repository.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
@@ -94,8 +95,8 @@ export const ormChangePassword = async (username, currPassword, newPassword) => 
     // If user exists and the given password matches
     if (user && (await bcrypt.compare(currPassword, user.password))) {
       const hashedPassword = hashPassword(newPassword);
-      await changePassword(username, hashedPassword);
-      return true;
+      const updateResp = await changePassword(username, hashedPassword);
+      return updateResp !== null;
     } else {
       return false;
     }
@@ -185,6 +186,18 @@ export const ormAuthToken = async (jwtToken) => {
     } else {
       return null;
     }
+  } catch (err) {
+    return { err };
+  }
+};
+
+export const ormUploadImage = async (username, imageURI) => {
+  try {
+    const { updateResp, imageUrl } = await uploadImage(username, imageURI);
+    if (updateResp === null) {
+      return null;
+    }
+    return imageUrl;
   } catch (err) {
     return { err };
   }
