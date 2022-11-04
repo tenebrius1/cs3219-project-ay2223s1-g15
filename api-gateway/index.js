@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import 'dotenv/config';
 import {
   userProxy,
   matchingProxy,
@@ -23,8 +24,8 @@ app.use(cookieParser());
 app.use(morgan('combined'));
 
 app.use('/user', userProxy);
-app.use('/matching', matchingProxy);
-app.use('/coding', codingProxy);
+app.use(matchingProxy);
+app.use(codingProxy);
 app.use('/video', videoProxy);
 app.use('/question', questionProxy);
 app.use('/history', historyProxy);
@@ -33,4 +34,4 @@ const server = app.listen(8080, () => {
   console.log('api gateway running on port 8080');
 });
 
-server.on('upgrade', () => console.log('upgrade event'));
+server.on('upgrade', () => console.log('upgrade to ws'));

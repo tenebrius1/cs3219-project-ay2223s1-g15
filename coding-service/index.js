@@ -14,6 +14,7 @@ const io = new Server(server, {
   cors: {
     origin: '*',
   },
+  path: '/coding',
 });
 
 var PORT = process.env.PORT || 8002;
@@ -22,7 +23,7 @@ app.get('/coding', (req, res) => {
   res.send('Hello World from coding-service');
 });
 
-io.of('/coding').on('connection', (socket) => {
+io.on('connection', (socket) => {
   console.log('a user connected to coding-service');
 
   socket.on('connectedToRoom', (roomId) => {

@@ -25,7 +25,7 @@ const useProvideAuth = () => {
   const passwordLogin = async (username, password) => {
     const res = await axios
       .post(
-        'http://localhost:8080/user' + '/passwordLogin',
+        URL_USER_SVC + '/passwordLogin',
         { username, password },
         { withCredentials: true }
       )
@@ -46,11 +46,7 @@ const useProvideAuth = () => {
 
   const tokenLogin = async () => {
     const res = await axios
-      .post(
-        'http://localhost:8080/user' + '/auth/tokenLogin',
-        {},
-        { withCredentials: true }
-      )
+      .post(URL_USER_SVC + '/auth/tokenLogin', {}, { withCredentials: true })
       .then((res) => {
         if (res && res.status === STATUS_CODE_OK) {
           setUser(res.data.username);

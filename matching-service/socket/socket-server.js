@@ -9,9 +9,10 @@ export const startServer = () => {
     cors: {
       origin: '*',
     },
+    path: '/matching',
   });
 
-  io.of('/matching').on('connection', (socket) => {
+  io.on('connection', (socket) => {
     console.log('User connected to matching-service');
 
     // listen to match event
@@ -23,10 +24,7 @@ export const startServer = () => {
           username
         );
         if (roomId) {
-          io.of('/matching')
-            .to(firstUserSocketId)
-            .to(secondUserSocketId)
-            .emit('matchSuccess', roomId);
+          io.to(firstUserSocketId).to(secondUserSocketId).emit('matchSuccess', roomId);
         } else {
           setTimeout(() => {
             socket.emit('matchFail');
@@ -41,5 +39,7 @@ export const startServer = () => {
     socket.on('matchCancel', async (username) => {
       deleteWaitingUser(username);
     });
+
+    socket.on('disconnect', () => console.log('User disconnected from matching-service'));
   });
 };
