@@ -71,8 +71,20 @@ export const uploadImage = async (userID, imageURI) => {
   const uploadResp = await cloudinary.v2.uploader.upload(imageURI);
   const updateResp = await UserModel.findOneAndUpdate(
     { username: userID },
-    { imageUrl: uploadResp.secure_url }
+    { imageId: uploadResp.public_id, imageUrl: uploadResp.secure_url },
+    { new: true }
   );
 
   return { updateResp: updateResp, imageUrl: uploadResp.secure_url };
+};
+
+export const removeImage = async (userID) => {
+  const findResp = await findUser(userID);
+  const removeResp = await cloudinary.v2.uploader.destroy(findResp.imageId);
+  const updateResp = await UserModel.findOneAndUpdate(
+    { username: userID },
+    { imageId: null, imageUrl: null },
+    { new: true }
+  );
+  return { updateResp: updateResp, isSuccess: removeResp };
 };

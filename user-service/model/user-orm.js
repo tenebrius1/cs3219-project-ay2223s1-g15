@@ -7,6 +7,7 @@ import {
   blacklist,
   isBlacklisted,
   uploadImage,
+  removeImage,
 } from './repository.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
@@ -198,6 +199,18 @@ export const ormUploadImage = async (username, imageURI) => {
       return null;
     }
     return imageUrl;
+  } catch (err) {
+    return { err };
+  }
+};
+
+export const ormRemoveImage = async (username) => {
+  try {
+    const { updateResp, isSuccess } = await removeImage(username);
+    if (updateResp === null) {
+      return false;
+    }
+    return isSuccess;
   } catch (err) {
     return { err };
   }

@@ -9,6 +9,7 @@ import {
   ormResetPassword as _resetPassword,
   ormAuthToken as _authToken,
   ormUploadImage as _uploadImage,
+  ormRemoveImage as _removeImage,
 } from '../model/user-orm.js';
 
 export const createUser = async (req, res) => {
@@ -216,7 +217,7 @@ export const authToken = async (req, res) => {
   }
 };
 
-export const uploadPicture = async (req, res) => {
+export const uploadImage = async (req, res) => {
   try {
     const { tokenUsername, imageURI } = req.body;
     const resp = await _uploadImage(tokenUsername, imageURI);
@@ -226,5 +227,18 @@ export const uploadPicture = async (req, res) => {
     return res.status(200).json({ message: 'Image upload success', imageUrl: resp });
   } catch (err) {
     return res.status(500).json({ message: 'Failure when uploading image' });
+  }
+};
+
+export const removeImage = async (req, res) => {
+  try {
+    const { tokenUsername } = req.body;
+    const resp = await _removeImage(tokenUsername);
+    if (!resp || resp.err) {
+      return res.status(400).json({ message: 'Image removal failed' });
+    }
+    return res.status(200).json({ message: 'Image removal success' });
+  } catch (err) {
+    return res.status(500).json({ message: 'Failure when removing image' });
   }
 };

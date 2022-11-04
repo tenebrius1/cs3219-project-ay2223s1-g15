@@ -15,6 +15,10 @@ let UserModelSchema = new Schema({
     type: String,
     required: true,
   },
+  imageId: {
+    type: String,
+    unique: true,
+  },
   imageUrl: {
     type: String,
     unique: true,
