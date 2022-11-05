@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { changePassword } from '../../api/user/user';
 import './profilepage.css';
 
@@ -60,7 +61,9 @@ const ChangePassword = ({ setShowChangePassword }) => {
           margin='dense'
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
-        {pwChangeFail && <div className='profilePageResponseMsg'>{pwChangeFailMsg}</div>}
+        {pwChangeFail && (
+          <Typography sx={{ color: 'red', fontSize: 12 }}>{pwChangeFailMsg}</Typography>
+        )}
         <Box className='profilePageConfirmationBox'>
           <Button
             variant='outlined'

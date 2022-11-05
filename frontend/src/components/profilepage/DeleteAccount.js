@@ -2,17 +2,16 @@ import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { deleteAccount } from '../../api/user/user';
-import { logout } from '../../api/user/auth';
-import { useNavigate } from 'react-router';
 import './profilepage.css';
+import DeleteSuccessModal from './DeleteSuccessModal';
 
 const DeleteAccount = ({ setShowDeleteAccount }) => {
   const [password, setPassword] = useState('');
   const [showDeleteMsg, setShowDeleteMsg] = useState(false);
   const [deleteMsg, setDeleteMsg] = useState('');
-
-  const navigate = useNavigate();
+  const [isDeleteSuccess, setIsDeleteSuccess] = useState(false);
 
   const handleDeleteAccount = async () => {
     setShowDeleteMsg(false);
@@ -23,13 +22,7 @@ const DeleteAccount = ({ setShowDeleteAccount }) => {
       setShowDeleteMsg(true);
       return;
     }
-    setDeleteMsg([deleteResp.message, <br />, 'Logging out in 5 seconds']);
-    setShowDeleteMsg(true);
-    const timer = setTimeout(async () => {
-      await logout();
-      navigate('/');
-    }, 5000);
-    return () => clearTimeout(timer);
+    setIsDeleteSuccess(true);
   };
   return (
     <>
@@ -42,7 +35,9 @@ const DeleteAccount = ({ setShowDeleteAccount }) => {
         margin='dense'
         onChange={(e) => setPassword(e.target.value)}
       />
-      {showDeleteMsg && <div className='profilePageResponseMsg'>{deleteMsg}</div>}
+      {showDeleteMsg && (
+        <Typography sx={{ color: 'red', fontSize: 12 }}>{deleteMsg}</Typography>
+      )}
       <Box className='profilePageConfirmationBox'>
         <Button
           variant='outlined'
@@ -58,6 +53,10 @@ const DeleteAccount = ({ setShowDeleteAccount }) => {
           Delete
         </Button>
       </Box>
+      <DeleteSuccessModal
+        isOpen={isDeleteSuccess}
+        handleClose={() => setIsDeleteSuccess(false)}
+      />
     </>
   );
 };

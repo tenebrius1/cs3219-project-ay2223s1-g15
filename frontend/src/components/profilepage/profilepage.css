@@ -60,3 +60,8 @@
     font-size: 12px;
     font-family: "Roboto",sans-serif;
 }
+
+.profilePageDeleteSuccess {
+    display: flex;
+    flex-direction: column;
+}

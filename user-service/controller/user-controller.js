@@ -137,7 +137,7 @@ export const changePassword = async (req, res) => {
     if (isChanged) {
       return res.status(200).json({ message: 'Successfully updated password' });
     } else {
-      return res.status(401).json({ message: 'Incorrect current password' });
+      return res.status(401).json({ message: 'Incorrect password' });
     }
   } catch (err) {
     return res.status(500).json({ message: 'Failure when changing password' });

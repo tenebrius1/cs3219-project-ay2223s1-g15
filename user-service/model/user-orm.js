@@ -45,7 +45,7 @@ export const ormPasswordLogin = async (username, password) => {
       });
       return { user: user, userToken: token };
     } else {
-      return null;
+      return {};
     }
   } catch (err) {
     return { err };
