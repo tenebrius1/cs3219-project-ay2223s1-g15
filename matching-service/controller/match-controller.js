@@ -2,7 +2,7 @@ import {
   ormCreateWaitingUser as _createWaitingUser,
   ormCreateMatchedUsers as _persistMatchedUsers,
   ormDeleteWaitingUser as _deleteWaitingUser,
-} from "../model/match-orm";
+} from "../model/match-orm.js";
 
 export const createWaitingUser = async (username, difficulty, socketId) => {
   try {

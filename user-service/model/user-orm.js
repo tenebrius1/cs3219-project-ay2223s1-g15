@@ -9,7 +9,7 @@ import {
   changePassword,
   blacklist,
   isBlacklisted,
-} from "./repository";
+} from "./repository.js";
 
 // need to separate orm functions from repository to decouple business logic from persistence
 async function hashPassword(password) {
