@@ -15,7 +15,6 @@ function CodePad({ currentLanguage, setOutput }) {
   const serializedState = localStorage.getItem('myEditorState');
   const [code, setCode] = useState('');
   const judgeURL = 'http://localhost:2358';
-  const [codeStatus, setCodeStatus] = useState('');
   const availableLanguages = {
     python: '70',
     java: '62',

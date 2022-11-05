@@ -144,7 +144,15 @@ function Dashboard() {
               Practise
             </Button>
           ) : (
-            <Button className='queueUpButton' color={'info'} variant={'contained'}>
+            <Button
+              className='queueUpButton'
+              color={'info'}
+              variant={
+                buttonToggleEasy || buttonToggleMedium || buttonToggleHard
+                  ? 'contained'
+                  : 'outlined'
+              }
+            >
               Practise
             </Button>
           )}

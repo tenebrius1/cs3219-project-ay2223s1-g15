@@ -35,7 +35,6 @@ function CustomAvatar() {
   };
 
   const handleProfileClick = () => {
-    // navgiate('/profile')
     setIsProfileClick(true);
   };
 

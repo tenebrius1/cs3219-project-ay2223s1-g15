@@ -113,19 +113,22 @@ function SignupPage() {
           sx={{ marginBottom: '2rem' }}
           required
         />
-      </Box>
-      <Box
-        className='normalButton'
-        display={'flex'}
-        flexDirection={'row'}
-        justifyContent={'flex-end'}
-      >
-        <Button component={Link} to='/login' variant='outlined' color='secondary'>
-          Sign In
-        </Button>
-        <Button variant={'outlined'} color={'secondary'} onClick={handleSignup}>
-          Sign up
-        </Button>
+        <Box
+          className='normalButton'
+          display={'flex'}
+          flexDirection={'row'}
+          justifyContent={'space-between'}
+        >
+          <Box sx={{ display: 'flex' }}>
+            <Typography>Already have an account?&nbsp;</Typography>
+            <Typography component={Link} to='/login' variant='outlined' color='secondary'>
+              Log in
+            </Typography>
+          </Box>
+          <Button variant={'contained'} color={'secondary'} onClick={handleSignup}>
+            Sign up
+          </Button>
+        </Box>
       </Box>
 
       <Dialog open={isDialogOpen} onClose={closeDialog}>

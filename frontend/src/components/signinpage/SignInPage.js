@@ -96,31 +96,43 @@ function SignInPage() {
           required
           error={usernameError}
         />
-        <TextField
-          label='Password'
-          variant='standard'
-          type='password'
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          sx={{ marginBottom: '2rem' }}
-          required
-          error={passwordError}
-        />
-      </Box>
-      <Box
-        className='normalButtons'
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-evenly',
-        }}
-      >
-        <Button variant={'outlined'} color={'secondary'} onClick={onSignUpClick}>
-          Sign up
-        </Button>
-        <Button variant={'outlined'} color={'secondary'} onClick={handleSignin}>
-          Sign in
-        </Button>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            marginBottom: '2rem',
+          }}
+        >
+          <TextField
+            label='Password'
+            variant='standard'
+            type='password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            sx={{ marginBottom: '0.5rem' }}
+            required
+            error={passwordError}
+          />
+          <Typography
+            component={Link}
+            to='/passwordreset'
+            color='secondary'
+            textAlign={'right'}
+          >
+            Forgot your password?
+          </Typography>
+        </Box>
+        <Box className='normalButton'>
+          <Box sx={{ display: 'flex' }}>
+            <Typography>Don't have an account?&nbsp;</Typography>
+            <Typography component={Link} to='/signup' color='secondary'>
+              Sign up!
+            </Typography>
+          </Box>
+          <Button variant={'contained'} color={'secondary'} onClick={handleSignin}>
+            Sign in
+          </Button>
+        </Box>
       </Box>
 
       <Dialog open={isDialogOpen} onClose={closeDialog}>

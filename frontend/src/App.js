@@ -4,6 +4,8 @@ import Dashboard from './components/dashboard/Dashboard';
 import CodingPage from './components/codingpage/CodingPage';
 import SignInPage from './components/signinpage/SignInPage';
 import MatchingPage from './components/matching/MatchingPage';
+import PasswordResetPage from './components/passwordresetpage/PasswordResetPage';
+import HistoryPage from './components/historypage/HistoryPage';
 import Box from '@mui/material/Box';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -44,6 +46,7 @@ function App() {
                 <Route exact path='/' element={<Navigate replace to='/login' />} />
                 <Route path='/signup' element={<SignupPage />} />
                 <Route path='/login' element={<SignInPage />} />
+                <Route path='/passwordreset' element={<PasswordResetPage />} />
                 <Route
                   path='/dashboard'
                   element={
@@ -65,6 +68,14 @@ function App() {
                   element={
                     <PrivateRoute>
                       <MatchingPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/history'
+                  element={
+                    <PrivateRoute>
+                      <HistoryPage />
                     </PrivateRoute>
                   }
                 />
