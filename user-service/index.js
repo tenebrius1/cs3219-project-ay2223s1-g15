@@ -11,13 +11,9 @@ import {
   requestPasswordReset,
   resetPassword,
   authToken,
-<<<<<<< HEAD
-} from "./controller/user-controller.js";
-=======
   uploadImage,
   removeImage,
-} from './controller/user-controller.js';
->>>>>>> 3d8ee6b168eeb967d9432f6c20f7bdd43413572e
+} from "./controller/user-controller.js";
 
 import authenticate from "./middleware/auth.js";
 import cookieParser from "cookie-parser";
@@ -42,18 +38,11 @@ const router = express.Router();
 const authRouter = express.Router();
 
 // Controller will contain all the User-defined Routes
-<<<<<<< HEAD
 router.get("/", (req, res) => res.send("Hello World from user-service"));
 router.post("/", createUser);
 router.post("/passwordLogin", passwordLogin);
+router.post("/tokenLogin", tokenLogin);
 router.post("/requestPasswordReset", requestPasswordReset);
-=======
-router.get('/', (req, res) => res.send('Hello World from user-service'));
-router.post('/', createUser);
-router.post('/passwordLogin', passwordLogin);
-router.post('/tokenLogin', tokenLogin);
-router.post('/requestPasswordReset', requestPasswordReset);
->>>>>>> 3d8ee6b168eeb967d9432f6c20f7bdd43413572e
 
 // For frontend testing
 router.post("/python", (req, res) => {
@@ -63,20 +52,12 @@ router.post("/python", (req, res) => {
 
 app.use("/user", router);
 
-<<<<<<< HEAD
-authRouter.post("/tokenLogin", tokenLogin);
 authRouter.put("/changePW", changePassword);
 authRouter.delete("/", deleteUser);
 authRouter.delete("/logout", logout);
 authRouter.post("/resetPassword", resetPassword);
-=======
-authRouter.put('/changePW', changePassword);
-authRouter.delete('/', deleteUser);
-authRouter.delete('/logout', logout);
-authRouter.post('/resetPassword', resetPassword);
-authRouter.post('/uploadImage', uploadImage);
-authRouter.delete('/removeImage', removeImage);
->>>>>>> 3d8ee6b168eeb967d9432f6c20f7bdd43413572e
+authRouter.post("/uploadImage", uploadImage);
+authRouter.delete("/removeImage", removeImage);
 
 app.use("/user/auth", authenticate, authRouter);
 

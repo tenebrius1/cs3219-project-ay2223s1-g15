@@ -1,25 +1,15 @@
-<<<<<<< HEAD
 import UserModel from "./user-model.js";
 import "dotenv/config";
 import redis from "redis";
-=======
-import UserModel from './user-model.js';
-import 'dotenv/config';
-import redis from 'redis';
-import cloudinary from 'cloudinary';
->>>>>>> 3d8ee6b168eeb967d9432f6c20f7bdd43413572e
+import cloudinary from "cloudinary";
 
 //Set up mongoose connection
 import mongoose from "mongoose";
 
 let mongoDB =
-<<<<<<< HEAD
   process.env.ENV == "PROD"
     ? process.env.DB_CLOUD_URI
     : process.env.DB_LOCAL_URI;
-=======
-  process.env.ENV == 'PROD' ? process.env.DB_CLOUD_URI : process.env.DB_LOCAL_URI;
->>>>>>> 3d8ee6b168eeb967d9432f6c20f7bdd43413572e
 
 // Connect to MongoDB
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -38,7 +28,7 @@ redisClient.on("error", console.error);
 await redisClient.connect();
 
 cloudinary.v2.config({
-  cloud_name: 'dkbsbikj8',
+  cloud_name: "dkbsbikj8",
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
@@ -49,13 +39,9 @@ export const createUser = async (params) => {
 };
 
 export const exists = async (email, userID) => {
-<<<<<<< HEAD
   return await UserModel.exists({
     $or: [{ username: userID }, { email: email }],
   });
-=======
-  return await UserModel.exists({ $or: [{ username: userID }, { email: email }] });
->>>>>>> 3d8ee6b168eeb967d9432f6c20f7bdd43413572e
 };
 
 export const findUser = async (userID) => {
@@ -82,8 +68,6 @@ export const isBlacklisted = async (token) => {
 export const blacklist = async (token) => {
   const token_key = `bl_${token}`;
   return await redisClient.set(token_key, token);
-<<<<<<< HEAD
-=======
 };
 
 // Functions that interact with Cloudinary (Profile picture host)
@@ -107,5 +91,4 @@ export const removeImage = async (userID) => {
     { new: true }
   );
   return { updateResp: updateResp, isSuccess: removeResp };
->>>>>>> 3d8ee6b168eeb967d9432f6c20f7bdd43413572e
 };

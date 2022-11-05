@@ -10,6 +10,7 @@ import { removeAvatarImage, uploadAvatarImage } from "../../api/user/user";
 import UserContext from "../../contexts/UserContext";
 import DeleteAccount from "./DeleteAccount";
 import ChangePassword from "./ChangePassword";
+import DeleteAccountDialog from "./DeleteAccountDialog";
 
 const ProfilePage = () => {
   const [isChangePassword, setIsChangePassword] = useState(false);
