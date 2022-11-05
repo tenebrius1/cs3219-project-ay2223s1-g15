@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Link as MuiLink,
   TextField,
   Typography,
 } from '@mui/material';
@@ -42,10 +43,6 @@ function SignInPage() {
     setDialogTitle('Error');
     setDialogMsg(msg);
   };
-
-  const onSignUpClick = () => {
-    navigate('/signup')
-  }
 
   useEffect(() => {
     if (auth.user) {
@@ -96,14 +93,16 @@ function SignInPage() {
           />
         </Box>
         <Box
-          className="normalButtons"
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-evenly'
-          }}
+          className="normalButton"
         >
-          <Button variant={'outlined'} color={'secondary'} onClick={onSignUpClick}>Sign up</Button>
+          <Box sx={{display: 'flex'}}>
+            <Typography>
+              Don't have an account?&nbsp;
+            </Typography>
+            <Typography component={Link} to='/signup' color='secondary'>
+              Sign up!
+            </Typography>
+          </Box>
           <Button variant={"outlined"} color={"secondary"} onClick={handleSignin}>
             Sign in
           </Button>
