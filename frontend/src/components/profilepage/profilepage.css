@@ -47,7 +47,16 @@
     transform: translate(10px, 290px);
 }
 
-.pwChangeFailMsg {
+.profilePageTextField .MuiOutlinedInput-root fieldset {
+    border-color: rgb(192, 192, 192);
+}
+
+.profilePageTextField .MuiOutlinedInput-root.Mui-focused fieldset {
+    border-color: rgb(192, 192, 192);
+}
+
+.profilePageResponseMsg {
     color:red;
     font-size: 12px;
+    font-family: "Roboto",sans-serif;
 }

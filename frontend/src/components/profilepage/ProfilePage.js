@@ -3,55 +3,24 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import './profilepage.css';
 import AvatarSelectDialog from './AvatarSelectDialog';
-import { URL_USER_SVC } from '../../configs';
-import {
-  changePassword,
-  removeAvatarImage,
-  uploadAvatarImage,
-} from '../../api/user/user';
+import { removeAvatarImage, uploadAvatarImage } from '../../api/user/user';
 import UserContext from '../../contexts/UserContext';
+import DeleteAccount from './DeleteAccount';
+import ChangePassword from './ChangePassword';
 
 const ProfilePage = () => {
   const [isChangePassword, setIsChangePassword] = useState(false);
-  const [currPassword, setCurrPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [pwChangeFail, setPwChangeFail] = useState(false);
-  const [pwChangeFailMsg, setPwChangeFailMsg] = useState('');
+  const [isDeleteAccount, setIsDeleteAccount] = useState(false);
   const [isEditAvatar, setIsEditAvatar] = useState(false);
   const [selectedValue, setSelectedValue] = useState(null);
   const [imgCrop, setImgCrop] = useState(null);
-  const [storeImg, setStoreImg] = useState(null);
 
   const { user, imageUrl, setImageUrl } = useContext(UserContext);
 
-  const onClickDeleteAccount = async () => {};
-
-  const handleChangePassword = async () => {
-    if (newPassword !== confirmPassword) {
-      setPwChangeFailMsg('New passwords do not match');
-      return;
-    }
-    const changeResp = await changePassword(currPassword, confirmPassword);
-    if (!changeResp.isSuccess) {
-      setPwChangeFail(true);
-      setPwChangeFailMsg(changeResp.message);
-      return;
-    }
-
-    setIsChangePassword(false);
-  };
-
-  const onClickChangePassword = () => {
-    setIsChangePassword(!isChangePassword);
-  };
-
   const onClickProfile = () => {
-    console.log('hi');
     setIsEditAvatar(true);
   };
 
@@ -107,61 +76,25 @@ const ProfilePage = () => {
             {user}
           </Typography>
           {isChangePassword ? (
-            <>
-              <Box className='changePasswordBox'>
-                <TextField
-                  label='Current password'
-                  variant='outlined'
-                  type='password'
-                  size='small'
-                  margin='dense'
-                  onChange={(e) => setCurrPassword(e.target.value)}
-                />
-                <TextField
-                  label='New password'
-                  variant='outlined'
-                  type='password'
-                  size='small'
-                  margin='dense'
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-                <TextField
-                  label='Confirm new password'
-                  variant='outlined'
-                  type='password'
-                  size='small'
-                  margin='dense'
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-                {pwChangeFail && <div className='pwChangeFailMsg'>{pwChangeFailMsg}</div>}
-                <Box className='profilePageConfirmationBox'>
-                  <Button
-                    variant='outlined'
-                    color='error'
-                    onClick={onClickChangePassword}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    variant='contained'
-                    color='secondary'
-                    onClick={handleChangePassword}
-                  >
-                    Confirm
-                  </Button>
-                </Box>
-              </Box>
-            </>
+            <ChangePassword setShowChangePassword={setIsChangePassword} />
+          ) : isDeleteAccount ? (
+            <DeleteAccount setShowDeleteAccount={setIsDeleteAccount} />
           ) : (
             <>
               <Box className='profilePageConfirmationBox'>
-                <Button variant='outlined' color='error' onClick={onClickDeleteAccount}>
+                <Button
+                  variant='outlined'
+                  color='error'
+                  onClick={() => setIsDeleteAccount((prev) => !prev)}
+                  sx={{ borderWidth: '2px', marginRight: '5px' }}
+                >
                   Delete account
                 </Button>
                 <Button
                   variant='outlined'
                   color='secondary'
-                  onClick={onClickChangePassword}
+                  onClick={() => setIsChangePassword((prev) => !prev)}
+                  sx={{ marginLeft: '5px' }}
                 >
                   Change password
                 </Button>

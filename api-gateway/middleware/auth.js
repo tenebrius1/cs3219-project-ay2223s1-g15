@@ -14,7 +14,9 @@ export const authenticate = async (req, res, next) => {
       }
       next();
     })
-    .catch(() => res.status(401).json({ message: 'Missing JWT token' }));
+    .catch(() => {
+      res.status(401).json({ message: 'Missing JWT token' });
+    });
 };
 
 export default authenticate;

@@ -38,19 +38,27 @@ export const changePassword = async (currPassword, newPassword) => {
       }
     })
     .catch((err) => {
+      console.log(err.response.status);
       return { isSuccess: false, message: err.response.data.message };
     });
   return res;
 };
 
 export const deleteAccount = async (password) => {
-  await axios
-    .delete(URL_USER_SVC, {
+  const res = await axios
+    .delete(URL_USER_SVC + '/auth', {
       data: { password: password },
       withCredentials: true,
     })
-    .then((res) => {})
-    .catch((err) => {});
+    .then((res) => {
+      if (res && res.status === STATUS_CODE_OK) {
+        return { isSuccess: true, message: res.data.message };
+      }
+    })
+    .catch((err) => {
+      return { isSuccess: false, message: err.response.data.message };
+    });
+  return res;
 };
 
 export const uploadAvatarImage = async (imageURI) => {

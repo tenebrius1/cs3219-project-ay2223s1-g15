@@ -12,6 +12,7 @@ import {
   ormRemoveImage as _removeImage,
 } from '../model/user-orm.js';
 
+// requires email,username and password from client
 export const createUser = async (req, res) => {
   try {
     const { email, username, password } = req.body;
@@ -42,6 +43,7 @@ export const createUser = async (req, res) => {
   }
 };
 
+// does not require anything from client
 export const tokenLogin = async (req, res) => {
   try {
     const { token } = req.cookies;
@@ -66,6 +68,7 @@ export const tokenLogin = async (req, res) => {
   }
 };
 
+// requires username and password from client
 export const passwordLogin = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -91,6 +94,7 @@ export const passwordLogin = async (req, res) => {
   }
 };
 
+// does not require anything from client
 export const logout = async (req, res) => {
   try {
     const { token } = req.cookies;
@@ -104,6 +108,7 @@ export const logout = async (req, res) => {
   }
 };
 
+// requires password from client
 export const deleteUser = async (req, res) => {
   try {
     const { token } = req.cookies;
@@ -117,13 +122,14 @@ export const deleteUser = async (req, res) => {
         .status(200)
         .json({ message: 'Successfully deleted account ' + username });
     } else {
-      return res.status(401).json({ message: 'Unauthorized account deletion.' });
+      return res.status(401).json({ message: 'Incorrect password' });
     }
   } catch (err) {
     return res.status(500).json({ message: 'Failure when deleting account' });
   }
 };
 
+// requires currPassword and newPassword from client
 export const changePassword = async (req, res) => {
   try {
     const { tokenUsername, currPassword, newPassword } = req.body;
@@ -131,13 +137,14 @@ export const changePassword = async (req, res) => {
     if (isChanged) {
       return res.status(200).json({ message: 'Successfully updated password' });
     } else {
-      return res.status(401).json({ message: 'Unauthorized password change' });
+      return res.status(401).json({ message: 'Incorrect current password' });
     }
   } catch (err) {
     return res.status(500).json({ message: 'Failure when changing password' });
   }
 };
 
+// requires username from client
 export const requestPasswordReset = async (req, res) => {
   try {
     const { username } = req.body;
@@ -171,6 +178,7 @@ export const requestPasswordReset = async (req, res) => {
   }
 };
 
+// requires resetUsername and newPassword from client
 export const resetPassword = async (req, res) => {
   try {
     const { token } = req.cookies;
@@ -217,6 +225,7 @@ export const authToken = async (req, res) => {
   }
 };
 
+// requires imageURI from client
 export const uploadImage = async (req, res) => {
   try {
     const { tokenUsername, imageURI } = req.body;
@@ -230,6 +239,7 @@ export const uploadImage = async (req, res) => {
   }
 };
 
+// does not require anything from client
 export const removeImage = async (req, res) => {
   try {
     const { tokenUsername } = req.body;
