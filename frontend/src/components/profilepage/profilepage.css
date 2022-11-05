@@ -12,9 +12,15 @@
 }
 
 .profilePageConfirmationBox.MuiBox-root {
+<<<<<<< HEAD
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
+=======
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+>>>>>>> 3d8ee6b168eeb967d9432f6c20f7bdd43413572e
 }
 
 .changePasswordBox.MuiBox-root {
@@ -45,4 +51,23 @@
 
 .profilePageAdminPage {
   transform: translate(25px, 270px);
+}
+
+.profilePageTextField .MuiOutlinedInput-root fieldset {
+    border-color: rgb(192, 192, 192);
+}
+
+.profilePageTextField .MuiOutlinedInput-root.Mui-focused fieldset {
+    border-color: rgb(192, 192, 192);
+}
+
+.profilePageResponseMsg {
+    color:red;
+    font-size: 12px;
+    font-family: "Roboto",sans-serif;
+}
+
+.profilePageDeleteSuccess {
+    display: flex;
+    flex-direction: column;
 }

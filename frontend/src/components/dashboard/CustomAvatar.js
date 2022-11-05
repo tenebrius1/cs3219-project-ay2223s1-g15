@@ -1,22 +1,23 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Navigate } from "react-router-dom";
-import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Dialog from "@mui/material/Dialog";
+import Avatar from "@mui/material/Avatar";
+import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Avatar, DialogTitle } from "@mui/material";
-import { useAuth } from "../../contexts/AuthContext";
-import { STATUS_CODE_OK } from "../../constants";
+import UserContext from "../../contexts/UserContext";
 import ProfilePage from "../profilepage/ProfilePage";
+import { logout } from "../../api/user/auth";
 
 function CustomAvatar() {
   const [anchorElement, setAnchorElement] = useState(null);
   const [open, setOpen] = useState(false);
-  const auth = useAuth();
   const [isLogout, setIsLogout] = useState(false);
   const [isProfileClick, setIsProfileClick] = useState(false);
+
+  const { imageUrl } = useContext(UserContext);
 
   const handleClick = (event) => {
     setAnchorElement(event.currentTarget);
@@ -28,13 +29,11 @@ function CustomAvatar() {
   };
 
   const handleLogout = async () => {
-    await auth.logout().then((res) => {
-      if (res && res.status === STATUS_CODE_OK) {
-        setIsLogout(true);
-      } else {
-        setIsLogout(false);
-      }
-    });
+    if (await logout()) {
+      setIsLogout(true);
+    } else {
+      setIsLogout(false);
+    }
   };
 
   const handleProfileClick = () => {
@@ -50,7 +49,6 @@ function CustomAvatar() {
   ) : (
     <>
       <Avatar
-        component={Button}
         id="basic-button"
         aria-controls={open ? "basic-menu" : undefined}
         aria-haspopup="true"
@@ -59,6 +57,7 @@ function CustomAvatar() {
         sx={{
           minWidth: 0,
         }}
+        src={imageUrl}
       />
       <Menu
         id="basic-menu"

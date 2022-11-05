@@ -1,19 +1,18 @@
-import {
-  Box,
-  Button,
-  Card,
-  List,
-  ListItemText,
-  Divider,
-  ListItem,
-  Typography,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import "./dashboard.css";
-import { useState, useContext } from "react";
-import CustomAvatar from "./CustomAvatar";
-import RoomContext from "../../contexts/RoomContext";
-import { useAuth } from "../../contexts/AuthContext";
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import List from '@mui/material/List';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import Typography from '@mui/material/Typography';
+
+import { useNavigate } from 'react-router-dom';
+import './dashboard.css';
+import { useState, useContext } from 'react';
+import CustomAvatar from './CustomAvatar';
+import RoomContext from '../../contexts/RoomContext';
+import UserContext from '../../contexts/UserContext';
 
 function Dashboard() {
   const [buttonToggleEasy, setButtonToggleEasy] = useState(false);
@@ -22,12 +21,12 @@ function Dashboard() {
 
   const navigate = useNavigate();
   const { difficulty, setDifficulty } = useContext(RoomContext);
-  const { user } = useAuth();
+  const { user } = useContext(UserContext);
 
   const startMatch = async () => {
-    console.log("user", user);
-    console.log("difficulty", difficulty);
-    navigate("/matching", { replace: true });
+    console.log('user', user);
+    console.log('difficulty', difficulty);
+    navigate('/matching', { replace: true });
   };
 
   const toggleButtonEasy = (event) => {
@@ -39,9 +38,9 @@ function Dashboard() {
       setButtonToggleHard(false);
     }
     if (buttonToggleEasy) {
-      setDifficulty("");
+      setDifficulty('');
     } else {
-      setDifficulty("Easy");
+      setDifficulty('Easy');
     }
     setButtonToggleEasy(!buttonToggleEasy);
   };
@@ -55,9 +54,9 @@ function Dashboard() {
       setButtonToggleHard(false);
     }
     if (buttonToggleMedium) {
-      setDifficulty("");
+      setDifficulty('');
     } else {
-      setDifficulty("Medium");
+      setDifficulty('Medium');
     }
     setButtonToggleMedium(!buttonToggleMedium);
   };
@@ -71,70 +70,65 @@ function Dashboard() {
       setButtonToggleMedium(false);
     }
     if (buttonToggleHard) {
-      setDifficulty("");
+      setDifficulty('');
     } else {
-      setDifficulty("Hard");
+      setDifficulty('Hard');
     }
     setButtonToggleHard(!buttonToggleHard);
   };
 
-  const handleClickEasy = () => (buttonToggleEasy ? "contained" : "outlined");
-  const handleClickMedium = () =>
-    buttonToggleMedium ? "contained" : "outlined";
-  const handleClickHard = () => (buttonToggleHard ? "contained" : "outlined");
+  const handleClickEasy = () => (buttonToggleEasy ? 'contained' : 'outlined');
+  const handleClickMedium = () => (buttonToggleMedium ? 'contained' : 'outlined');
+  const handleClickHard = () => (buttonToggleHard ? 'contained' : 'outlined');
 
   return (
-    <Box className="mainDashboardBox">
-      <Box className="topBar">
-        <Typography component={"h3"} variant={"h5"}>
+    <Box className='mainDashboardBox'>
+      <Box className='topBar'>
+        <Typography component={'h3'} variant={'h5'}>
           PeerPrep
         </Typography>
         <CustomAvatar />
       </Box>
-      <Box className="mainContent">
-        <Box className="leftBox">
+      <Box className='mainContent'>
+        <Box className='leftBox'>
           <Typography>Practice History</Typography>
-          <List component="nav" aria-label="mailbox folders">
+          <List component='nav' aria-label='mailbox folders'>
             <Divider />
             <ListItem button>
               <Card>test</Card>
             </ListItem>
             <Divider />
             <ListItem button divider>
-              <ListItemText primary="Drafts" />
+              <ListItemText primary='Drafts' />
             </ListItem>
             <ListItem button>
-              <ListItemText primary="Trash" />
+              <ListItemText primary='Trash' />
             </ListItem>
           </List>
         </Box>
-        <Box className="rightBox">
-          <Typography
-            className="difficultyButton"
-            component={"h3"}
-            variant={"h5"}
-          >
+        <Box className='rightBox'>
+          <Typography className='difficultyButton' component={'h3'} variant={'h5'}>
             Difficulty
           </Typography>
           <Button
-            className="difficultyButton"
-            color={"success"}
+            className='difficultyButton'
+            color={'success'}
             variant={handleClickEasy()}
             onClick={toggleButtonEasy}
           >
             Easy
           </Button>
           <Button
-            className="difficultyButton"
-            color={"warning"}
+            className='difficultyButton'
+            color={'warning'}
             variant={handleClickMedium()}
             onClick={toggleButtonMedium}
           >
             Medium
           </Button>
           <Button
-            className="difficultyButton"
-            color={"error"}
+            className='difficultyButton'
+            color={'error'}
             variant={handleClickHard()}
             onClick={toggleButtonHard}
           >
@@ -142,21 +136,21 @@ function Dashboard() {
           </Button>
           {buttonToggleEasy || buttonToggleMedium || buttonToggleHard ? (
             <Button
-              className="queueUpButton"
-              color={"info"}
-              variant={"contained"}
+              className='queueUpButton'
+              color={'info'}
+              variant={'contained'}
               onClick={startMatch}
             >
               Practise
             </Button>
           ) : (
             <Button
-              className="queueUpButton"
-              color={"info"}
+              className='queueUpButton'
+              color={'info'}
               variant={
                 buttonToggleEasy || buttonToggleMedium || buttonToggleHard
-                  ? "contained"
-                  : "outlined"
+                  ? 'contained'
+                  : 'outlined'
               }
             >
               Practise
