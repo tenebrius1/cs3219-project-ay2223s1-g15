@@ -15,6 +15,14 @@
   },
   "scripts": {
     "lint": "npx eslint . --ext .js",
+    "install-dep": "npm install && run-s install-all:*",
+    "install-all:gateway": "cd api-gateway && npm install",
+    "install-all:coding": "cd coding-service && npm install",
+    "install-all:frontend": "cd frontend && npm install",
+    "install-all:matching": "cd matching-service && npm install",
+    "install-all:question": "cd question-service && npm install",
+    "install-all:user": "cd user-service && npm install",
+    "install-all:video": "cd video-service && npm install",
     "start": "docker-compose up --build -d",
     "stop": "docker-compose down"
   }

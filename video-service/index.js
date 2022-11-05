@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { generateAccessToken } from "./controller/video-controller.js";
+import { generateAccessToken } from "./controller/video-controller";
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));

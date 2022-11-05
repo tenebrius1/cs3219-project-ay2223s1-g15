@@ -9,9 +9,13 @@ import {
   changePassword,
   blacklist,
   isBlacklisted,
-} from "./repository.js";
+} from "./repository";
 
 // need to separate orm functions from repository to decouple business logic from persistence
+async function hashPassword(password) {
+  const hashed = await bcrypt.hash(password, 10);
+  return hashed;
+}
 
 export const ormCreateUser = async (email, username, password) => {
   try {
@@ -153,7 +157,7 @@ export const ormResetPassword = async (
     let user;
 
     // If provided token details match provided username
-    if (tokenUsername == username) {
+    if (tokenUsername === username) {
       user = await findUser(username);
     }
     if (user) {
@@ -182,8 +186,3 @@ export const ormAuthToken = async (jwtToken) => {
     return { err };
   }
 };
-
-async function hashPassword(password) {
-  const hashed = await bcrypt.hash(password, 10);
-  return hashed;
-}

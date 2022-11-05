@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
-import { matchWaitingUser, deleteWaitingUser, createWaitingUser } from "../controller/match-controller.js";
-import { httpServer } from "../index.js";
+import { matchWaitingUser, deleteWaitingUser, createWaitingUser } from "../controller/match-controller";
+import { httpServer } from "../index";
 
 export const startServer = () => {
   const io = new Server(httpServer, {
