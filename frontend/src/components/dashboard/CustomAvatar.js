@@ -15,7 +15,7 @@ function CustomAvatar() {
   const [anchorElement, setAnchorElement] = useState(null);
   const [open, setOpen] = useState(false);
   const auth = useAuth();
-  const [isLogout, setIsLogout] = useState(false)
+  const [isLogout, setIsLogout] = useState(false);
   const navgiate = useNavigate();
   const [isProfileClick, setIsProfileClick] = useState(false);
 
@@ -31,68 +31,68 @@ function CustomAvatar() {
   const handleLogout = async () => {
     await auth.logout().then(res => {
       if (res && res.status === STATUS_CODE_OK) {
-        setIsLogout(true)
+        setIsLogout(true);
       } else {
-        setIsLogout(false)
+        setIsLogout(false);
       }
     });
-  }
+  };
 
   const handleProfileClick = () => {
     // navgiate('/profile')
     setIsProfileClick(true);
-  }
+  };
 
   const handleProfileClose = () => {
     setIsProfileClick(false);
-  }
+  };
 
   return (
     (isLogout) ? (
       <Navigate to={"/"} replace />
-      ) : (
-        <>
-          <Avatar
-            component={Button}
-            id="basic-button"
-            aria-controls={open ? "basic-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            onClick={handleClick}
-            sx={{
-              minWidth: 0,
-            }}
-          />
-          <Menu
-            id="basic-menu"
-            anchorEl={anchorElement}
-            open={open}
-            onClose={handleClose}
-            MenuListProps={{
-              "aria-labelledby": "basic-button",
-            }}
-          >
-            <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
-            <MenuItem onClick={handleLogout}>
+    ) : (
+      <>
+        <Avatar
+          component={Button}
+          id="basic-button"
+          aria-controls={open ? "basic-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+          onClick={handleClick}
+          sx={{
+            minWidth: 0,
+          }}
+        />
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorElement}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+          }}
+        >
+          <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
+          <MenuItem onClick={handleLogout}>
               Logout
-            </MenuItem>
-          </Menu>
-          <Dialog
-            open={isProfileClick}
-            onClose={handleProfileClose}
-            fullWidth
-            PaperProps={{
-              sx: {
-                height: '90%',
-                maxHeight: '90%'
-              }
-            }}
-          >
-            <DialogTitle>Profile</DialogTitle>
-            <ProfilePage />
-          </Dialog>
+          </MenuItem>
+        </Menu>
+        <Dialog
+          open={isProfileClick}
+          onClose={handleProfileClose}
+          fullWidth
+          PaperProps={{
+            sx: {
+              height: "90%",
+              maxHeight: "90%"
+            }
+          }}
+        >
+          <DialogTitle>Profile</DialogTitle>
+          <ProfilePage />
+        </Dialog>
       </>
-      )
+    )
   );
 }
 

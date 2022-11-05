@@ -16,7 +16,7 @@ function a11yProps(index) {
 function CodingPage() {
   const [value, setValue] = useState(0);
   const [currentLanguage, setCurrentLanguage] = useState("python");
-  const [output, setOutput] = useState('Output');
+  const [output, setOutput] = useState("Output");
   const navigate = useNavigate();
 
   const handleChange = (event, newValue) => {
@@ -24,8 +24,8 @@ function CodingPage() {
   };
 
   const handleEndClick = () => {
-    navigate('/dashboard', { replace: true })
-  }
+    navigate("/dashboard", { replace: true });
+  };
 
   return (
     <Box className="mainCodingPageBox">

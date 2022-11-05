@@ -1,16 +1,16 @@
-import { createContext } from 'react';
-import io from 'socket.io-client';
+import { createContext } from "react";
+import io from "socket.io-client";
 
 const SocketContext = createContext({
-  matchingSocket: io(`http://localhost:8080`, {
+  matchingSocket: io("http://localhost:8080", {
     reconnection: true,
     reconnectionDelay: 1000,
-    path: '/matching',
+    path: "/matching",
   }),
-  codingSocket: io(`http://localhost:8080`, {
+  codingSocket: io("http://localhost:8080", {
     reconnection: true,
     reconnectionDelay: 1000,
-    path: '/coding',
+    path: "/coding",
   }),
 });
 

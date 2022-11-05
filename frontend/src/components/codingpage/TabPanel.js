@@ -11,10 +11,10 @@ function TabPanel({ children, value, index, ...other }) {
       {...other}
     >
       {value === index && (
-        <Box height={"70vh"} padding={"1%"} overflow={'auto'}>
+        <Box height={"70vh"} padding={"1%"} overflow={"auto"}>
           <Typography
             style={{
-              whiteSpace: 'pre-line',
+              whiteSpace: "pre-line",
             }}
           >
             {children}

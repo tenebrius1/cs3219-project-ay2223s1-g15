@@ -1,7 +1,7 @@
-import axios from 'axios';
-import { createContext, useContext, useState } from 'react';
-import { URL_USER_SVC } from '../configs';
-import { STATUS_CODE_OK } from '../constants';
+import axios from "axios";
+import { createContext, useContext, useState } from "react";
+import { URL_USER_SVC } from "../configs";
+import { STATUS_CODE_OK } from "../constants";
 
 const AuthContext = createContext({
   user: null,
@@ -25,7 +25,7 @@ const useProvideAuth = () => {
   const passwordLogin = async (username, password) => {
     const res = await axios
       .post(
-        URL_USER_SVC + '/passwordLogin',
+        URL_USER_SVC + "/passwordLogin",
         { username, password },
         { withCredentials: true }
       )
@@ -33,7 +33,7 @@ const useProvideAuth = () => {
         if (res && res.status === STATUS_CODE_OK) {
           setUser(res.data.username);
         } else {
-          console.log('invalid login');
+          console.log("invalid login");
           setUser(null);
         }
         return res;
@@ -46,7 +46,7 @@ const useProvideAuth = () => {
 
   const tokenLogin = async () => {
     const res = await axios
-      .post(URL_USER_SVC + '/auth/tokenLogin', {}, { withCredentials: true })
+      .post(URL_USER_SVC + "/auth/tokenLogin", {}, { withCredentials: true })
       .then((res) => {
         if (res && res.status === STATUS_CODE_OK) {
           setUser(res.data.username);
@@ -63,7 +63,7 @@ const useProvideAuth = () => {
 
   const logout = async () => {
     const res = await axios
-      .delete(URL_USER_SVC + '/auth/logout', { withCredentials: true })
+      .delete(URL_USER_SVC + "/auth/logout", { withCredentials: true })
       .then((res) => {
         if (res) {
           setUser(null);

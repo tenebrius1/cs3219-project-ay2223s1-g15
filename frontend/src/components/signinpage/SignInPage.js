@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect } from "react";
 import {
   Box,
   Button,
@@ -9,16 +9,16 @@ import {
   DialogTitle,
   TextField,
   Typography,
-} from '@mui/material';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+} from "@mui/material";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 function SignInPage() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [dialogTitle, setDialogTitle] = useState('');
-  const [dialogMsg, setDialogMsg] = useState('');
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMsg, setDialogMsg] = useState("");
   const [isSigninSuccess, setIsSigninSuccess] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
@@ -33,28 +33,28 @@ function SignInPage() {
 
   const setSuccessDialog = (msg) => {
     setIsDialogOpen(true);
-    setDialogTitle('Success');
+    setDialogTitle("Success");
     setDialogMsg(msg);
   };
 
   const setErrorDialog = (msg) => {
     setIsDialogOpen(true);
-    setDialogTitle('Error');
+    setDialogTitle("Error");
     setDialogMsg(msg);
   };
 
   const onSignUpClick = () => {
-    navigate('/signup')
-  }
+    navigate("/signup");
+  };
 
   useEffect(() => {
     if (auth.user) {
-      navigate('/dashboard', { replace: true });
+      navigate("/dashboard", { replace: true });
     } else {
       const loginWithToken = async () => {
         const res = await auth.tokenLogin();
         if (res) {
-          navigate('/dashboard', { replace: true });
+          navigate("/dashboard", { replace: true });
         }
       };
       loginWithToken();
@@ -98,33 +98,33 @@ function SignInPage() {
         <Box
           className="normalButtons"
           sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-evenly'
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-evenly"
           }}
         >
-          <Button variant={'outlined'} color={'secondary'} onClick={onSignUpClick}>Sign up</Button>
+          <Button variant={"outlined"} color={"secondary"} onClick={onSignUpClick}>Sign up</Button>
           <Button variant={"outlined"} color={"secondary"} onClick={handleSignin}>
             Sign in
           </Button>
         </Box>
 
-      <Dialog open={isDialogOpen} onClose={closeDialog}>
-        <DialogTitle>{dialogTitle}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>{dialogMsg}</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          {isSigninSuccess ? (
-            <Button component={Link} to='/login'>
+        <Dialog open={isDialogOpen} onClose={closeDialog}>
+          <DialogTitle>{dialogTitle}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>{dialogMsg}</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            {isSigninSuccess ? (
+              <Button component={Link} to='/login'>
               Log in
-            </Button>
-          ) : (
-            <Button onClick={closeDialog}>Done</Button>
-          )}
-        </DialogActions>
-      </Dialog>
-    </Box>
+              </Button>
+            ) : (
+              <Button onClick={closeDialog}>Done</Button>
+            )}
+          </DialogActions>
+        </Dialog>
+      </Box>
     )
   );
 }

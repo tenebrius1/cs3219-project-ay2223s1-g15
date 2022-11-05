@@ -51,7 +51,7 @@ function BasicTab({ output }) {
               InputProps={{
                 disableUnderline: true,
                 sx: {
-                  height: '70vh'
+                  height: "70vh"
                 }
               }}
               margin="none"

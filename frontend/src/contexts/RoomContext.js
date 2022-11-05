@@ -1,15 +1,15 @@
-import { createContext, useState } from 'react';
+import { createContext, useState } from "react";
 
 export const RoomContext = createContext({
-  difficulty: '',
+  difficulty: "",
   setDifficulty: (difficulty) => {},
-  roomId: '',
+  roomId: "",
   setRoomId: (roomId) => {},
 });
 
 export const RoomContextProvider = ({ children }) => {
-  const [difficulty, setDifficulty] = useState('');
-  const [roomId, setRoomId] = useState('');
+  const [difficulty, setDifficulty] = useState("");
+  const [roomId, setRoomId] = useState("");
 
   return (
     <RoomContext.Provider value={{ difficulty, setDifficulty, roomId, setRoomId }}>

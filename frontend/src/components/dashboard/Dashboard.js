@@ -1,12 +1,12 @@
-import { Box, Button, Card, List, ListItemText, Divider, ListItem, Typography } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
-import './dashboard.css';
-import { useState, useContext } from 'react';
-import CustomAvatar from './CustomAvatar';
-import RoomContext from '../../contexts/RoomContext';
-import { useAuth } from '../../contexts/AuthContext';
-import axios from 'axios';
-import { STATUS_CODE_BAD_REQ, STATUS_CODE_CREATED } from '../../constants';
+import { Box, Button, Card, List, ListItemText, Divider, ListItem, Typography } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import "./dashboard.css";
+import { useState, useContext } from "react";
+import CustomAvatar from "./CustomAvatar";
+import RoomContext from "../../contexts/RoomContext";
+import { useAuth } from "../../contexts/AuthContext";
+import axios from "axios";
+import { STATUS_CODE_BAD_REQ, STATUS_CODE_CREATED } from "../../constants";
 
 function Dashboard() {
   const [buttonToggleEasy, setButtonToggleEasy] = useState(false);
@@ -18,9 +18,9 @@ function Dashboard() {
   const { user } = useAuth();
 
   const startMatch = async () => {
-    console.log('user', user);
-    console.log('difficulty', difficulty);
-    navigate('/matching', { replace: true });
+    console.log("user", user);
+    console.log("difficulty", difficulty);
+    navigate("/matching", { replace: true });
   };
 
   const toggleButtonEasy = (event) => {
@@ -32,9 +32,9 @@ function Dashboard() {
       setButtonToggleHard(false);
     }
     if (buttonToggleEasy) {
-      setDifficulty('');
+      setDifficulty("");
     } else {
-      setDifficulty('Easy');
+      setDifficulty("Easy");
     }
     setButtonToggleEasy(!buttonToggleEasy);
   };
@@ -48,9 +48,9 @@ function Dashboard() {
       setButtonToggleHard(false);
     }
     if (buttonToggleMedium) {
-      setDifficulty('');
+      setDifficulty("");
     } else {
-      setDifficulty('Medium');
+      setDifficulty("Medium");
     }
     setButtonToggleMedium(!buttonToggleMedium);
   };
@@ -64,21 +64,21 @@ function Dashboard() {
       setButtonToggleMedium(false);
     }
     if (buttonToggleHard) {
-      setDifficulty('');
+      setDifficulty("");
     } else {
-      setDifficulty('Hard');
+      setDifficulty("Hard");
     }
     setButtonToggleHard(!buttonToggleHard);
   };
 
-  const handleClickEasy = () => (buttonToggleEasy ? 'contained' : 'outlined');
-  const handleClickMedium = () => (buttonToggleMedium ? 'contained' : 'outlined');
-  const handleClickHard = () => (buttonToggleHard ? 'contained' : 'outlined');
+  const handleClickEasy = () => (buttonToggleEasy ? "contained" : "outlined");
+  const handleClickMedium = () => (buttonToggleMedium ? "contained" : "outlined");
+  const handleClickHard = () => (buttonToggleHard ? "contained" : "outlined");
 
   return (
     <Box className='mainDashboardBox'>
       <Box className='topBar'>
-        <Typography component={'h3'} variant={'h5'}>
+        <Typography component={"h3"} variant={"h5"}>
           PeerPrep
         </Typography>
         <CustomAvatar />
@@ -103,12 +103,12 @@ function Dashboard() {
           </List>
         </Box>
         <Box className='rightBox'>
-          <Typography className='difficultyButton' component={'h3'} variant={'h5'}>
+          <Typography className='difficultyButton' component={"h3"} variant={"h5"}>
             Difficulty
           </Typography>
           <Button
             className='difficultyButton'
-            color={'success'}
+            color={"success"}
             variant={handleClickEasy()}
             onClick={toggleButtonEasy}
           >
@@ -116,7 +116,7 @@ function Dashboard() {
           </Button>
           <Button
             className='difficultyButton'
-            color={'warning'}
+            color={"warning"}
             variant={handleClickMedium()}
             onClick={toggleButtonMedium}
           >
@@ -124,7 +124,7 @@ function Dashboard() {
           </Button>
           <Button
             className='difficultyButton'
-            color={'error'}
+            color={"error"}
             variant={handleClickHard()}
             onClick={toggleButtonHard}
           >
@@ -133,14 +133,14 @@ function Dashboard() {
           {buttonToggleEasy || buttonToggleMedium || buttonToggleHard ? (
             <Button
               className='queueUpButton'
-              color={'info'}
-              variant={'contained'}
+              color={"info"}
+              variant={"contained"}
               onClick={startMatch}
             >
               Practise
             </Button>
           ) : (
-            <Button className='queueUpButton' color={'info'} variant={'contained'}>
+            <Button className='queueUpButton' color={"info"} variant={"contained"}>
               Practise
             </Button>
           )}
