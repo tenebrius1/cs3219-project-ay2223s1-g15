@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes } from "sequelize";
-import * as dotenv from 'dotenv'
-dotenv.config()
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const DATABASE_USERNAME = process.env.DATABASE_USERNAME;
 const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD;
@@ -8,20 +8,20 @@ const DATABASE_HOST = process.env.DATABASE_HOST;
 
 // init connection to azure mysql db
 export const sequelize = new Sequelize(
-  'questions-db',
+  "questions-db",
   DATABASE_USERNAME,
   DATABASE_PASSWORD,
   {
     host: DATABASE_HOST,
-    dialect: 'mysql'
+    dialect: "mysql"
   }
 );
 
 // check connection
 sequelize.authenticate().then(() => {
-  console.log('Connection has been established successfully.');
+  console.log("Connection has been established successfully.");
 }).catch((error) => {
-  console.error('Unable to connect to the database: ', error);
+  console.error("Unable to connect to the database: ", error);
 });
 
 export const Question = sequelize.define("questions", {

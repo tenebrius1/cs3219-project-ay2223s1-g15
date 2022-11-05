@@ -6,10 +6,10 @@ import {
   changePassword,
   blacklist,
   isBlacklisted,
-} from './repository.js';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-import nodemailer from 'nodemailer';
+} from "./repository.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import nodemailer from "nodemailer";
 
 // need to separate orm functions from repository to decouple business logic from persistence
 
@@ -27,7 +27,7 @@ export const ormCreateUser = async (email, username, password) => {
     newUser.save();
     return true;
   } catch (err) {
-    console.log('ERROR: Could not create new user');
+    console.log("ERROR: Could not create new user");
     return { err };
   }
 };
@@ -39,7 +39,7 @@ export const ormPasswordLogin = async (username, password) => {
     // If given credentials match database info, sign new JWT token
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = jwt.sign({ user_id: user._id, username }, process.env.JWT_TOKEN_KEY, {
-        expiresIn: '10d',
+        expiresIn: "10d",
       });
       return token;
     } else {
@@ -115,12 +115,12 @@ export const ormRequestPasswordReset = async (username) => {
       const resetToken = jwt.sign(
         { user: user._id, username },
         process.env.JWT_TOKEN_KEY,
-        { expiresIn: '1h' }
+        { expiresIn: "1h" }
       );
 
       // Connect to admin email account
       var transporter = nodemailer.createTransport({
-        service: 'gmail',
+        service: "gmail",
         auth: {
           user: process.env.GMAIL,
           pass: process.env.GMAIL_PW,
@@ -131,11 +131,11 @@ export const ormRequestPasswordReset = async (username) => {
       var mailOptions = {
         from: process.env.GMAIL,
         to: user.email,
-        subject: 'Confirm Password Reset',
+        subject: "Confirm Password Reset",
         html:
           `<p>Hi ${username},</p>` +
-          `<p>You requested to reset your password.</p>` +
-          `<p> Please, click the link below to reset your password</p>` +
+          "<p>You requested to reset your password.</p>" +
+          "<p> Please, click the link below to reset your password</p>" +
           `<a href="http://localhost:8000/confirmPasswordReset?token=${resetToken}&user=${username}">Reset Password</a>`,
       };
 

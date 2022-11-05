@@ -1,18 +1,18 @@
-import { Sequelize, DataTypes } from 'sequelize'
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { Sequelize, DataTypes } from "sequelize";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: path.join(__dirname, '../db/matches.sqlite'),
+  dialect: "sqlite",
+  storage: path.join(__dirname, "../db/matches.sqlite"),
   logging: false
 });
 
 // model for pending match
-export const pendingMatch = sequelize.define('pendingMatch', {
+export const pendingMatch = sequelize.define("pendingMatch", {
   userName: {
     type: DataTypes.STRING,
     allowNull: false
@@ -29,7 +29,7 @@ export const pendingMatch = sequelize.define('pendingMatch', {
 });
 
 // model for matched users
-export const match = sequelize.define('match', {
+export const match = sequelize.define("match", {
   firstUser: {
     type: DataTypes.STRING,
     allowNull: false

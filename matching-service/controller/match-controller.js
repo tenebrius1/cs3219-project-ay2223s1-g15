@@ -2,7 +2,7 @@ import {
   ormCreateWaitingUser as _createWaitingUser,
   ormCreateMatchedUsers as _persistMatchedUsers,
   ormDeleteWaitingUser as _deleteWaitingUser
-} from '../model/match-orm.js'
+} from "../model/match-orm.js";
 
 export const createWaitingUser = async (username, difficulty, socketId) => {
   try {
@@ -18,7 +18,7 @@ export const createWaitingUser = async (username, difficulty, socketId) => {
     console.error(err);
     return false;
   }
-}
+};
 
 export const deleteWaitingUser = async (username) => {
   try {
@@ -33,7 +33,7 @@ export const deleteWaitingUser = async (username) => {
     console.error(err);
     return false;
   }
-}
+};
 
 export const matchWaitingUser = async (username) => {
   try {
@@ -46,6 +46,6 @@ export const matchWaitingUser = async (username) => {
     }
   } catch (err) {
     console.error(err);
-    return false
+    return false;
   }
-}
+};

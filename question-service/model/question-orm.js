@@ -1,4 +1,4 @@
-import { createQuestion, getRandomQuestion } from './repository.js'
+import { createQuestion, getRandomQuestion } from "./repository.js";
 
 export const ormCreateNewQuestion = async (title, difficulty, description, example, constraint) => {
   try {
@@ -7,10 +7,10 @@ export const ormCreateNewQuestion = async (title, difficulty, description, examp
     return true;
   } catch (err) {
     console.error(err);
-    console.log('ERROR: Could not create a new question');
+    console.log("ERROR: Could not create a new question");
     return { err };
   }
-}
+};
 
 export const ormGetRandomQuestion = async (difficulty) => {
   try {
@@ -20,4 +20,4 @@ export const ormGetRandomQuestion = async (difficulty) => {
     console.error(err);
     return { err };
   }
-}
+};

@@ -1,0 +1,21 @@
+{
+  "name": "peerprep",
+  "version": "0.0.1",
+  "description": "PeerPrep",
+  "repository": "https://github.com/CS3219-AY2223S1/cs3219-project-ay2223s1-g15",
+  "author": "Team 15",
+  "private": true,
+  "devDependencies": {
+    "eslint": "^8.26.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-react": "^7.31.10",
+    "eslint-plugin-react-hooks": "^4.6.0"
+  },
+  "scripts": {
+    "lint": "npx eslint . --ext .js",
+    "start": "docker-compose -f docker-compose.yml up",
+    "stop": "docker-compose -f docker-compose.yml down"
+  }
+}

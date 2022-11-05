@@ -1,17 +1,17 @@
-import { sequelize, pendingMatch, match } from './match-model.js'
-import { Op } from 'sequelize'
-import { v4 as uuidv4 } from 'uuid';
+import { sequelize, pendingMatch, match } from "./match-model.js";
+import { Op } from "sequelize";
+import { v4 as uuidv4 } from "uuid";
 
 // init database, remember to set force: false on production server!
 sequelize
-  .sync({force: true})
+  .sync({force: true});
 
 const TIMEOUT_DURATION = 30000;
 
 export const createWaitingUser = async (username, difficultylevel, socketId) => {
   const waitingUser = pendingMatch.build({ userName: username, difficultyLevel: difficultylevel, socketId: socketId });
   return waitingUser;
-}
+};
 
 export const deleteWaitingUser = async (username) => {
   await pendingMatch.destroy({
@@ -19,7 +19,7 @@ export const deleteWaitingUser = async (username) => {
       userName: username
     }
   });
-}
+};
 
 const _deleteWaitingUsers = async (currentUser, matchedUser) => {
   await pendingMatch.destroy({
@@ -34,7 +34,7 @@ const _deleteWaitingUsers = async (currentUser, matchedUser) => {
       difficultyLevel: matchedUser.difficultyLevel
     }
   });
-}
+};
 
 const _userStillWaiting = async (username) => {
   const user = await pendingMatch.findOne({
@@ -44,7 +44,7 @@ const _userStillWaiting = async (username) => {
   });
 
   return user !== null;
-}
+};
 
 export const matchWaitingUser = async (username) => {
   // finds the current user that wants to be matched in the database
@@ -56,7 +56,7 @@ export const matchWaitingUser = async (username) => {
 
   // handle scenario where user cant be found
   if (currentUser === null) {
-    console.log('Could not find current user');
+    console.log("Could not find current user");
     return null;
   }
 
@@ -73,9 +73,9 @@ export const matchWaitingUser = async (username) => {
 
   // handle scenario where a matched user cannot be found
   if (matchedUser === null) {
-    console.log('Could not find a match');
+    console.log("Could not find a match");
     setTimeout(() => {
-      console.log('Removing user due to timeout.');
+      console.log("Removing user due to timeout.");
       if (_userStillWaiting(username)) 
         deleteWaitingUser(username);
     }, TIMEOUT_DURATION);
@@ -89,9 +89,9 @@ export const matchWaitingUser = async (username) => {
     firstUserSocketId: currentUser.socketId,
     secondUserSocketId: matchedUser.socketId,
     roomId: uuidv4()
-  }
+  };
   const matchedUsers = match.build(matchUserObject);
   _deleteWaitingUsers(currentUser, matchedUser);
 
   return matchedUsers;
-}
+};
