@@ -14,6 +14,7 @@
 .profilePageConfirmationBox.MuiBox-root {
     display: flex;
     justify-content: space-between;
+    margin-top: 10px;
 }
 
 .changePasswordBox.MuiBox-root {
@@ -44,4 +45,23 @@
 
 .profilePageAdminPage {
     transform: translate(10px, 290px);
+}
+
+.profilePageTextField .MuiOutlinedInput-root fieldset {
+    border-color: rgb(192, 192, 192);
+}
+
+.profilePageTextField .MuiOutlinedInput-root.Mui-focused fieldset {
+    border-color: rgb(192, 192, 192);
+}
+
+.profilePageResponseMsg {
+    color:red;
+    font-size: 12px;
+    font-family: "Roboto",sans-serif;
+}
+
+.profilePageDeleteSuccess {
+    display: flex;
+    flex-direction: column;
 }

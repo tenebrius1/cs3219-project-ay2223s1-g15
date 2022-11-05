@@ -6,6 +6,8 @@ import {
   changePassword,
   blacklist,
   isBlacklisted,
+  uploadImage,
+  removeImage,
 } from './repository.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
@@ -41,9 +43,9 @@ export const ormPasswordLogin = async (username, password) => {
       const token = jwt.sign({ user_id: user._id, username }, process.env.JWT_TOKEN_KEY, {
         expiresIn: '10d',
       });
-      return token;
+      return { user: user, userToken: token };
     } else {
-      return null;
+      return {};
     }
   } catch (err) {
     return { err };
@@ -53,14 +55,15 @@ export const ormPasswordLogin = async (username, password) => {
 export const ormTokenLogin = async (jwtToken) => {
   try {
     // If given JWT token is not blacklisted, then verify the token
-    if (!(await isBlacklisted(jwtToken))) {
+    if ((await isBlacklisted(jwtToken)) === null) {
       const decodedToken = jwt.verify(jwtToken, process.env.JWT_TOKEN_KEY);
-      return decodedToken.username;
+      const user = await findUser(decodedToken.username);
+      return { user: user };
     } else {
       null;
     }
   } catch (err) {
-    return null;
+    return { err };
   }
 };
 
@@ -90,12 +93,11 @@ export const ormChangePassword = async (username, currPassword, newPassword) => 
   try {
     // Check if the user exists.
     const user = await findUser(username);
-
     // If user exists and the given password matches
     if (user && (await bcrypt.compare(currPassword, user.password))) {
-      const hashedPassword = hashPassword(newPassword);
-      await changePassword(username, hashedPassword);
-      return true;
+      const hashedPassword = await hashPassword(newPassword);
+      const updateResp = await changePassword(username, hashedPassword);
+      return updateResp !== null;
     } else {
       return false;
     }
@@ -185,6 +187,30 @@ export const ormAuthToken = async (jwtToken) => {
     } else {
       return null;
     }
+  } catch (err) {
+    return { err };
+  }
+};
+
+export const ormUploadImage = async (username, imageURI) => {
+  try {
+    const { updateResp, imageUrl } = await uploadImage(username, imageURI);
+    if (updateResp === null) {
+      return null;
+    }
+    return imageUrl;
+  } catch (err) {
+    return { err };
+  }
+};
+
+export const ormRemoveImage = async (username) => {
+  try {
+    const { updateResp, isSuccess } = await removeImage(username);
+    if (updateResp === null) {
+      return false;
+    }
+    return isSuccess;
   } catch (err) {
     return { err };
   }

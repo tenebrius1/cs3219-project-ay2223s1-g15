@@ -8,8 +8,11 @@ import {
   ormRequestPasswordReset as _requestPasswordReset,
   ormResetPassword as _resetPassword,
   ormAuthToken as _authToken,
+  ormUploadImage as _uploadImage,
+  ormRemoveImage as _removeImage,
 } from '../model/user-orm.js';
 
+// requires email,username and password from client
 export const createUser = async (req, res) => {
   try {
     const { email, username, password } = req.body;
@@ -40,15 +43,32 @@ export const createUser = async (req, res) => {
   }
 };
 
+// does not require anything from client
 export const tokenLogin = async (req, res) => {
-  const { tokenUsername } = req.body;
-  console.log(tokenUsername);
-  return res.status(200).json({
-    message: 'Successfully logged in using JWT Token',
-    username: tokenUsername,
-  });
+  try {
+    const { token } = req.cookies;
+    if (token) {
+      const { user } = await _tokenLogin(token);
+      if (user.err) {
+        return res.status(401).json({ message: 'Invalid JWT token' });
+      }
+      if (user === null) {
+        return res.status(401).json({ message: 'JWT token provided was blacklisted' });
+      }
+      return res.status(200).json({
+        message: 'Successfully authenticated',
+        user: user,
+      });
+    } else {
+      return res.status(400).json({ message: 'Missing JWT token' });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: 'Failure when authenticating' });
+  }
 };
 
+// requires username and password from client
 export const passwordLogin = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -56,7 +76,7 @@ export const passwordLogin = async (req, res) => {
       return res.status(401).json({ message: 'Username and/or Password are missing!' });
     }
 
-    const userToken = await _passwordLogin(username, password);
+    const { user, userToken } = await _passwordLogin(username, password);
     if (userToken) {
       // Login is successful. Clear previous token if exist store JWT token in user's cookies.
       res.clearCookie('token');
@@ -65,7 +85,7 @@ export const passwordLogin = async (req, res) => {
         secure: true,
         sameSite: 'none',
       });
-      return res.status(200).json({ username: username, token: userToken });
+      return res.status(200).json({ user: user, token: userToken });
     } else {
       return res.status(401).json({ message: 'Invalid Credentials!' });
     }
@@ -74,6 +94,7 @@ export const passwordLogin = async (req, res) => {
   }
 };
 
+// does not require anything from client
 export const logout = async (req, res) => {
   try {
     const { token } = req.cookies;
@@ -87,6 +108,7 @@ export const logout = async (req, res) => {
   }
 };
 
+// requires password from client
 export const deleteUser = async (req, res) => {
   try {
     const { token } = req.cookies;
@@ -100,28 +122,29 @@ export const deleteUser = async (req, res) => {
         .status(200)
         .json({ message: 'Successfully deleted account ' + username });
     } else {
-      return res.status(401).json({ message: 'Unauthorized account deletion.' });
+      return res.status(401).json({ message: 'Incorrect password' });
     }
   } catch (err) {
     return res.status(500).json({ message: 'Failure when deleting account' });
   }
 };
 
+// requires currPassword and newPassword from client
 export const changePassword = async (req, res) => {
   try {
     const { tokenUsername, currPassword, newPassword } = req.body;
     const isChanged = await _updatePassword(tokenUsername, currPassword, newPassword);
-
     if (isChanged) {
       return res.status(200).json({ message: 'Successfully updated password' });
     } else {
-      return res.status(401).json({ message: 'Unauthorized password change' });
+      return res.status(401).json({ message: 'Incorrect password' });
     }
   } catch (err) {
     return res.status(500).json({ message: 'Failure when changing password' });
   }
 };
 
+// requires username from client
 export const requestPasswordReset = async (req, res) => {
   try {
     const { username } = req.body;
@@ -155,6 +178,7 @@ export const requestPasswordReset = async (req, res) => {
   }
 };
 
+// requires resetUsername and newPassword from client
 export const resetPassword = async (req, res) => {
   try {
     const { token } = req.cookies;
@@ -177,6 +201,7 @@ export const resetPassword = async (req, res) => {
   }
 };
 
+// For API gateway auth
 export const authToken = async (req, res) => {
   try {
     const { token } = req.cookies;
@@ -197,5 +222,33 @@ export const authToken = async (req, res) => {
     }
   } catch (err) {
     return res.status(500).json({ message: 'Failure when authenticating' });
+  }
+};
+
+// requires imageURI from client
+export const uploadImage = async (req, res) => {
+  try {
+    const { tokenUsername, imageURI } = req.body;
+    const resp = await _uploadImage(tokenUsername, imageURI);
+    if (resp === null || resp.err) {
+      return res.status(400).json({ message: 'Image upload failed' });
+    }
+    return res.status(200).json({ message: 'Image upload success', imageUrl: resp });
+  } catch (err) {
+    return res.status(500).json({ message: 'Failure when uploading image' });
+  }
+};
+
+// does not require anything from client
+export const removeImage = async (req, res) => {
+  try {
+    const { tokenUsername } = req.body;
+    const resp = await _removeImage(tokenUsername);
+    if (!resp || resp.err) {
+      return res.status(400).json({ message: 'Image removal failed' });
+    }
+    return res.status(200).json({ message: 'Image removal success' });
+  } catch (err) {
+    return res.status(500).json({ message: 'Failure when removing image' });
   }
 };

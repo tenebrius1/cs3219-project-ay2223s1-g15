@@ -1,12 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Grid, Typography, Zoom } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Zoom from '@mui/material/Zoom';
 import { useState, useEffect, useContext } from 'react';
 import { COUNTDOWN_DURATION } from '../../constants';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import './matchingpage.css';
 import RoomContext from '../../contexts/RoomContext';
-import { useAuth } from '../../contexts/AuthContext';
+import UserContext from '../../contexts/UserContext';
 import SocketContext from '../../contexts/SocketContext';
 
 function MatchingPage() {
@@ -17,7 +21,7 @@ function MatchingPage() {
   const navigate = useNavigate();
 
   const { difficulty, setRoomId } = useContext(RoomContext);
-  const auth = useAuth();
+  const { user } = useContext(UserContext);
   const { matchingSocket, codingSocket } = useContext(SocketContext);
 
   useEffect(() => {
@@ -27,7 +31,7 @@ function MatchingPage() {
   //Send match event when countdown timer starts
   useEffect(() => {
     console.log('match event sent');
-    matchingSocket.emit('match', auth.user, difficulty);
+    matchingSocket.emit('match', user, difficulty);
   }, [key]);
 
   useEffect(() => {
@@ -73,7 +77,7 @@ function MatchingPage() {
   };
 
   const handleBack = () => {
-    matchingSocket.emit('matchCancel', auth.user);
+    matchingSocket.emit('matchCancel', user);
     navigate('/dashboard', { replace: true });
   };
 
