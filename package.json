@@ -15,7 +15,7 @@
   },
   "scripts": {
     "lint": "npx eslint . --ext .js",
-    "start": "docker-compose -f docker-compose.yml up",
-    "stop": "docker-compose -f docker-compose.yml down"
+    "start": "docker-compose up --build -d",
+    "stop": "docker-compose down"
   }
 }
