@@ -87,7 +87,7 @@ function SignupPage() {
     <Box className="mainBox">
       <Box className="signUpBox">
         <Typography variant={"h3"} marginBottom={"2rem"}>
-          Sign Up
+          Sign up
         </Typography>
       </Box>
       <Box className="textFieldBox">
@@ -121,27 +121,31 @@ function SignupPage() {
           sx={{ marginBottom: "2rem" }}
           required
         />
-      </Box>
-      <Box
-        className="normalButton"
-        display={"flex"}
-        flexDirection={"row"}
-        justifyContent={"space-between"}
-      >
-        <Box sx={{display: 'flex'}}>
-          <Typography>Already have an account?&nbsp;</Typography>
-          <Typography
-            component={Link}
-            to="/login"
-            variant="outlined"
-            color="secondary"
+        <Box
+          className="normalButton"
+          display={"flex"}
+          flexDirection={"row"}
+          justifyContent={"space-between"}
+        >
+          <Box sx={{ display: "flex" }}>
+            <Typography>Already have an account?&nbsp;</Typography>
+            <Typography
+              component={Link}
+              to="/login"
+              variant="outlined"
+              color="secondary"
+            >
+              Log in
+            </Typography>
+          </Box>
+          <Button
+            variant={"contained"}
+            color={"secondary"}
+            onClick={handleSignup}
           >
-            Log in
-          </Typography>
+            Sign up
+          </Button>
         </Box>
-        <Button variant={"outlined"} color={"secondary"} onClick={handleSignup}>
-          Sign up
-        </Button>
       </Box>
 
       <Dialog open={isDialogOpen} onClose={closeDialog}>
