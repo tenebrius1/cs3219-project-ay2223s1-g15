@@ -4,6 +4,8 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Dialog from "@mui/material/Dialog";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 import { Avatar, DialogTitle } from "@mui/material";
 import { useAuth } from "../../contexts/AuthContext";
 import { STATUS_CODE_OK } from "../../constants";
@@ -81,7 +83,22 @@ function CustomAvatar() {
           },
         }}
       >
-        <DialogTitle>Profile</DialogTitle>
+        <DialogTitle>
+          Profile
+          {handleProfileClose ? (
+            <IconButton
+              onClick={handleProfileClose}
+              sx={{
+                position: "absolute",
+                right: 12,
+                top: 12,
+                color: "#D8DEE9",
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          ) : null}
+        </DialogTitle>
         <ProfilePage />
       </Dialog>
     </>

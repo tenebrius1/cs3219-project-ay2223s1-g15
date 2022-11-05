@@ -6,6 +6,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import "./profilepage.css";
 import AvatarSelectDialog from "./AvatarSelectDialog";
 import { URL_USER_SVC } from "../../configs";
+import DeleteAccountDialog from "./DeleteAccountDialog";
 
 const ProfilePage = () => {
   const { user } = useAuth();
@@ -17,9 +18,14 @@ const ProfilePage = () => {
   const [selectedValue, setSelectedValue] = useState(null);
   const [imgCrop, setImgCrop] = useState(null);
   const [storeImg, setStoreImg] = useState(null);
+  const [isDeleteAccount, setIsDeleteAccount] = useState(false);
 
-  const onClickDeleteAccount = async () => {
-    await axios.delete("/");
+  const onClickDeleteAccount = () => {
+    setIsDeleteAccount(true);
+  };
+
+  const handleCancelDeleteAccount = () => {
+    setIsDeleteAccount(false);
   };
 
   const handleChangePassword = async () => {
@@ -41,7 +47,6 @@ const ProfilePage = () => {
   };
 
   const onClickProfile = () => {
-    console.log("hi");
     setIsEditAvatar(true);
   };
 
@@ -140,6 +145,7 @@ const ProfilePage = () => {
                   variant="outlined"
                   color="error"
                   onClick={onClickDeleteAccount}
+                  sx={{ marginRight: "40px" }}
                 >
                   Delete account
                 </Button>
@@ -163,6 +169,10 @@ const ProfilePage = () => {
         saveImage={saveImage}
         restoreDefault={restoreDefault}
         handleDialogClose={handleDialogClose}
+      />
+      <DeleteAccountDialog
+        open={isDeleteAccount}
+        onClose={handleCancelDeleteAccount}
       />
     </Box>
   );
