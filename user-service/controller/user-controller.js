@@ -83,13 +83,15 @@ export const passwordLogin = async (req, res) => {
       res.cookie('token', userToken, {
         httpOnly: true,
         secure: true,
-        sameSite: 'none',
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 24 * 7 * 1000,
       });
       return res.status(200).json({ user: user, token: userToken });
     } else {
       return res.status(401).json({ message: 'Invalid Credentials!' });
     }
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ message: 'Login failed!' });
   }
 };
@@ -144,57 +146,73 @@ export const changePassword = async (req, res) => {
   }
 };
 
-// requires username from client
+// requires email from client
 export const requestPasswordReset = async (req, res) => {
   try {
-    const { username } = req.body;
-    if (username) {
-      const resp = await _requestPasswordReset(username);
-      if (resp.err) {
-        return res.status(500).json({ message: 'Unable to request for password reset' });
+    const { email } = req.body;
+    if (email) {
+      const resp = await _requestPasswordReset(email);
+      if (!resp) {
+        return res
+          .status(400)
+          .json({ message: 'Email provided does not have an account.' });
       }
 
-      if (!resp) {
-        return res.status(400).json({ message: 'Username provided does not exist' });
+      if (resp.err) {
+        return res.status(500).json({
+          message: 'Unable to request for password reset. Please try again later.',
+        });
       }
 
       const { transporter, mailOptions } = resp;
       transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
-          return res
-            .status(500)
-            .json({ message: 'Error when sending password reset email' });
+          return res.status(500).json({
+            message: 'Error when sending password reset email. Please try again later.',
+          });
         } else {
-          return res.status(200).json({ message: 'Email sent: ' + info.response });
+          return res
+            .status(200)
+            .json({ message: `Email sent to ${email}`, info: info.response });
         }
       });
     } else {
-      return res.status(400).json({ message: 'Username is missing' });
+      return res.status(400).json({ message: 'Email is missing' });
     }
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: 'Failure when requesting for password reset' });
+    return res.status(500).json({
+      message: 'Failure when requesting for password reset. Please try again later.',
+    });
   }
 };
 
-// requires resetUsername and newPassword from client
+// requires newPassword from client
 export const resetPassword = async (req, res) => {
   try {
-    const { token } = req.cookies;
-    const { username, newPassword, tokenUsername } = req.body;
-    if (username && newPassword) {
-      const resp = await _resetPassword(username, newPassword, tokenUsername, token);
-      if (resp.err) {
-        return res.status(500).json({ message: 'Unable to reset password' });
+    const authHeader = req.headers.authorization;
+    var resetToken = '';
+    if (authHeader.startsWith('Bearer ')) {
+      resetToken = authHeader.substring(7, authHeader.length);
+    } else {
+      return res.status(400).json({ message: 'Missing reset token.' });
+    }
+
+    const { newPassword } = req.body;
+    if (newPassword) {
+      const resp = await _resetPassword(newPassword, resetToken);
+      if (resp === null) {
+        return res.status(400).json({ message: 'Cannot find user.' });
       }
 
-      if (resp) {
-        return res.status(200).json({ message: 'Password successfully reset!' });
+      if (!resp) {
+        return res.status(401).json({ message: 'Reset token is blacklisted.' });
       }
-      return res.status(400).json({ message: 'Token details do not match username' });
+      if (resp.err) {
+        return res.status(401).json({ message: 'Invalid reset token.' });
+      }
+      return res.status(200).json({ message: 'Password successfully reset!' });
     } else {
-      return res.status(400).json({ message: 'Token/Username/newPassword is missing' });
+      return res.status(400).json({ message: 'Please enter your new password.' });
     }
   } catch (err) {
     return res.status(500).json({ message: 'Failure when resetting password' });

@@ -43,6 +43,7 @@ router.post('/', createUser);
 router.post('/passwordLogin', passwordLogin);
 router.post('/tokenLogin', tokenLogin);
 router.post('/requestPasswordReset', requestPasswordReset);
+router.post('/resetPassword', resetPassword);
 
 // For frontend testing
 router.post('/python', (req, res) => {
@@ -55,7 +56,6 @@ app.use('/user', router);
 authRouter.put('/changePW', changePassword);
 authRouter.delete('/', deleteUser);
 authRouter.delete('/logout', logout);
-authRouter.post('/resetPassword', resetPassword);
 authRouter.post('/uploadImage', uploadImage);
 authRouter.delete('/removeImage', removeImage);
 
