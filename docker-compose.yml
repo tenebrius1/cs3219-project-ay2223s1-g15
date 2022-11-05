@@ -1,9 +1,30 @@
 version: '3.8'
 
-x-common-variables: &common-variables
+# back-end variables
+x-common-variables: &common-backend-variables
   ENV: PROD
+  USER_URL: http://user:8000
+  MATCHING_URL: http://matching:8001
+  CODING_URL: http://coding:8002
+  VIDEO_URL: http://video:8003
+  QUESTION_URL: http://question:8004
+  HISTORY_URL: http://history:8005
 
 services:
+  gateway:
+    container_name: gateway
+    build:
+      dockerfile: Dockerfile
+      context: ./api-gateway
+    volumes:
+      - ./gateway:/home/node/app/gateway
+    ports:
+      - 8080:8080
+    restart: on-failure
+    environment:
+      <<: *common-backend-variables
+      HTTP_PROXY: 'http://localhost:8080'
+
   frontend: 
     container_name: frontend
     build: 
@@ -14,61 +35,59 @@ services:
     ports:
       - 3000:3000
     restart: on-failure
-    environment:
-      <<: *common-variables
-
-  matching:
-    container_name: matching_service
-    build:
-      dockerfile: Dockerfile
-      context: ./matching-service
-    volumes:
-      - ./matching-service:/home/node/app/matching
-    ports:
-      - 8001:8001
-    restart: on-failure
-    environment:
-      <<: *common-variables
-
+      
   user:
-    container_name: user_service
+    container_name: user
     build:
       dockerfile: Dockerfile
       context: ./user-service
     volumes:
       - ./user-service:/home/node/app/user-service
-    ports: 
-      - 8000:8000
+    expose:
+      - 8000
     restart: on-failure
     environment:
-      <<: *common-variables
+      <<: *common-backend-variables
       DB_CLOUD_URI: 'mongodb+srv://cs3219-g15:cs3219-g15@cs3219-g15.ryvsrmt.mongodb.net/?retryWrites=true&w=majority'
-  
+
+  matching:
+    container_name: matching
+    build:
+      dockerfile: Dockerfile
+      context: ./matching-service
+    volumes:
+      - ./matching-service:/home/node/app/matching
+    expose:
+       - 8001
+    restart: on-failure
+    environment:
+      <<: *common-backend-variables
+
   coding:
-    container_name: coding_service
+    container_name: coding
     build:
       dockerfile: Dockerfile
       context: ./coding-service
     volumes:
-      - ./matching-service:/home/node/app/coding-service
-    ports:
-      - 8002:8002
+      - ./coding-service:/home/node/app/coding-service
+    expose:
+    - 8002
     restart: on-failure
     environment:
-      <<: *common-variables
+      <<: *common-backend-variables
     
   question:
-    container_name: question_serive
+    container_name: question
     build:
       dockerfile: Dockerfile
       context: ./question-service
     volumes:
-      - ./matching-service:/home/node/app/coding-service
-    ports:
-      - 8004:8004
+      - ./question-service:/home/node/app/question_service
+    expose:
+      - 8004
     restart: on-failure
     environment:
-      <<: *common-variables
+      <<: *common-backend-variables
 
   # Used for local dev
   # mongo:

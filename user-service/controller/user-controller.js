@@ -42,7 +42,7 @@ export const createUser = async (req, res) => {
 
 export const tokenLogin = async (req, res) => {
   const { tokenUsername } = req.body;
-
+  console.log(tokenUsername);
   return res.status(200).json({
     message: 'Successfully logged in using JWT Token',
     username: tokenUsername,

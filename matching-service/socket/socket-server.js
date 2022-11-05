@@ -9,14 +9,16 @@ export const startServer = () => {
     cors: {
       origin: '*',
     },
+    path: '/matching',
   });
 
   io.on('connection', (socket) => {
-    console.log('User connected');
+    console.log('User connected to matching-service');
 
     // listen to match event
     socket.on('match', async (username, difficulty) => {
       // puts user in queue and tries to match user
+      console.log('match received');
       if (await createWaitingUser(username, difficulty, socket.id)) {
         const { roomId, firstUserSocketId, secondUserSocketId } = await matchWaitingUser(
           username
@@ -37,5 +39,7 @@ export const startServer = () => {
     socket.on('matchCancel', async (username) => {
       deleteWaitingUser(username);
     });
+
+    socket.on('disconnect', () => console.log('User disconnected from matching-service'));
   });
 };

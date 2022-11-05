@@ -14,12 +14,13 @@ const io = new Server(server, {
   cors: {
     origin: '*',
   },
+  path: '/coding',
 });
 
 var PORT = process.env.PORT || 8002;
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+app.get('/coding', (req, res) => {
+  res.send('Hello World from coding-service');
 });
 
 io.on('connection', (socket) => {
