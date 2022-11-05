@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-var Schema = mongoose.Schema;
-let UserModelSchema = new Schema({
+
+const { Schema } = mongoose;
+const UserModelSchema = new Schema({
   email: {
     type: String,
     required: true,

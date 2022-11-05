@@ -1,7 +1,6 @@
 import { Server } from "socket.io";
-import { matchWaitingUser, deleteWaitingUser } from "../controller/match-controller.js";
+import { matchWaitingUser, deleteWaitingUser, createWaitingUser } from "../controller/match-controller.js";
 import { httpServer } from "../index.js";
-import { createWaitingUser } from "../controller/match-controller.js";
 
 export const startServer = () => {
   const io = new Server(httpServer, {
@@ -21,7 +20,7 @@ export const startServer = () => {
       console.log("match received");
       if (await createWaitingUser(username, difficulty, socket.id)) {
         const { roomId, firstUserSocketId, secondUserSocketId } = await matchWaitingUser(
-          username
+          username,
         );
         if (roomId) {
           io.to(firstUserSocketId).to(secondUserSocketId).emit("matchSuccess", roomId);

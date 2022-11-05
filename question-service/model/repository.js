@@ -8,47 +8,56 @@ sequelize.sync().then(() => {
 });
 
 export const createQuestion = async (title, difficulty, description, example, constraint) => {
-  var newQuestion;
-  switch(difficulty) {
+  let newQuestion;
+  switch (difficulty) {
   case "Easy":
-    newQuestion = Question.build({ title: title, difficulty: "Easy", description: description, example: example, constraint: constraint });
+    newQuestion = Question.build({
+      title, difficulty: "Easy", description, example, constraint,
+    });
     break;
   case "Medium":
-    newQuestion = Question.build({ title: title, difficulty: "Medium", description: description, example: example, constraint: constraint });
+    newQuestion = Question.build({
+      title, difficulty: "Medium", description, example, constraint,
+    });
     break;
   case "Hard":
-    newQuestion = Question.build({ title: title, difficulty: "Hard", description: description, example: example, constraint: constraint });
+    newQuestion = Question.build({
+      title, difficulty: "Hard", description, example, constraint,
+    });
     break;
-  } 
-   
+  }
+
   return newQuestion;
 };
 
 export const getRandomQuestion = async (difficulty) => {
-  var randomQuestion;
-  switch(difficulty.toLowerCase()) {
+  let randomQuestion;
+  switch (difficulty.toLowerCase()) {
   case "easy":
     randomQuestion = await Question.findAll({
       where: {
-        difficulty: "Easy"
+        difficulty: "Easy",
       },
-      order: Sequelize.literal("rand()"), limit: 1
+      order: Sequelize.literal("rand()"),
+      limit: 1,
     });
     break;
   case "medium":
     randomQuestion = await Question.findAll({
       where: {
-        difficulty: "Medium"
+        difficulty: "Medium",
       },
-      order: Sequelize.literal("rand()"), limit: 1
+      order: Sequelize.literal("rand()"),
+      limit: 1,
     });
     break;
   case "hard":
     randomQuestion = await Question.findAll({
       where: {
-        difficulty: "Hard"
+        difficulty: "Hard",
       },
-      order: Sequelize.literal("rand()"), limit: 1
+      order: Sequelize.literal("rand()"),
+      limit: 1,
     });
     break;
   }

@@ -17,7 +17,7 @@ const io = new Server(server, {
   path: "/coding",
 });
 
-var PORT = process.env.PORT || 8002;
+const PORT = process.env.PORT || 8002;
 
 app.get("/coding", (req, res) => {
   res.send("Hello World from coding-service");

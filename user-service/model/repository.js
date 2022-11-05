@@ -2,16 +2,15 @@ import UserModel from "./user-model.js";
 import "dotenv/config";
 import redis from "redis";
 
-//Set up mongoose connection
+// Set up mongoose connection
 import mongoose from "mongoose";
 
-let mongoDB =
-    process.env.ENV == "PROD" ? process.env.DB_CLOUD_URI : process.env.DB_LOCAL_URI;
+const mongoDB = process.env.ENV == "PROD" ? process.env.DB_CLOUD_URI : process.env.DB_LOCAL_URI;
 
 // Connect to MongoDB
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
-let db = mongoose.connection;
+const db = mongoose.connection;
 db.on("connected", () => console.log("connected to MongoDB"));
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
@@ -25,28 +24,18 @@ redisClient.on("error", console.error);
 await redisClient.connect();
 
 // Functions that interact with MongoDB (user data)
-export const createUser = async (params) => {
-  return new UserModel(params);
-};
+export const createUser = async (params) => new UserModel(params);
 
-export const exists = async (email, userID) => {
-  return await UserModel.exists({ $or: [{ username: userID }, { email: email }] });
-};
+export const exists = async (email, userID) => await UserModel.exists({ $or: [{ username: userID }, { email }] });
 
-export const findUser = async (userID) => {
-  return await UserModel.findOne({ username: userID });
-};
+export const findUser = async (userID) => await UserModel.findOne({ username: userID });
 
-export const deleteUser = async (userID) => {
-  return await UserModel.findOneAndDelete({ username: userID });
-};
+export const deleteUser = async (userID) => await UserModel.findOneAndDelete({ username: userID });
 
-export const changePassword = async (userID, newPassword) => {
-  return await UserModel.findOneAndUpdate(
-    { username: userID },
-    { password: newPassword }
-  );
-};
+export const changePassword = async (userID, newPassword) => await UserModel.findOneAndUpdate(
+  { username: userID },
+  { password: newPassword },
+);
 
 // Functions that interact with Redis (JWT token blacklist)
 export const isBlacklisted = async (token) => {

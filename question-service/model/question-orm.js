@@ -16,7 +16,7 @@ export const ormGetRandomQuestion = async (difficulty) => {
   try {
     const randomQuestion = await getRandomQuestion(difficulty);
     return randomQuestion;
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     return { err };
   }

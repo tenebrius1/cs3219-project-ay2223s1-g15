@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 import {
   createUser,
   deleteUser,
@@ -14,7 +15,6 @@ import {
 } from "./controller/user-controller.js";
 
 import authenticate from "./middleware/auth.js";
-import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(cookieParser());
@@ -23,10 +23,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
   cors({
-    //replace with deployed endpoint
+    // replace with deployed endpoint
     origin: "http://localhost:3000",
     credentials: true,
-  })
+  }),
 ); // config cors so that front-end can use
 
 app.options("*", cors());

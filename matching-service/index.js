@@ -5,7 +5,7 @@ import { createServer } from "http";
 import { startServer } from "./socket/socket-server.js";
 
 const app = express();
-var PORT = process.env.PORT || 8001;
+const PORT = process.env.PORT || 8001;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

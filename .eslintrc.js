@@ -1,42 +1,43 @@
 module.exports = {
-  "env": {
-    "es2021": true,
-    "node": true
+  env: {
+    es2021: true,
+    node: true,
   },
-  "extends": [
+  extends: [
     "eslint:recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+    "airbnb",
   ],
-  "settings": {
-    "react": {
-      "version": "18.2",
+  settings: {
+    react: {
+      version: "18.2",
     },
   },
-  "overrides": [
+  overrides: [
   ],
-  "parserOptions": {
-    "ecmaVersion": "latest",
-    "sourceType": "module"
+  parserOptions: {
+    ecmaVersion: "latest",
+    sourceType: "module",
   },
-  "plugins": [
-    "react"
+  plugins: [
+    "react",
   ],
-  "rules": {
-    "indent": [
+  rules: {
+    indent: [
       "error",
-      2
+      2,
     ],
     "linebreak-style": [
       "error",
-      "unix"
+      "unix",
     ],
-    "quotes": [
+    quotes: [
       "error",
-      "double"
+      "double",
     ],
-    "semi": [
+    semi: [
       "error",
-      "always"
-    ]
-  }
+      "always",
+    ],
+  },
 };

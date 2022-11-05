@@ -17,24 +17,22 @@ export const createUser = async (req, res) => {
       const resp = await _createUser(email, username, password);
       if (resp.err) {
         return res.status(400).json({ message: "Could not create a new user!" });
-      } else if (!resp) {
+      } if (!resp) {
         console.log(
-          `Failed to create new user. user with username ${username} or email ${email} already exists.`
+          `Failed to create new user. user with username ${username} or email ${email} already exists.`,
         );
         return res.status(409).json({
           message: "Username already exists! Please try again with a different username.",
         });
-      } else {
-        console.log(`Created new user ${username} successfully!`);
-        return res
-          .status(201)
-          .json({ message: `Created new user ${username} successfully!` });
       }
-    } else {
+      console.log(`Created new user ${username} successfully!`);
       return res
-        .status(400)
-        .json({ message: "Email and/or Username and/or Password are missing!" });
+        .status(201)
+        .json({ message: `Created new user ${username} successfully!` });
     }
+    return res
+      .status(400)
+      .json({ message: "Email and/or Username and/or Password are missing!" });
   } catch (err) {
     return res.status(500).json({ message: "Database failure when creating new user!" });
   }
@@ -65,10 +63,9 @@ export const passwordLogin = async (req, res) => {
         secure: true,
         sameSite: "none",
       });
-      return res.status(200).json({ username: username, token: userToken });
-    } else {
-      return res.status(401).json({ message: "Invalid Credentials!" });
+      return res.status(200).json({ username, token: userToken });
     }
+    return res.status(401).json({ message: "Invalid Credentials!" });
   } catch (err) {
     return res.status(500).json({ message: "Login failed!" });
   }
@@ -98,10 +95,9 @@ export const deleteUser = async (req, res) => {
 
       return res
         .status(200)
-        .json({ message: "Successfully deleted account " + username });
-    } else {
-      return res.status(401).json({ message: "Unauthorized account deletion." });
+        .json({ message: `Successfully deleted account ${username}` });
     }
+    return res.status(401).json({ message: "Unauthorized account deletion." });
   } catch (err) {
     return res.status(500).json({ message: "Failure when deleting account" });
   }
@@ -114,9 +110,8 @@ export const changePassword = async (req, res) => {
 
     if (isChanged) {
       return res.status(200).json({ message: "Successfully updated password" });
-    } else {
-      return res.status(401).json({ message: "Unauthorized password change" });
     }
+    return res.status(401).json({ message: "Unauthorized password change" });
   } catch (err) {
     return res.status(500).json({ message: "Failure when changing password" });
   }
@@ -141,9 +136,8 @@ export const requestPasswordReset = async (req, res) => {
           return res
             .status(500)
             .json({ message: "Error when sending password reset email" });
-        } else {
-          return res.status(200).json({ message: "Email sent: " + info.response });
         }
+        return res.status(200).json({ message: `Email sent: ${info.response}` });
       });
     } else {
       return res.status(400).json({ message: "Username is missing" });
@@ -169,9 +163,8 @@ export const resetPassword = async (req, res) => {
         return res.status(200).json({ message: "Password successfully reset!" });
       }
       return res.status(400).json({ message: "Token details do not match username" });
-    } else {
-      return res.status(400).json({ message: "Token/Username/newPassword is missing" });
     }
+    return res.status(400).json({ message: "Token/Username/newPassword is missing" });
   } catch (err) {
     return res.status(500).json({ message: "Failure when resetting password" });
   }
@@ -190,11 +183,10 @@ export const authToken = async (req, res) => {
       }
       return res.status(200).json({
         message: "Successfully authenticated",
-        tokenUsername: tokenUsername,
+        tokenUsername,
       });
-    } else {
-      return res.status(400).json({ message: "Missing JWT token" });
     }
+    return res.status(400).json({ message: "Missing JWT token" });
   } catch (err) {
     return res.status(500).json({ message: "Failure when authenticating" });
   }

@@ -1,3 +1,6 @@
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import nodemailer from "nodemailer";
 import {
   createUser,
   deleteUser,
@@ -7,9 +10,6 @@ import {
   blacklist,
   isBlacklisted,
 } from "./repository.js";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import nodemailer from "nodemailer";
 
 // need to separate orm functions from repository to decouple business logic from persistence
 
@@ -42,9 +42,8 @@ export const ormPasswordLogin = async (username, password) => {
         expiresIn: "10d",
       });
       return token;
-    } else {
-      return null;
     }
+    return null;
   } catch (err) {
     return { err };
   }
@@ -56,9 +55,8 @@ export const ormTokenLogin = async (jwtToken) => {
     if (!(await isBlacklisted(jwtToken))) {
       const decodedToken = jwt.verify(jwtToken, process.env.JWT_TOKEN_KEY);
       return decodedToken.username;
-    } else {
-      null;
     }
+    null;
   } catch (err) {
     return null;
   }
@@ -78,9 +76,8 @@ export const ormDeleteUser = async (jwtToken, username, password) => {
       await deleteUser(username);
       await blacklist(jwtToken);
       return username;
-    } else {
-      return null;
     }
+    return null;
   } catch (err) {
     return { err };
   }
@@ -96,9 +93,8 @@ export const ormChangePassword = async (username, currPassword, newPassword) => 
       const hashedPassword = hashPassword(newPassword);
       await changePassword(username, hashedPassword);
       return true;
-    } else {
-      return false;
     }
+    return false;
   } catch (err) {
     return { err };
   }
@@ -115,11 +111,11 @@ export const ormRequestPasswordReset = async (username) => {
       const resetToken = jwt.sign(
         { user: user._id, username },
         process.env.JWT_TOKEN_KEY,
-        { expiresIn: "1h" }
+        { expiresIn: "1h" },
       );
 
       // Connect to admin email account
-      var transporter = nodemailer.createTransport({
+      const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
           user: process.env.GMAIL,
@@ -128,21 +124,20 @@ export const ormRequestPasswordReset = async (username) => {
       });
 
       // Create the email
-      var mailOptions = {
+      const mailOptions = {
         from: process.env.GMAIL,
         to: user.email,
         subject: "Confirm Password Reset",
         html:
-          `<p>Hi ${username},</p>` +
-          "<p>You requested to reset your password.</p>" +
-          "<p> Please, click the link below to reset your password</p>" +
-          `<a href="http://localhost:8000/confirmPasswordReset?token=${resetToken}&user=${username}">Reset Password</a>`,
+          `<p>Hi ${username},</p>`
+          + "<p>You requested to reset your password.</p>"
+          + "<p> Please, click the link below to reset your password</p>"
+          + `<a href="http://localhost:8000/confirmPasswordReset?token=${resetToken}&user=${username}">Reset Password</a>`,
       };
 
-      return { transporter: transporter, mailOptions: mailOptions };
-    } else {
-      return null;
+      return { transporter, mailOptions };
     }
+    return null;
   } catch (err) {
     return { err };
   }
@@ -152,7 +147,7 @@ export const ormResetPassword = async (
   username,
   newPassword,
   tokenUsername,
-  jwtToken
+  jwtToken,
 ) => {
   try {
     let user;
@@ -168,9 +163,8 @@ export const ormResetPassword = async (
       // Blacklist JWT token so that user cannot reset password with same token again
       await blacklist(jwtToken);
       return true;
-    } else {
-      return false;
     }
+    return false;
   } catch (err) {
     console.log(err);
     return { err };
@@ -182,9 +176,8 @@ export const ormAuthToken = async (jwtToken) => {
     if ((await isBlacklisted(jwtToken)) === null) {
       const decodedToken = jwt.verify(jwtToken, process.env.JWT_TOKEN_KEY);
       return decodedToken.username;
-    } else {
-      return null;
     }
+    return null;
   } catch (err) {
     return { err };
   }

@@ -15,10 +15,10 @@ import {
 const app = express();
 app.use(
   cors({
-    //replace with deployed endpoint
+    // replace with deployed endpoint
     origin: "http://localhost:3000",
     credentials: true,
-  })
+  }),
 ); // config cors so that front-end can use
 app.use(cookieParser());
 app.use(morgan("combined"));
