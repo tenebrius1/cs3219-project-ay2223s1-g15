@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react';
-import axios from 'axios';
 import CodeMirror from '@uiw/react-codemirror';
 import { githubDark } from '@uiw/codemirror-theme-github';
 import Box from '@mui/material/Box';
@@ -24,43 +23,24 @@ function CodePad({ currentLanguage, setOutput }) {
   const { codingSocket } = useContext(SocketContext);
   const { roomId } = useContext(RoomContext);
 
-  var reqBody = {
-    source_code: `${code}`,
-    language_id: `${availableLanguages[currentLanguage]}`,
-    number_of_runs: null,
-    stdin: 'Judge0',
-    expected_output: null,
-    cpu_time_limit: null,
-    cpu_extra_time: null,
-    wall_time_limit: null,
-    memory_limit: null,
-    stack_limit: null,
-    max_processes_and_or_threads: null,
-    enable_per_process_and_thread_time_limit: null,
-    enable_per_process_and_thread_memory_limit: null,
-    max_file_size: null,
-    enable_network: null,
-  };
-
   useEffect(() => {
     codingSocket.on('codeChanged', (value) => {
-      console.log('codeChanged', value);
+      console.log('codeChanged ', value);
       setCode(value);
+    });
+
+    codingSocket.on('runCodeResults', (results) => {
+      console.log('runCodeResults', results);
+      setOutput(results);
     });
   }, [codingSocket]);
 
-  const submitCode = async () => {
-    await axios
-      .post(`${judgeURL}/submissions/?wait=true`, reqBody)
-      .then((res) => {
-        console.log(res);
-        if (res.data.stdout === null) {
-          setOutput(res.data.message);
-        } else {
-          setOutput(res.data.stdout);
-        }
-      })
-      .catch((err) => console.log('err', err));
+  const submitCode = () => {
+    codingSocket.emit('runCode', {
+      code: code,
+      languageId: availableLanguages[currentLanguage],
+      roomId: roomId,
+    });
   };
 
   return (
