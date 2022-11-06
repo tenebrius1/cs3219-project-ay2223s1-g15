@@ -15,11 +15,13 @@
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
+  margin-bottom: 10%;
 }
 
 .changePasswordBox.MuiBox-root {
   display: flex;
   flex-direction: column;
+  padding-bottom: 5%;
 }
 
 .avatarButtonSection {

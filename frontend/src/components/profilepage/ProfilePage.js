@@ -10,7 +10,6 @@ import { removeAvatarImage, uploadAvatarImage } from "../../api/user/user";
 import UserContext from "../../contexts/UserContext";
 import DeleteAccount from "./DeleteAccount";
 import ChangePassword from "./ChangePassword";
-import DeleteAccountDialog from "./DeleteAccountDialog";
 
 const ProfilePage = () => {
   const [isChangePassword, setIsChangePassword] = useState(false);
@@ -21,10 +20,6 @@ const ProfilePage = () => {
 
   const onClickDeleteAccount = () => {
     setIsDeleteAccount(true);
-  };
-
-  const handleCancelDeleteAccount = () => {
-    setIsDeleteAccount(false);
   };
 
   const { user, imageUrl, setImageUrl } = useContext(UserContext);
@@ -120,10 +115,6 @@ const ProfilePage = () => {
         saveImage={saveImage}
         restoreDefault={restoreDefault}
         handleDialogClose={handleDialogClose}
-      />
-      <DeleteAccountDialog
-        open={isDeleteAccount}
-        onClose={handleCancelDeleteAccount}
       />
     </Box>
   );
