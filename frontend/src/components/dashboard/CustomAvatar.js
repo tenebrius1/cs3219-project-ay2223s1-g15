@@ -75,6 +75,7 @@ function CustomAvatar() {
         open={isProfileClick}
         onClose={handleProfileClose}
         fullWidth
+        scroll={"paper"}
         PaperProps={{
           sx: {
             height: "90%",
@@ -84,7 +85,7 @@ function CustomAvatar() {
       >
         <DialogTitle>
           Profile
-          {handleProfileClose ? (
+          {handleProfileClose && (
             <IconButton
               onClick={handleProfileClose}
               sx={{
@@ -96,7 +97,7 @@ function CustomAvatar() {
             >
               <CloseIcon />
             </IconButton>
-          ) : null}
+          )}
         </DialogTitle>
         <ProfilePage />
       </Dialog>

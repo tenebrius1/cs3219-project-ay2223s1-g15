@@ -17,7 +17,7 @@ const DeleteAccountDialog = ({ open, onClose }) => {
   };
 
   return (
-    <Dialog onClose={onClose} open={open} fullWidth>
+    <Dialog onClose={onClose} open={open} fullWidth scroll={"paper"}>
       <DialogTitle>
         Delete account
         {onClose ? (
