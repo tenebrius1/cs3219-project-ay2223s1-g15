@@ -30,7 +30,7 @@ services:
   frontend:
     container_name: frontend
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-dev
       context: ./frontend
     image: cs3219.azurecr.io/frontend
     volumes:
