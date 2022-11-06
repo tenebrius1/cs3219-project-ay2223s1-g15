@@ -44,6 +44,10 @@ export const findUser = async (userID) => {
   return await UserModel.findOne({ username: userID });
 };
 
+export const findUserByEmail = async (email) => {
+  return await UserModel.findOne({ email: email });
+};
+
 export const deleteUser = async (userID) => {
   return await UserModel.findOneAndDelete({ username: userID });
 };
@@ -63,7 +67,7 @@ export const isBlacklisted = async (token) => {
 
 export const blacklist = async (token) => {
   const token_key = `bl_${token}`;
-  return await redisClient.set(token_key, token);
+  return await redisClient.set(token_key, token, { EX: 60 * 60 * 24 * 7 });
 };
 
 // Functions that interact with Cloudinary (Profile picture host)

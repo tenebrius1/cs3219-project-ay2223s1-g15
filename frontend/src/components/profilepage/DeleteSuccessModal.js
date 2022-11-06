@@ -7,14 +7,15 @@ import { useNavigate } from 'react-router';
 
 const DeleteSuccessModal = ({ isOpen, handleClose }) => {
   const navigate = useNavigate();
+  const onClose = async () => {
+    handleClose();
+    await logout();
+    navigate('/', { replace: true });
+  };
   return (
     <Dialog
       open={isOpen}
-      onClose={async () => {
-        handleClose();
-        await logout();
-        navigate('/');
-      }}
+      onClose={onClose}
       PaperProps={{
         sx: {
           width: '30%',
@@ -30,11 +31,7 @@ const DeleteSuccessModal = ({ isOpen, handleClose }) => {
         variant='outlined'
         color='error'
         sx={{ marginTop: '20px', maxWidth: '50%', borderWidth: '2px' }}
-        onClick={async () => {
-          handleClose();
-          await logout();
-          navigate('/');
-        }}
+        onClick={onClose}
       >
         Logout
       </Button>
