@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: frontend
+  selector:
+    app: frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matching
+  labels:
+    app: matching
+spec:
+  type: NodePort
+  ports:
+    - port: 8001
+      targetPort: 8001
+      protocol: TCP
+      name: matching
+  selector:
+    app: matching
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user
+  labels:
+    app: user
+spec:
+  type: NodePort
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: user
+  selector:
+    app: user
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: coding
+  labels:
+    app: coding
+spec:
+  type: NodePort
+  ports:
+    - port: 8002
+      targetPort: 8002
+      protocol: TCP
+      name: coding
+  selector:
+    app: coding
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: question
+  labels:
+    app: question
+spec:
+  type: NodePort
+  ports:
+    - port: 8004
+      targetPort: 8004
+      protocol: TCP
+      name: question
+  selector:
+    app: question
+---
+

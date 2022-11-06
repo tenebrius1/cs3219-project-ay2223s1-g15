@@ -1,0 +1,46 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: peerprep-ingress
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+    appgw.ingress.kubernetes.io/use-private-ip: "false" 
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /matching
+            pathType: Prefix
+            backend:
+              service:
+                name: matching
+                port:
+                  number: 8001
+          - path: /user
+            pathType: Prefix
+            backend:
+              service:
+                name: user
+                port:
+                  number: 8000
+          - path: /coding
+            pathType: Prefix
+            backend:
+              service:
+                name: coding
+                port:
+                  number: 8002
+          - path: /question
+            pathType: Prefix
+            backend:
+              service:
+                name: question
+                port:
+                  number: 8004
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
