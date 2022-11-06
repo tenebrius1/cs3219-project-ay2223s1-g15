@@ -43,6 +43,10 @@ router.post('/', createUser);
 router.post('/passwordLogin', passwordLogin);
 router.post('/tokenLogin', tokenLogin);
 router.post('/requestPasswordReset', requestPasswordReset);
+router.post('/resetPassword', resetPassword);
+
+//For api-gateway
+router.get('/checkAuth', authToken);
 
 // For frontend testing
 router.post('/python', (req, res) => {
@@ -55,12 +59,9 @@ app.use('/user', router);
 authRouter.put('/changePW', changePassword);
 authRouter.delete('/', deleteUser);
 authRouter.delete('/logout', logout);
-authRouter.post('/resetPassword', resetPassword);
 authRouter.post('/uploadImage', uploadImage);
 authRouter.delete('/removeImage', removeImage);
 
 app.use('/user/auth', authenticate, authRouter);
-
-app.get('/auth', authToken);
 
 app.listen(8000, () => console.log('user-service listening on port 8000'));

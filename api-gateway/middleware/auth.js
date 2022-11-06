@@ -2,20 +2,19 @@ import axios from 'axios';
 
 export const authenticate = async (req, res, next) => {
   const { token } = req.cookies;
+  if (!token) {
+    return res.status(401).json({ message: 'Missing JWT token' });
+  }
   await axios
-    .get('http://localhost:8000/auth', {
-      headers: {
-        Cookie: `token=${token}`,
-      },
+    .get(process.env.USER_URL + '/user/checkAuth', {
+      headers: { Cookie: `token=${token}` },
     })
     .then((resp) => {
-      if (resp.status != 200) {
-        res.status(401).json({ message: 'Invalid JWT token' });
-      }
       next();
     })
-    .catch(() => {
-      res.status(401).json({ message: 'Missing JWT token' });
+    .catch((err) => {
+      console.log(err.response.data.message);
+      return res.status(401).json({ message: 'JWT token authentication failed' });
     });
 };
 
