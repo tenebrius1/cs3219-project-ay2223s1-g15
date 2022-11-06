@@ -48,7 +48,6 @@ services:
     restart: on-failure
     environment:
       <<: *common-backend-variables
-      DB_CLOUD_URI: 'mongodb+srv://cs3219-g15:cs3219-g15@cs3219-g15.ryvsrmt.mongodb.net/?retryWrites=true&w=majority'
 
   matching:
     container_name: matching

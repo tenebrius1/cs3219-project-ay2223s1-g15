@@ -45,6 +45,9 @@ router.post('/tokenLogin', tokenLogin);
 router.post('/requestPasswordReset', requestPasswordReset);
 router.post('/resetPassword', resetPassword);
 
+//For api-gateway
+router.get('/checkAuth', authToken);
+
 // For frontend testing
 router.post('/python', (req, res) => {
   console.log(req.body);
@@ -60,7 +63,5 @@ authRouter.post('/uploadImage', uploadImage);
 authRouter.delete('/removeImage', removeImage);
 
 app.use('/user/auth', authenticate, authRouter);
-
-app.get('/auth', authToken);
 
 app.listen(8000, () => console.log('user-service listening on port 8000'));
