@@ -17,6 +17,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./api-gateway
+    image: cs3219.azurecr.io/gateway
     volumes:
       - ./gateway:/home/node/app/gateway
     ports:
@@ -24,13 +25,14 @@ services:
     restart: on-failure
     environment:
       <<: *common-backend-variables
-      HTTP_PROXY: 'http://localhost:8080'
+      HTTP_PROXY: 'http://20.197.107.181/:8080'
 
   frontend:
     container_name: frontend
     build:
       dockerfile: Dockerfile
       context: ./frontend
+    image: cs3219.azurecr.io/frontend
     volumes:
       - ./frontend:/home/node/app/frontend
     ports:
@@ -42,6 +44,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./user-service
+    image: cs3219.azurecr.io/user
     volumes:
       - ./user-service:/home/node/app/user-service
     expose:
@@ -55,6 +58,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./matching-service
+    image: cs3219.azurecr.io/matching
     volumes:
       - ./matching-service:/home/node/app/matching
     expose:
@@ -68,6 +72,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./coding-service
+    image: cs3219.azurecr.io/coding
     volumes:
       - ./coding-service:/home/node/app/coding-service
     expose:
@@ -81,6 +86,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./question-service
+    image: cs3219.azurecr.io/question
     volumes:
       - ./question-service:/home/node/app/question_service
     expose:
@@ -97,6 +103,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./history-service
+    image: cs3219.azurecr.io/history
     volumes:
       - ./history-service:/home/node/app/history_service
     expose:
@@ -113,6 +120,7 @@ volumes:
   user-service:
   frontend:
   gateway:
+  history:
 
   # Used for local dev
   # mongo:

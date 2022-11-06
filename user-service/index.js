@@ -26,8 +26,8 @@ app.use(express.json());
 app.use(
   cors({
     //replace with deployed endpoint
-    origin: 'http://localhost:3000',
-    credentials: true,
+    // origin: 'http://localhost:3000',
+    // credentials: true,
   })
 ); // config cors so that front-end can use
 
