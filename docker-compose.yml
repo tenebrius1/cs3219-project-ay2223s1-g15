@@ -1,7 +1,8 @@
 version: '3.8'
 
 # back-end variables
-x-common-variables: &common-backend-variables
+x-common-variables:
+  &common-backend-variables
   ENV: PROD
   USER_URL: http://user:8000
   MATCHING_URL: http://matching:8001
@@ -25,9 +26,9 @@ services:
       <<: *common-backend-variables
       HTTP_PROXY: 'http://localhost:8080'
 
-  frontend: 
+  frontend:
     container_name: frontend
-    build: 
+    build:
       dockerfile: Dockerfile
       context: ./frontend
     volumes:
@@ -35,7 +36,7 @@ services:
     ports:
       - 3000:3000
     restart: on-failure
-      
+
   user:
     container_name: user
     build:
@@ -48,7 +49,6 @@ services:
     restart: on-failure
     environment:
       <<: *common-backend-variables
-      DB_CLOUD_URI: 'mongodb+srv://cs3219-g15:cs3219-g15@cs3219-g15.ryvsrmt.mongodb.net/?retryWrites=true&w=majority'
 
   matching:
     container_name: matching
@@ -58,7 +58,7 @@ services:
     volumes:
       - ./matching-service:/home/node/app/matching
     expose:
-       - 8001
+      - 8001
     restart: on-failure
     environment:
       <<: *common-backend-variables
@@ -71,11 +71,11 @@ services:
     volumes:
       - ./coding-service:/home/node/app/coding-service
     expose:
-    - 8002
+      - 8002
     restart: on-failure
     environment:
       <<: *common-backend-variables
-    
+
   question:
     container_name: question
     build:
@@ -88,6 +88,31 @@ services:
     restart: on-failure
     environment:
       <<: *common-backend-variables
+      DATABASE_USERNAME: cs3219g15
+      DATABASE_PASSWORD: Password1234!
+      DATABASE_HOST: question-service.mysql.database.azure.com
+  
+  history:
+    container_name: history
+    build:
+      dockerfile: Dockerfile
+      context: ./history-service
+    volumes:
+      - ./history-service:/home/node/app/history_service
+    expose:
+      - 8005
+    restart: on-failure
+    environment:
+      <<: *common-backend-variables
+      DB_CLOUD_URI: 'mongodb+srv://cs3219-history:cs3219-history@cs3219-history.u9n8v5t.mongodb.net/?retryWrites=true&w=majority'
+
+volumes: 
+  question-service:
+  coding-service:
+  matching-service: 
+  user-service:
+  frontend:
+  gateway:
 
   # Used for local dev
   # mongo:

@@ -8,6 +8,7 @@ import {
   isBlacklisted,
   uploadImage,
   removeImage,
+  findUserByEmail,
 } from './repository.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
@@ -41,7 +42,7 @@ export const ormPasswordLogin = async (username, password) => {
     // If given credentials match database info, sign new JWT token
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = jwt.sign({ user_id: user._id, username }, process.env.JWT_TOKEN_KEY, {
-        expiresIn: '10d',
+        expiresIn: '7d',
       });
       return { user: user, userToken: token };
     } else {
@@ -106,18 +107,20 @@ export const ormChangePassword = async (username, currPassword, newPassword) => 
   }
 };
 
-export const ormRequestPasswordReset = async (username) => {
+export const ormRequestPasswordReset = async (email) => {
   try {
     // Check if user exists
-    const user = await findUser(username);
+    const user = await findUserByEmail(email);
 
     // If user exists
     if (user) {
       // Generate a JWT token to be used as a reset token.
       const resetToken = jwt.sign(
-        { user: user._id, username },
-        process.env.JWT_TOKEN_KEY,
-        { expiresIn: '1h' }
+        { user: user._id, username: user.username },
+        process.env.JWT_RESET_TOKEN_KEY,
+        {
+          expiresIn: '900s',
+        }
       );
 
       // Connect to admin email account
@@ -132,13 +135,13 @@ export const ormRequestPasswordReset = async (username) => {
       // Create the email
       var mailOptions = {
         from: process.env.GMAIL,
-        to: user.email,
+        to: email,
         subject: 'Confirm Password Reset',
         html:
-          `<p>Hi ${username},</p>` +
+          `<p>Hi ${user.username},</p>` +
           `<p>You requested to reset your password.</p>` +
-          `<p> Please, click the link below to reset your password</p>` +
-          `<a href="http://localhost:8000/confirmPasswordReset?token=${resetToken}&user=${username}">Reset Password</a>`,
+          `<p> Please click the link below to reset your password</p>` +
+          `<a href="http://localhost:3000/passwordresetconfirm/${resetToken}">Reset Password</a>`,
       };
 
       return { transporter: transporter, mailOptions: mailOptions };
@@ -150,26 +153,24 @@ export const ormRequestPasswordReset = async (username) => {
   }
 };
 
-export const ormResetPassword = async (
-  username,
-  newPassword,
-  tokenUsername,
-  jwtToken
-) => {
+export const ormResetPassword = async (newPassword, resetToken) => {
   try {
-    let user;
+    if ((await isBlacklisted(resetToken)) === null) {
+      const decodedToken = jwt.verify(resetToken, process.env.JWT_RESET_TOKEN_KEY);
+      const decodedUsername = decodedToken.username;
+      // If provided token details match provided username
+      const user = await findUser(decodedUsername);
 
-    // If provided token details match provided username
-    if (tokenUsername == username) {
-      user = await findUser(username);
-    }
-    if (user) {
-      const hashedPassword = await hashPassword(newPassword);
-      await changePassword(username, hashedPassword);
+      if (user) {
+        const hashedPassword = await hashPassword(newPassword);
+        await changePassword(decodedUsername, hashedPassword);
 
-      // Blacklist JWT token so that user cannot reset password with same token again
-      await blacklist(jwtToken);
-      return true;
+        // Blacklist JWT token so that user cannot reset password with same token again
+        await blacklist(resetToken);
+        return true;
+      } else {
+        return null;
+      }
     } else {
       return false;
     }

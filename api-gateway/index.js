@@ -11,6 +11,7 @@ import {
   questionProxy,
   historyProxy,
 } from './proxy.js';
+import authenticate from './middleware/auth.js';
 
 const app = express();
 app.use(
@@ -26,9 +27,10 @@ app.use(morgan('combined'));
 app.use('/user', userProxy);
 app.use(matchingProxy);
 app.use(codingProxy);
-app.use('/video', videoProxy);
-app.use('/question', questionProxy);
-app.use('/history', historyProxy);
+
+app.use('/video', authenticate, videoProxy);
+app.use('/question', authenticate, questionProxy);
+app.use('/history', authenticate, historyProxy);
 
 const server = app.listen(8080, () => {
   console.log('api gateway running on port 8080');

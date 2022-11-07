@@ -61,6 +61,40 @@ export const deleteAccount = async (password) => {
   return res;
 };
 
+export const requestPasswordReset = async (email) => {
+  const res = await axios
+    .post(URL_USER_SVC + '/requestPasswordReset', {
+      email: email,
+    })
+    .then((res) => {
+      return { isSuccess: true, message: res.data.message };
+    })
+    .catch((err) => {
+      return { isSuccess: false, message: err.response.data.message };
+    });
+  return res;
+};
+
+export const resetPassword = async (newPassword, resetToken) => {
+  const res = await axios
+    .post(
+      URL_USER_SVC + '/resetPassword',
+      {
+        newPassword: newPassword,
+      },
+      {
+        headers: { Authorization: `Bearer ${resetToken}` },
+      }
+    )
+    .then((res) => {
+      return { isSuccess: true, message: res.data.message };
+    })
+    .catch((err) => {
+      return { isSuccess: false, message: err.response.data.message };
+    });
+  return res;
+};
+
 export const uploadAvatarImage = async (imageURI) => {
   const imageUrl = await axios
     .post(

@@ -4,7 +4,8 @@ import Dashboard from './components/dashboard/Dashboard';
 import CodingPage from './components/codingpage/CodingPage';
 import SignInPage from './components/signinpage/SignInPage';
 import MatchingPage from './components/matching/MatchingPage';
-import PasswordResetPage from './components/passwordresetpage/PasswordResetPage';
+import PasswordResetPage from './components/passwordreset/PasswordResetPage';
+import PasswordResetConfirm from './components/passwordreset/PasswordResetConfirm';
 import HistoryPage from './components/historypage/HistoryPage';
 import Box from '@mui/material/Box';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -47,6 +48,10 @@ function App() {
                 <Route path='/signup' element={<SignupPage />} />
                 <Route path='/login' element={<SignInPage />} />
                 <Route path='/passwordreset' element={<PasswordResetPage />} />
+                <Route
+                  path='/passwordresetconfirm/:resetToken/'
+                  element={<PasswordResetConfirm />}
+                />
                 <Route
                   path='/dashboard'
                   element={
