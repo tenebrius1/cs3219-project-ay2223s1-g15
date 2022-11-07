@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useClient } from "./settings";
-import { Grid, Button } from "@material-ui/core";
-import MicIcon from "@material-ui/icons/Mic";
-import MicOffIcon from "@material-ui/icons/MicOff";
-import VideocamIcon from "@material-ui/icons/Videocam";
-import VideocamOffIcon from "@material-ui/icons/VideocamOff";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import MicIcon from "@mui/icons-material/Mic";
+import MicOffIcon from "@mui/icons-material/MicOff";
+import VideocamIcon from "@mui/icons-material/Videocam";
+import VideocamOffIcon from "@mui/icons-material/VideocamOff";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
 export default function Controls(props) {
     const client = useClient();
