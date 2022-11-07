@@ -4,6 +4,7 @@ import { createServer } from 'http';
 
 const app = express();
 var PORT = process.env.PORT || 8005;
+const LIVE_URL = process.env.ENV  === "PROD" ? process.env.LIVE_URL : "http://localhost";
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
@@ -23,5 +24,5 @@ app.use('/history', router);
 export const httpServer = createServer(app);
 
 httpServer.listen(PORT, () => {
-  console.log(`http://localhost:${PORT}`);
+  console.log(`${LIVE_URL}:${PORT}`);
 });

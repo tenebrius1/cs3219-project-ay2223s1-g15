@@ -19,6 +19,7 @@ import authenticate from "./middleware/auth.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
+const LIVE_URL = process.env.ENV  === "PROD" ? process.env.LIVE_URL : "http://localhost:3000";
 app.use(cookieParser());
 
 app.use(express.urlencoded({ extended: true }));
@@ -26,7 +27,7 @@ app.use(express.json());
 app.use(
   cors({
     //replace with deployed endpoint
-    origin: "http://localhost:3000",
+    origin: LIVE_URL,
     credentials: true,
   })
 ); // config cors so that front-end can use

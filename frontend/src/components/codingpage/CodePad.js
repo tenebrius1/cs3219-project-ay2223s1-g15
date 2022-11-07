@@ -11,11 +11,12 @@ import RoomContext from "../../contexts/RoomContext";
 import { Typography } from "@mui/material";
 
 const stateFields = { history: historyField };
+const LIVE_URL = process.env.ENV  === "PROD" ? process.env.LIVE_URL : "http://localhost";
 
 function CodePad({ currentLanguage, setOutput }) {
-  const serializedState = localStorage.getItem("myEditorState");
-  const [code, setCode] = useState("");
-  const judgeURL = "http://localhost:2358";
+  const serializedState = localStorage.getItem('myEditorState');
+  const [code, setCode] = useState('');
+  const judgeURL = `${LIVE_URL}:2358`;
   const availableLanguages = {
     python: "70",
     java: "62",
