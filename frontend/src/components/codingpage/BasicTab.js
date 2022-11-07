@@ -7,7 +7,7 @@ import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
 import TabPanel from "./TabPanel";
 import "./codingpage.css";
-import { Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
 
 function BasicTab({ output }) {
   const [value, setValue] = useState(0);

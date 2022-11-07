@@ -12,28 +12,29 @@ const HistoryPage = () => {
   let decideColor = "";
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location.state);
+  console.log(location);
   const [tab, setTab] = useState(0);
 
-  const title = location.state.title ? location.state.title : "No title";
-  const date = location.state.date ? location.state.date : "Date unknown";
-  const time = location.state.time ? location.state.time : "Time unknown";
-  const interviewer = location.state.interviewer
+  const title = (location.state && location.state.title) ? location.state.title : "No title";
+  const timestamp = (location.state && location.state.timestamp) ? location.state.timestamp : "Time unknown";
+  const interviewer = (location.state && location.state.interviewer)
     ? location.state.interviewer
     : "Interviwer unknown";
-  const difficulty = location.state.difficulty
+  const difficulty = (location.state && location.state.difficulty)
     ? location.state.difficulty
     : "Difficulty unknown";
-  const code = location.state.code ? location.state.code : "No code";
-  const question = location.state.question
+  const code = (location.state && location.state.code) ? location.state.code : "No code";
+  const question = (location.state && location.state.question)
     ? location.state.question
     : "No question";
-  const interviewerNotes = location.state.interviewerNotes
+  const interviewerNotes = (location.state && location.state.interviewerNotes)
     ? location.state.interviewerNotes
     : "No interviewer notes";
-  const personalNotes = location.state.personalNotes
+  const personalNotes = (location.state && location.state.personalNotes)
     ? location.state.personalNotes
     : "No personal notes";
+
+    console.log(location.state)
 
   const onDashboardClick = () => {
     navigate("/dashboard");
@@ -119,7 +120,7 @@ const HistoryPage = () => {
                 </Box>
                 <Typography>Interviewer: {interviewer}</Typography>
                 <Typography>
-                  {time}, {date}
+                  {timestamp}
                 </Typography>
               </Box>
             </Box>

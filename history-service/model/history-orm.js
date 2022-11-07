@@ -3,9 +3,9 @@ import {
   getUserHistory,
 } from './repository.js'
 
-export const ormAddHistory = async (user, code, notes, question, difficulty, interviewer) => {
+export const ormAddHistory = async (user, title, code, interviewerNotes, personalNotes, question, difficulty, interviewer) => {
   try {
-    const newUserHistory = await addHistory({ user, code, notes, question, difficulty, interviewer });
+    const newUserHistory = await addHistory({ user, title, code, interviewerNotes, personalNotes, question, difficulty, interviewer });
     newUserHistory.save();
     return true;
   } catch (err) {
