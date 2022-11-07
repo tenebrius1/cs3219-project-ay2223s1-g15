@@ -20,7 +20,7 @@ function CodingLanguageSelector({ currentLanguage, setCurrentLanguage }) {
   const handleLanguageChange = (language) => {
     setCurrentLanguage(language);
     setAnchorElement(null);
-    setOpen(false)
+    setOpen(false);
   };
 
   return (
