@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createContext, useContext, useState } from 'react';
-import { URL_USER_SVC } from '../configs';
-import { STATUS_CODE_OK } from '../constants';
+import { URL_USER_SVC } from '../configs.js';
+import { STATUS_CODE_OK } from '../constants.js';
 
 const AuthContext = createContext({
   user: null,
