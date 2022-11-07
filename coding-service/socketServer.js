@@ -21,14 +21,14 @@ export const startSocketServer = (httpServer) => {
     socket.on('codeChanged', (args) => {
       const { value, roomId } = args;
       const roomName = `ROOM:${roomId}`;
-      socket.in(roomName).emit('codeChanged', value);
+      socket.to(roomName).emit('codeChanged', value);
     });
 
     socket.on('languageChanged', (args) => {
       const { language, roomId } = args;
       console.log('languageChanged ', language);
       const roomName = `ROOM:${roomId}`;
-      socket.in(roomName).emit('languageChanged', language);
+      socket.to(roomName).emit('languageChanged', language);
     });
 
     socket.on('runCode', async (args) => {

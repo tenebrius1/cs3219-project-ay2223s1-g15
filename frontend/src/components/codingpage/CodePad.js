@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useCallback, useRef } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { githubDark } from '@uiw/codemirror-theme-github';
 import Box from '@mui/material/Box';
@@ -7,13 +7,15 @@ import { historyField } from '@codemirror/commands';
 import { loadLanguage } from '@uiw/codemirror-extensions-langs';
 import SocketContext from '../../contexts/SocketContext';
 import RoomContext from '../../contexts/RoomContext';
+import * as Automerge from 'automerge';
 
 const stateFields = { history: historyField };
+
+let doc = Automerge.init();
 
 function CodePad({ currentLanguage, setOutput }) {
   const serializedState = localStorage.getItem('myEditorState');
   const [code, setCode] = useState('');
-  const judgeURL = 'http://localhost:2358';
   const availableLanguages = {
     python: '70',
     java: '62',
@@ -25,8 +27,12 @@ function CodePad({ currentLanguage, setOutput }) {
 
   useEffect(() => {
     codingSocket.on('codeChanged', (value) => {
-      console.log('codeChanged ', value);
-      setCode(value);
+      // console.log('codeChanged', value);
+      // setCode(value);
+      const updated = new Uint8Array(value);
+      let newDoc = Automerge.merge(doc, Automerge.load(updated));
+      doc = newDoc;
+      setCode(doc.text);
     });
 
     codingSocket.on('runCodeResults', (results) => {
@@ -34,6 +40,21 @@ function CodePad({ currentLanguage, setOutput }) {
       setOutput(results);
     });
   }, [codingSocket]);
+
+  const updateDocument = (code) => {
+    try {
+      let newDoc = Automerge.change(doc, (doc) => {
+        if (!doc.text) doc.text = code;
+        doc.text = code;
+      });
+
+      let binary = Automerge.save(newDoc);
+      codingSocket.emit('codeChanged', { value: binary, roomId: roomId });
+      doc = newDoc;
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const submitCode = () => {
     codingSocket.emit('runCode', {
@@ -60,10 +81,9 @@ function CodePad({ currentLanguage, setOutput }) {
         }
         onChange={(value, viewUpdate) => {
           setCode(value);
-          codingSocket.emit('codeChanged', {
-            value: value,
-            roomId: roomId,
-          });
+          if (viewUpdate.transactions[0].annotations.length > 1) {
+            updateDocument(value);
+          }
         }}
       />
       <Box display={'flex'} justifyContent={'flex-end'} marginTop={'1rem'}>
