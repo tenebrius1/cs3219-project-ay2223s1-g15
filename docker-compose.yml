@@ -112,13 +112,6 @@ services:
       <<: *common-backend-variables
       DB_CLOUD_URI: 'mongodb+srv://cs3219-history:cs3219-history@cs3219-history.u9n8v5t.mongodb.net/?retryWrites=true&w=majority'
 
-volumes: 
-  question-service:
-  coding-service:
-  matching-service: 
-  user-service:
-  frontend:
-  gateway:
 
   # Judge0
   server:
@@ -159,8 +152,14 @@ volumes:
       - redis-data:/data
     <<: *default-logging
     restart: always
-
-volumes:
+volumes: 
+  question-service:
+  coding-service:
+  matching-service: 
+  user-service:
+  history-service:
+  frontend:
+  gateway:
   postgres-data:
   redis-data:
 
