@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: peerprep-config
+  namespace: default
+data:
+  ENV: PROD
+  USER_URL: http://user:8000
+  MATCHING_URL: http://matching:8001
+  CODING_URL: http://coding:8002
+  VIDEO_URL: http://video:8003
+  QUESTION_URL: http://question:8004
+  HISTORY_URL: http://history:8005
