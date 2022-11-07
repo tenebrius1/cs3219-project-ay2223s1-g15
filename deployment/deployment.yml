@@ -24,10 +24,10 @@ spec:
           resources:
             limits:
               memory: 512Mi
-              cpu: '400m'
+              cpu: '250m'
             requests:
               memory: 256Mi
-              cpu: '400m'
+              cpu: '250m'
       imagePullSecrets:
         - name: azureregistrykey
 ---
@@ -54,10 +54,10 @@ spec:
           resources:
             limits:
               memory: 1024Mi
-              cpu: "400m"
+              cpu: "250m"
             requests:
               memory: 256Mi
-              cpu: "400m"
+              cpu: "250m"
           envFrom:
             - configMapRef:
                 name: peerprep-config
@@ -87,10 +87,10 @@ spec:
           resources:
             limits:
               memory: 512Mi
-              cpu: "400m"
+              cpu: "250m"
             requests:
               memory: 256Mi
-              cpu: "400m"
+              cpu: "250m"
           envFrom:
             - configMapRef:
                 name: peerprep-config
@@ -120,10 +120,10 @@ spec:
           resources:
             limits:
               memory: 512Mi
-              cpu: "400m"
+              cpu: "250m"
             requests:
               memory: 256Mi
-              cpu: "400m"
+              cpu: "250m"
           envFrom:
             - configMapRef:
                 name: peerprep-config
@@ -156,10 +156,10 @@ spec:
           resources:
             limits:
               memory: 512Mi
-              cpu: "400m"
+              cpu: "250m"
             requests:
               memory: 256Mi
-              cpu: "400m"
+              cpu: "250m"
           envFrom:
             - configMapRef:
                 name: peerprep-config
@@ -189,10 +189,10 @@ spec:
           resources:
             limits:
               memory: 512Mi
-              cpu: "400m"
+              cpu: "250m"
             requests:
               memory: 256Mi
-              cpu: "400m"
+              cpu: "250m"
           envFrom:
             - configMapRef:
                 name: peerprep-config
@@ -222,10 +222,10 @@ spec:
           resources:
             limits:
               memory: 512Mi
-              cpu: "400m"
+              cpu: "250m"
             requests:
               memory: 256Mi
-              cpu: "400m"
+              cpu: "250m"
           envFrom:
             - configMapRef:
                 name: peerprep-config

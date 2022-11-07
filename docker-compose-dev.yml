@@ -3,16 +3,13 @@ version: '3.8'
 # back-end variables
 x-common-variables:
   &common-backend-variables
-  ENV: PROD
+  ENV: DEV
   USER_URL: http://user:8000
   MATCHING_URL: http://matching:8001
   CODING_URL: http://coding:8002
   VIDEO_URL: http://video:8003
   QUESTION_URL: http://question:8004
   HISTORY_URL: http://history:8005
-  LIVE_URL: https://peerprep.live
-  URI_GATEWAY: https://peerprep.live:8080
-  URI_VIDEO_SVC: https://peerprep.live:8003
 
 services:
   gateway:
@@ -32,7 +29,7 @@ services:
   frontend:
     container_name: frontend
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-dev
       context: ./frontend
     image: cs3219.azurecr.io/frontend
     volumes:
@@ -40,8 +37,6 @@ services:
     ports:
       - 3000:3000
     restart: on-failure
-    environment:
-      <<: *common-backend-variables
 
   user:
     container_name: user
