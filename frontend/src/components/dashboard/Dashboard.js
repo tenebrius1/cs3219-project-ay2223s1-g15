@@ -105,7 +105,6 @@ function Dashboard() {
     interviewerNotes,
     personalNotes,
   }) => {
-    console.log("hi");
     navigate("/history", {
       state: {
         title,
@@ -130,15 +129,24 @@ function Dashboard() {
 
   useEffect(() => {
     const getHistory = async () => {
-      const res = await axios.get(URL_HISTORY_SVC + `/?user=${user}`, { withCredentials: true })
-                // .then((res) => res.data && res.data.map((hist) => console.log('hist', hist)))
-                // .then((res) => res.data && res.data.map((hist) => setHistoryList([...historyList, hist])))
-                .then(res => res.data.length && res.data.map(hist => hist.title && hist.timestamp && hist.interviewer && setHistoryList(histList => [...histList, hist])))
-                .then(console.log('historylist', historyList))
-                .catch(err => console.log(err))
-    }
+      const res = await axios
+        .get(URL_HISTORY_SVC + `/?user=${user}`, { withCredentials: true })
+        .then(
+          (res) =>
+            res.data.length &&
+            res.data.map(
+              (hist) =>
+                hist.title &&
+                hist.timestamp &&
+                hist.interviewer &&
+                setHistoryList((histList) => [...histList, hist])
+            )
+        )
+        .then(console.log("historylist", historyList))
+        .catch((err) => console.log(err));
+    };
     getHistory();
-  }, [user])
+  }, [user]);
 
   return (
     <Box className="mainDashboardBox">
@@ -152,49 +160,62 @@ function Dashboard() {
         <Box className="leftBox">
           <Typography>Practice history</Typography>
           <Divider />
-          {historyList.length ? 
-          (
-          <List component="nav" aria-label="history">
-              {
-              historyList.map(({_id, title, code, interviewerNotes, personalNotes, question, difficulty, interviewer, timestamp}) => {
+          {historyList.length ? (
+            <List component="nav" aria-label="history">
+              {historyList.map(
+                ({
+                  _id,
+                  title,
+                  code,
+                  interviewerNotes,
+                  personalNotes,
+                  question,
+                  difficulty,
+                  interviewer,
+                  timestamp,
+                }) => {
                   // console.log('hi', res)
-                return (
-                <>
-                  <ListItem
-                    key={_id}
-                    button
-                    onClick={() =>
-                      handleHistoryClick({
-                        title: title,
-                        question: question,
-                        code: code,
-                        interviewerNotes: interviewerNotes,
-                        personalNotes: personalNotes,
-                        difficulty: difficulty,
-                        interviewer: interviewer,
-                        timestamp: timestamp,
-                      })
-                    }
-                  >
-                    Problem: {title} <br/>
-                    Done at: {timestamp} <br/>
-                    Conducted by: {interviewer}
-                  </ListItem>
-                  <Divider />
-                </>
-                )
-                })
-              }
+                  return (
+                    <>
+                      <ListItem
+                        key={_id}
+                        button
+                        onClick={() =>
+                          handleHistoryClick({
+                            title: title,
+                            question: question,
+                            code: code,
+                            interviewerNotes: interviewerNotes,
+                            personalNotes: personalNotes,
+                            difficulty: difficulty,
+                            interviewer: interviewer,
+                            timestamp: timestamp,
+                          })
+                        }
+                      >
+                        Problem: {title} <br />
+                        Done at: {timestamp} <br />
+                        Conducted by: {interviewer}
+                      </ListItem>
+                      <Divider />
+                    </>
+                  );
+                }
+              )}
             </List>
-            ) : 
-            (
-              
-              <Box sx={{display: "flex", flexDirection: "column", alignItems: "center", padding: "10%"}}>
-                <CircularProgress sx={{marginBottom: "2%", color: "inherit"}} />
-                <Typography>No history to show. Get to practising!</Typography>
-              </Box>
-          )
-        }
+          ) : (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                padding: "10%",
+              }}
+            >
+              <CircularProgress sx={{ marginBottom: "2%", color: "inherit" }} />
+              <Typography>No history to show. Get to practising!</Typography>
+            </Box>
+          )}
         </Box>
         <Box className="rightBox">
           <Typography

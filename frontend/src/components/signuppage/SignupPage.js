@@ -12,6 +12,7 @@ import "./signuppage.css";
 import isEmail from "validator/lib/isEmail";
 import zxcvbn from "zxcvbn";
 import { signUp } from "../../api/user/user";
+import { REQUIRED_PASSWORD_STRENGTH } from "../../constants";
 
 function SignupPage() {
   const [username, setUsername] = useState("");
@@ -22,7 +23,6 @@ function SignupPage() {
   const [dialogMsg, setDialogMsg] = useState("");
   const [isSignupSuccess, setIsSignupSuccess] = useState(false);
   const navigate = useNavigate();
-  const minPasswordStrength = 1;
 
   const handleSignup = async () => {
     setIsSignupSuccess(false);
@@ -66,7 +66,7 @@ function SignupPage() {
   };
 
   const isPasswordSecure = () => {
-    if (zxcvbn(password).score < minPasswordStrength) {
+    if (zxcvbn(password).score < REQUIRED_PASSWORD_STRENGTH) {
       return false;
     } else {
       return true;

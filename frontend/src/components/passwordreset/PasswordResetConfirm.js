@@ -6,6 +6,8 @@ import Typography from "@mui/material/Typography";
 import { useNavigate, useParams } from "react-router-dom";
 import "./passwordResetConfirm.css";
 import { resetPassword } from "../../api/user/user";
+import zxcvbn from "zxcvbn";
+import { REQUIRED_PASSWORD_STRENGTH } from "../../constants";
 
 const PasswordResetConfirm = () => {
   const [newPassword, setNewPassword] = useState("");
@@ -16,11 +18,23 @@ const PasswordResetConfirm = () => {
   const { resetToken } = useParams();
   const navigate = useNavigate();
 
+  const isPasswordSecure = () => {
+    if (zxcvbn(newPassword).score < REQUIRED_PASSWORD_STRENGTH) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   const handlePasswordReset = async () => {
     setErrMsg("");
     setHasResetPassword(false);
     if (newPassword !== confirmPassword) {
       setErrMsg("Passwords do not match");
+      return;
+    }
+    if (!isPasswordSecure()) {
+      setErrMsg("New password is not strong enough!");
       return;
     }
     const resetResp = await resetPassword(newPassword, resetToken);
