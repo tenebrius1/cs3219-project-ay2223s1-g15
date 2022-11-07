@@ -1,8 +1,8 @@
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
+import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Typography from "@mui/material/Typography";
 
@@ -15,6 +15,7 @@ import UserContext from "../../contexts/UserContext";
 import { URL_HISTORY_SVC } from "../../configs";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
+import MatchingPageDialog from "../matching/MatchingPageDialog";
 
 function Dashboard() {
   const [buttonToggleEasy, setButtonToggleEasy] = useState(false);
@@ -23,6 +24,7 @@ function Dashboard() {
   const [isMatchWithoutDifficulty, setIsMatchWithoutDifficulty] =
     useState(false);
   const [historyList, setHistoryList] = useState([]);
+  const [isStartMatch, setIsStartMatch] = useState(false);
 
   const navigate = useNavigate();
   const { difficulty, setDifficulty } = useContext(RoomContext);
@@ -31,7 +33,12 @@ function Dashboard() {
   const startMatch = async () => {
     console.log("user", user);
     console.log("difficulty", difficulty);
-    navigate("/matching", { replace: true });
+    // navigate("/matching", { replace: true });
+    setIsStartMatch(true);
+  };
+
+  const handleStartMatchCancel = () => {
+    setIsStartMatch(false);
   };
 
   const toggleButtonEasy = (event) => {
@@ -174,7 +181,6 @@ function Dashboard() {
                   interviewer,
                   timestamp,
                 }) => {
-                  // console.log('hi', res)
                   return (
                     <>
                       <ListItem
@@ -279,6 +285,11 @@ function Dashboard() {
           )}
         </Box>
       </Box>
+      <MatchingPageDialog
+        open={isStartMatch}
+        close={handleStartMatchCancel}
+        setIsStartMatch={setIsStartMatch}
+      />
     </Box>
   );
 }

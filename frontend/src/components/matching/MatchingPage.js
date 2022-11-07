@@ -31,10 +31,17 @@ function MatchingPage() {
   //Send match event when countdown timer starts
   useEffect(() => {
     console.log("match event sent");
+    if (!difficulty || !user) {
+      navigate("/dashboard", { replace: true }); // if access this screen directly rather than from dashboard
+    }
     matchingSocket.emit("match", user, difficulty);
   }, [key]);
 
   useEffect(() => {
+    console.log(difficulty ? "yes" : "no");
+    if (!difficulty || !user) {
+      navigate("/dashboard", { replace: true }); // if access this screen directly rather than from dashboard
+    }
     matchingSocket.on("matchFail", () => {
       console.log("matchfail");
       setIsMatchFail(true);
