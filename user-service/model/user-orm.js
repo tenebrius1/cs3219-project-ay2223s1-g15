@@ -15,6 +15,7 @@ import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
 
 // need to separate orm functions from repository to decouple business logic from persistence
+const LIVE_URL = process.env.ENV  === "PROD" ? process.env.LIVE_URL : "http://localhost:3000";
 
 export const ormCreateUser = async (email, username, password) => {
   try {
@@ -141,7 +142,7 @@ export const ormRequestPasswordReset = async (email) => {
           `<p>Hi ${user.username},</p>` +
           `<p>You requested to reset your password.</p>` +
           `<p> Please click the link below to reset your password</p>` +
-          `<a href="http://localhost:3000/passwordresetconfirm/${resetToken}">Reset Password</a>`,
+          `<a href="${LIVE_URL}/passwordresetconfirm/${resetToken}">Reset Password</a>`,
       };
 
       return { transporter: transporter, mailOptions: mailOptions };

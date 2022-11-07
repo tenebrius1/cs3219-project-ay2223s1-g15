@@ -1,13 +1,15 @@
-import { useContext, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Dialog from '@mui/material/Dialog';
-import Avatar from '@mui/material/Avatar';
-import DialogTitle from '@mui/material/DialogTitle';
-import UserContext from '../../contexts/UserContext';
-import ProfilePage from '../profilepage/ProfilePage';
-import { logout } from '../../api/user/auth';
+import { useContext, useState } from "react";
+import { Navigate } from "react-router-dom";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Dialog from "@mui/material/Dialog";
+import Avatar from "@mui/material/Avatar";
+import DialogTitle from "@mui/material/DialogTitle";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import UserContext from "../../contexts/UserContext";
+import ProfilePage from "../profilepage/ProfilePage";
+import { logout } from "../../api/user/auth";
 
 function CustomAvatar() {
   const [anchorElement, setAnchorElement] = useState(null);
@@ -43,14 +45,14 @@ function CustomAvatar() {
   };
 
   return isLogout ? (
-    <Navigate to={'/'} replace />
+    <Navigate to={"/"} replace />
   ) : (
     <>
       <Avatar
-        id='basic-button'
-        aria-controls={open ? 'basic-menu' : undefined}
-        aria-haspopup='true'
-        aria-expanded={open ? 'true' : undefined}
+        id="basic-button"
+        aria-controls={open ? "basic-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
         sx={{
           minWidth: 0,
@@ -58,12 +60,12 @@ function CustomAvatar() {
         src={imageUrl}
       />
       <Menu
-        id='basic-menu'
+        id="basic-menu"
         anchorEl={anchorElement}
         open={open}
         onClose={handleClose}
         MenuListProps={{
-          'aria-labelledby': 'basic-button',
+          "aria-labelledby": "basic-button",
         }}
       >
         <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
@@ -73,14 +75,30 @@ function CustomAvatar() {
         open={isProfileClick}
         onClose={handleProfileClose}
         fullWidth
+        scroll={"paper"}
         PaperProps={{
           sx: {
-            height: '90%',
-            maxHeight: '90%',
+            height: "90%",
+            maxHeight: "90%",
           },
         }}
       >
-        <DialogTitle>Profile</DialogTitle>
+        <DialogTitle>
+          Profile
+          {handleProfileClose && (
+            <IconButton
+              onClick={handleProfileClose}
+              sx={{
+                position: "absolute",
+                right: 12,
+                top: 12,
+                color: "#D8DEE9",
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          )}
+        </DialogTitle>
         <ProfilePage />
       </Dialog>
     </>

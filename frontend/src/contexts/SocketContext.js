@@ -1,7 +1,8 @@
 import { createContext } from 'react';
 import io from 'socket.io-client';
+const LIVE_URL = process.env.ENV === 'PROD' ? process.env.LIVE_URL : 'http://localhost';
 
-const matchingSocket = io(`http://localhost:8080`, {
+const matchingSocket = io(`${LIVE_URL}:8080`, {
   reconnection: true,
   reconnectionDelay: 1000,
   reconnectionDelayMax: 5000,
@@ -17,7 +18,7 @@ matchingSocket.on('disconnect', () => {
   console.log('disconnected from matching');
 });
 
-const codingSocket = io(`http://localhost:8080`, {
+const codingSocket = io(`${LIVE_URL}:8080`, {
   reconnection: true,
   reconnectionDelay: 1000,
   reconnectionDelayMax: 5000,
