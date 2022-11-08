@@ -24,7 +24,8 @@ export const startServer = () => {
           username
         );
         if (roomId) {
-          io.to(firstUserSocketId).to(secondUserSocketId).emit('matchSuccess', roomId);
+          io.to(firstUserSocketId).emit('matchSuccess', { roomId, role: 'interviewee' });
+          io.to(secondUserSocketId).emit('matchSuccess', { roomId, role: 'interviewer' });
         } else {
           setTimeout(() => {
             socket.emit('matchFail');

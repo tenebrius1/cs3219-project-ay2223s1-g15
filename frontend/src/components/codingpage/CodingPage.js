@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import CodingLanguageSelector from './CodingLanguageSelector';
 import SocketContext from '../../contexts/SocketContext';
 import RoomContext from '../../contexts/RoomContext';
+import UserContext from '../../contexts/UserContext';
 import './codingpage.css';
 
 import VideoCall from '../video/VideoCall';
@@ -36,6 +37,7 @@ function CodingPage() {
   const navigate = useNavigate();
   const { codingSocket } = useContext(SocketContext);
   const { roomId } = useContext(RoomContext);
+  const { role } = useContext(RoomContext);
 
   const handleEndClick = () => {
     navigate('/dashboard', { replace: true });
@@ -67,6 +69,10 @@ function CodingPage() {
       setCurrentLanguage(language);
     });
   }, [codingSocket]);
+
+  useEffect(() => {
+    // roomSocket.on('')
+  }, []);
 
   return (
     <Box className='mainCodingPageBox'>
