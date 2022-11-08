@@ -1,0 +1,234 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - name: gateway
+          image: cs3219.azurecr.io/gateway
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: peerprep-config
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: '250m'
+            requests:
+              memory: 256Mi
+              cpu: '250m'
+      imagePullSecrets:
+        - name: azureregistrykey
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: cs3219.azurecr.io/frontend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: 1024Mi
+              cpu: "250m"
+            requests:
+              memory: 256Mi
+              cpu: "250m"
+          envFrom:
+            - configMapRef:
+                name: peerprep-config
+      imagePullSecrets:
+        - name: azureregistrykey
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matching
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matching
+  template:
+    metadata:
+      labels:
+        app: matching
+    spec:
+      containers:
+        - name: matching
+          image: cs3219.azurecr.io/matching
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8001
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "250m"
+            requests:
+              memory: 256Mi
+              cpu: "250m"
+          envFrom:
+            - configMapRef:
+                name: peerprep-config
+      imagePullSecrets:
+        - name: azureregistrykey
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      containers:
+        - name: user
+          image: cs3219.azurecr.io/user
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "250m"
+            requests:
+              memory: 256Mi
+              cpu: "250m"
+          envFrom:
+            - configMapRef:
+                name: peerprep-config
+          env:
+            - name: DB_CLOUD_URI
+              value: "mongodb+srv://cs3219-g15:cs3219-g15@cs3219-g15.ryvsrmt.mongodb.net/?retryWrites=true&w=majority"
+      imagePullSecrets:
+        - name: azureregistrykey
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coding
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coding
+  template:
+    metadata:
+      labels:
+        app: coding
+    spec:
+      containers:
+        - name: coding
+          image: cs3219.azurecr.io/coding
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8002
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "250m"
+            requests:
+              memory: 256Mi
+              cpu: "250m"
+          envFrom:
+            - configMapRef:
+                name: peerprep-config
+      imagePullSecrets:
+        - name: azureregistrykey
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: question
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: question
+  template:
+    metadata:
+      labels:
+        app: question
+    spec:
+      containers:
+        - name: question
+          image: cs3219.azurecr.io/question
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8004
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "250m"
+            requests:
+              memory: 256Mi
+              cpu: "250m"
+          envFrom:
+            - configMapRef:
+                name: peerprep-config
+      imagePullSecrets:
+        - name: azureregistrykey
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: history
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: history
+  template:
+    metadata:
+      labels:
+        app: history
+    spec:
+      containers:
+        - name: history
+          image: cs3219.azurecr.io/history
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8005
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "250m"
+            requests:
+              memory: 256Mi
+              cpu: "250m"
+          envFrom:
+            - configMapRef:
+                name: peerprep-config
+      imagePullSecrets:
+        - name: azureregistrykey
+---

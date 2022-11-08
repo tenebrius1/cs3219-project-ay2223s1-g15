@@ -77,5 +77,6 @@ export default function Controls(props) {
           </Button>
         </Grid>
       </Grid>
-    );
-  }
+    </Grid>
+  );
+}

@@ -35,10 +35,8 @@
 
 .endTurnBox.MuiBox-root {
   display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
-  transform: translate(0px, 5px);
   align-items: center;
+  width: 50%
 }
 
 .titleBar.MuiBox-root {

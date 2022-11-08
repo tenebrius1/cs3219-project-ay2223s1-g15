@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { URL_USER_SVC } from '../../configs';
+import { URL_USER_SVC } from '../../configs.js';
 import {
   STATUS_CODE_CONFLICT,
   STATUS_CODE_CREATED,
   STATUS_CODE_OK,
   STATUS_CODE_UNAUTHORIZED,
-} from '../../constants';
+} from '../../constants.js';
 
 export const signUp = async (email, username, password) => {
   const res = await axios

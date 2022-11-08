@@ -10,6 +10,15 @@ x-common-variables:
   VIDEO_URL: http://video:8003
   QUESTION_URL: http://question:8004
   HISTORY_URL: http://history:8005
+  LIVE_URL: https://peerprep.live
+  URI_GATEWAY: https://peerprep.live:8080
+  URI_VIDEO_SVC: https://peerprep.live:8003
+
+x-logging: &default-logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100m
 
 services:
   gateway:
@@ -17,6 +26,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./api-gateway
+    image: cs3219.azurecr.io/gateway
     volumes:
       - ./gateway:/home/node/app/gateway
     ports:
@@ -24,24 +34,27 @@ services:
     restart: on-failure
     environment:
       <<: *common-backend-variables
-      HTTP_PROXY: 'http://localhost:8080'
 
   frontend:
     container_name: frontend
     build:
       dockerfile: Dockerfile
       context: ./frontend
+    image: cs3219.azurecr.io/frontend
     volumes:
       - ./frontend:/home/node/app/frontend
     ports:
       - 3000:3000
     restart: on-failure
+    environment:
+      <<: *common-backend-variables
 
   user:
     container_name: user
     build:
       dockerfile: Dockerfile
       context: ./user-service
+    image: cs3219.azurecr.io/user
     volumes:
       - ./user-service:/home/node/app/user-service
     expose:
@@ -55,6 +68,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./matching-service
+    image: cs3219.azurecr.io/matching
     volumes:
       - ./matching-service:/home/node/app/matching
     expose:
@@ -68,6 +82,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./coding-service
+    image: cs3219.azurecr.io/coding
     volumes:
       - ./coding-service:/home/node/app/coding-service
     expose:
@@ -94,6 +109,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./question-service
+    image: cs3219.azurecr.io/question
     volumes:
       - ./question-service:/home/node/app/question_service
     expose:
@@ -110,6 +126,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./history-service
+    image: cs3219.azurecr.io/history
     volumes:
       - ./history-service:/home/node/app/history_service
     expose:
@@ -119,14 +136,59 @@ services:
       <<: *common-backend-variables
       DB_CLOUD_URI: 'mongodb+srv://cs3219-history:cs3219-history@cs3219-history.u9n8v5t.mongodb.net/?retryWrites=true&w=majority'
 
+
+  # Judge0
+  server:
+      image: judge0/judge0:1.13.0
+      volumes:
+        - ./judge0.conf:/judge0.conf:ro
+      ports:
+        - "2358:2358"
+      privileged: true
+      <<: *default-logging
+      restart: always
+
+  workers:
+    image: judge0/judge0:1.13.0
+    command: ["./scripts/workers"]
+    volumes:
+      - ./judge0.conf:/judge0.conf:ro
+    privileged: true
+    <<: *default-logging
+    restart: always
+
+  db:
+    image: postgres:13.0
+    env_file: judge0.conf
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+    <<: *default-logging
+    restart: always
+
+  redis:
+    image: redis:6.0
+    command: [
+      "bash", "-c",
+      'docker-entrypoint.sh --appendonly yes --requirepass "$$REDIS_PASSWORD"'
+    ]
+    env_file: judge0.conf
+    volumes:
+      - redis-data:/data
+    <<: *default-logging
+    restart: always
+    
 volumes: 
   question-service:
   video-service:
   coding-service:
   matching-service: 
   user-service:
+  history-service:
   frontend:
   gateway:
+  history:
+  postgres-data:
+  redis-data:
 
   # Used for local dev
   # mongo:

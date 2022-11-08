@@ -1,15 +1,15 @@
-import { useContext, useState } from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import './profilepage.css';
-import AvatarSelectDialog from './AvatarSelectDialog';
-import { removeAvatarImage, uploadAvatarImage } from '../../api/user/user';
-import UserContext from '../../contexts/UserContext';
-import DeleteAccount from './DeleteAccount';
-import ChangePassword from './ChangePassword';
+import { useContext, useState } from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
+import Typography from "@mui/material/Typography";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import "./profilepage.css";
+import AvatarSelectDialog from "./AvatarSelectDialog";
+import { removeAvatarImage, uploadAvatarImage } from "../../api/user/user";
+import UserContext from "../../contexts/UserContext";
+import DeleteAccount from "./DeleteAccount";
+import ChangePassword from "./ChangePassword";
 
 const ProfilePage = () => {
   const [isChangePassword, setIsChangePassword] = useState(false);
@@ -17,6 +17,10 @@ const ProfilePage = () => {
   const [isEditAvatar, setIsEditAvatar] = useState(false);
   const [selectedValue, setSelectedValue] = useState(null);
   const [imgCrop, setImgCrop] = useState(null);
+
+  const onClickDeleteAccount = () => {
+    setIsDeleteAccount(true);
+  };
 
   const { user, imageUrl, setImageUrl } = useContext(UserContext);
 
@@ -50,20 +54,20 @@ const ProfilePage = () => {
   };
 
   return (
-    <Box className='mainProfilePageBox'>
-      <Box className='profilePageVerticalBox'>
-        <div className='avatarButtonSection' onClick={onClickProfile}>
+    <Box className="mainProfilePageBox">
+      <Box className="profilePageVerticalBox">
+        <div className="avatarButtonSection" onClick={onClickProfile}>
           <Avatar
-            id='basic-button'
-            className='avatarButton'
+            id="basic-button"
+            className="avatarButton"
             src={imageUrl}
             width={500}
-            margin={'2%'}
+            
           />
           <Button
-            className='editAvatarButton'
-            variant='contained'
-            color='primary'
+            className="editAvatarButton"
+            variant="contained"
+            color="primary"
             startIcon={<EditOutlinedIcon />}
             disableRipple
             disableTouchRipple
@@ -71,8 +75,8 @@ const ProfilePage = () => {
             Edit
           </Button>
         </div>
-        <div className='profilePageAdminPage'>
-          <Typography variant='h4' sx={{ textAlign: 'center' }}>
+        <div className="profilePageAdminPage">
+          <Typography variant="h4" sx={{ textAlign: "center" }}>
             {user}
           </Typography>
           {isChangePassword ? (
@@ -81,20 +85,20 @@ const ProfilePage = () => {
             <DeleteAccount setShowDeleteAccount={setIsDeleteAccount} />
           ) : (
             <>
-              <Box className='profilePageConfirmationBox'>
+              <Box className="profilePageConfirmationBox">
                 <Button
-                  variant='outlined'
-                  color='error'
-                  onClick={() => setIsDeleteAccount((prev) => !prev)}
-                  sx={{ borderWidth: '2px', marginRight: '5px' }}
+                  variant="outlined"
+                  color="error"
+                  onClick={onClickDeleteAccount}
+                  sx={{ borderWidth: "2px", marginRight: "5px" }}
                 >
                   Delete account
                 </Button>
                 <Button
-                  variant='outlined'
-                  color='secondary'
+                  variant="outlined"
+                  color="secondary"
                   onClick={() => setIsChangePassword((prev) => !prev)}
-                  sx={{ marginLeft: '5px' }}
+                  sx={{ marginLeft: "5px" }}
                 >
                   Change password
                 </Button>

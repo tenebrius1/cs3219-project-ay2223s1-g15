@@ -1,0 +1,170 @@
+version: '3.8'
+
+# back-end variables
+x-common-variables:
+  &common-backend-variables
+  ENV: DEV
+  USER_URL: http://user:8000
+  MATCHING_URL: http://matching:8001
+  CODING_URL: http://coding:8002
+  VIDEO_URL: http://video:8003
+  QUESTION_URL: http://question:8004
+  HISTORY_URL: http://history:8005
+
+services:
+  gateway:
+    container_name: gateway
+    build:
+      dockerfile: Dockerfile
+      context: ./api-gateway
+    image: cs3219.azurecr.io/gateway
+    volumes:
+      - ./gateway:/home/node/app/gateway
+    ports:
+      - 8080:8080
+    restart: on-failure
+    environment:
+      <<: *common-backend-variables
+
+  frontend:
+    container_name: frontend
+    build:
+      dockerfile: Dockerfile-dev
+      context: ./frontend
+    image: cs3219.azurecr.io/frontend
+    volumes:
+      - ./frontend:/home/node/app/frontend
+    ports:
+      - 3000:3000
+    restart: on-failure
+
+  user:
+    container_name: user
+    build:
+      dockerfile: Dockerfile
+      context: ./user-service
+    image: cs3219.azurecr.io/user
+    volumes:
+      - ./user-service:/home/node/app/user-service
+    expose:
+      - 8000
+    restart: on-failure
+    environment:
+      <<: *common-backend-variables
+
+  matching:
+    container_name: matching
+    build:
+      dockerfile: Dockerfile
+      context: ./matching-service
+    image: cs3219.azurecr.io/matching
+    volumes:
+      - ./matching-service:/home/node/app/matching
+    expose:
+      - 8001
+    restart: on-failure
+    environment:
+      <<: *common-backend-variables
+
+  coding:
+    container_name: coding
+    build:
+      dockerfile: Dockerfile
+      context: ./coding-service
+    image: cs3219.azurecr.io/coding
+    volumes:
+      - ./coding-service:/home/node/app/coding-service
+    expose:
+      - 8002
+    restart: on-failure
+    environment:
+      <<: *common-backend-variables
+
+  question:
+    container_name: question
+    build:
+      dockerfile: Dockerfile
+      context: ./question-service
+    image: cs3219.azurecr.io/question
+    volumes:
+      - ./question-service:/home/node/app/question_service
+    expose:
+      - 8004
+    restart: on-failure
+    environment:
+      <<: *common-backend-variables
+      DATABASE_USERNAME: cs3219g15
+      DATABASE_PASSWORD: Password1234!
+      DATABASE_HOST: question-service.mysql.database.azure.com
+  
+  history:
+    container_name: history
+    build:
+      dockerfile: Dockerfile
+      context: ./history-service
+    image: cs3219.azurecr.io/history
+    volumes:
+      - ./history-service:/home/node/app/history_service
+    expose:
+      - 8005
+    restart: on-failure
+    environment:
+      <<: *common-backend-variables
+      DB_CLOUD_URI: 'mongodb+srv://cs3219-history:cs3219-history@cs3219-history.u9n8v5t.mongodb.net/?retryWrites=true&w=majority'
+
+  # Judge0
+  server:
+      image: judge0/judge0:1.13.0
+      volumes:
+        - ./judge0.conf:/judge0.conf:ro
+      ports:
+        - "2358:2358"
+      privileged: true
+      <<: *default-logging
+      restart: always
+
+  workers:
+    image: judge0/judge0:1.13.0
+    command: ["./scripts/workers"]
+    volumes:
+      - ./judge0.conf:/judge0.conf:ro
+    privileged: true
+    <<: *default-logging
+    restart: always
+
+  db:
+    image: postgres:13.0
+    env_file: judge0.conf
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+    <<: *default-logging
+    restart: always
+
+  redis:
+    image: redis:6.0
+    command: [
+      "bash", "-c",
+      'docker-entrypoint.sh --appendonly yes --requirepass "$$REDIS_PASSWORD"'
+    ]
+    env_file: judge0.conf
+    volumes:
+      - redis-data:/data
+    <<: *default-logging
+    restart: always
+volumes: 
+  question-service:
+  coding-service:
+  matching-service: 
+  user-service:
+  history-service:
+  frontend:
+  gateway:
+  history:
+  postgres-data:
+  redis-data:
+
+  # Used for local dev
+  # mongo:
+  #   container_name: mongo
+  #   image: mongo
+  #   restart: always
