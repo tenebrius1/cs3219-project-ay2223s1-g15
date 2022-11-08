@@ -98,7 +98,7 @@ function CodePad({ currentLanguage, setOutput }) {
       <CodeMirror
         value={code}
         theme={githubDark}
-        height={"70vh"}
+        height={'80vh'}
         extensions={[loadLanguage(currentLanguage)]}
         initialState={
           serializedState

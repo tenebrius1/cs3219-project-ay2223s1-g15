@@ -11,6 +11,12 @@ x-common-variables:
   QUESTION_URL: http://question:8004
   HISTORY_URL: http://history:8005
 
+x-logging: &default-logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100m
+
 services:
   gateway:
     container_name: gateway

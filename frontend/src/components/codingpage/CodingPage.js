@@ -1,16 +1,14 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import BasicTab from "./BasicTab";
 import CodePad from "./CodePad";
+import VideoCall from '../video/VideoCall.js'
 import { useNavigate } from "react-router-dom";
 import CodingLanguageSelector from "./CodingLanguageSelector";
+import RoomContext from '../../contexts/RoomContext';
 import SocketContext from "../../contexts/SocketContext";
-import RoomContext from "../../contexts/RoomContext";
 import "./codingpage.css";
-
-import VideoCall from "../video/VideoCall";
-import Video from "../video/Video";
 import ConfirmationDialog from "../confirmationdialog/ConfirmationDialog";
 
 function a11yProps(index) {
@@ -22,6 +20,7 @@ function a11yProps(index) {
 
 function CodingPage() {
   const [currentLanguage, setCurrentLanguage] = useState("python");
+  const [inCall, setInCall] = useState(false);
   const [output, setOutput] = useState(
     "No output to display"
   );
@@ -30,12 +29,13 @@ function CodingPage() {
   const [hasOtherPartyLeft, setHasOtherPartyLeft] = useState(false);
 
   const [hasClickedEndInterview, setHasClickedEndInterview] = useState(false);
-
-  const navigate = useNavigate();
+   const navigate = useNavigate();
+  const { difficulty, client, tracks } = useContext(RoomContext);
   const { codingSocket } = useContext(SocketContext);
   const { roomId } = useContext(RoomContext);
 
-  const handleEndClick = () => {
+  const handleEndClick = async () => {
+
     setHasClickedEndInterview(true);
     console.log("interview ended");
   };
@@ -44,7 +44,13 @@ function CodingPage() {
     setHasClickedEndInterview(false);
   };
 
-  const handleEndClickConfirm = () => {
+  const handleEndClickConfirm = async () => {
+    if (inCall) {
+      await client.leave();
+      client.removeAllListeners();
+      tracks[0].close();
+      tracks[1].close();
+    }
     navigate("/dashboard", { replace: true });
   };
 
@@ -63,6 +69,10 @@ function CodingPage() {
   const handleOtherPartyLeaveClose = () => {
     setHasOtherPartyLeft(false);
   };
+
+  const handleJoinCallClick = () => {
+    setInCall(true);
+  }
 
   useEffect(() => {
     codingSocket.on("languageChanged", (language) => {
@@ -113,7 +123,16 @@ function CodingPage() {
         <CodePad currentLanguage={currentLanguage} setOutput={setOutput} />
       </Box>
       <Box className="adminSpace">
-        <BasicTab output={output} />
+        <BasicTab output={output} inCall={inCall}/>
+        <Box display={'flex'} justifyContent={'flex-end'} marginTop={'1rem'}>
+          {!inCall && <Button variant='outlined' color='secondary' onClick={handleJoinCallClick}>
+            Join Call
+          </Button>}
+        </Box>
+        {inCall && 
+          <Box className='videoCall'>
+            <VideoCall setInCall={setInCall} />
+          </Box>}
       </Box>
       <ConfirmationDialog
         className="requestToChangeButtonDialog"

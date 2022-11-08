@@ -1,107 +1,103 @@
 import { useState, useEffect, useContext } from "react";
-import { useClient, useMicrophoneAndCameraTracks } from "./settings.js";
+import Grid from "@mui/material/Grid";
+import {
+    useClient,
+    useMicrophoneAndCameraTracks,
+  } from "./settings.js";
 import Video from "./Video";
 import Controls from "./Controls";
-import RoomContext from "../../contexts/RoomContext";
-import { useAuth } from "../../contexts/AuthContext";
-import { URL_VIDEO_SVC } from "./../../configs";
-import axios from "axios";
-import Grid from "@mui/material/Grid";
+import RoomContext from '../../contexts/RoomContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { getToken } from "../../api/video/video.js";
 
-const appId = process.env.AGORA_APP_ID ?? "";
+const appId = process.env.REACT_APP_AGORA_APP_ID ?? '';
 
 export default function VideoCall(props) {
-  const { setInCall } = props;
-  const [users, setUsers] = useState([]);
-  const [start, setStart] = useState(false);
-  const client = useClient();
-  const { ready, tracks } = useMicrophoneAndCameraTracks();
-  const { user } = useAuth();
-  const { roomId } = useContext(RoomContext);
+    const { setInCall } = props;
+    const [users, setUsers] = useState([]);
+    const [start, setStart] = useState(false);
+    const client = useClient();
+    const { ready, tracks } = useMicrophoneAndCameraTracks();
+    const { user } = useAuth();
+    const { roomId } = useContext(RoomContext);
 
-  const getToken = async (roomId) => {
-    const res = await axios
-      .post(`${URL_VIDEO_SVC}`, { roomId })
-      .then((res) => {
-        console.log(res);
-        return res.token;
-      })
-      .catch((err) => {
-        return "";
-      });
-    return res;
-  };
-
-  useEffect(() => {
-    if (!appId) {
-      return;
+    const generateToken = async (roomId) => {
+      const token = await getToken(roomId);
+      console.log(token)
+      return token;
     }
-    let init = async (channelName) => {
-      client.on("user-published", async (user, mediaType) => {
-        await client.subscribe(user, mediaType);
-        if (mediaType === "video") {
-          setUsers((prevUsers) => {
-            return [...prevUsers, user];
-          });
-        }
-        if (mediaType === "audio") {
-          user.audioTrack.play();
-        }
-      });
 
-      client.on("user-unpublished", (user, mediaType) => {
-        if (mediaType === "audio") {
-          if (user.audioTrack) user.audioTrack.stop();
+    useEffect(() => {
+        if (!appId) {
+            return;
         }
-        if (mediaType === "video") {
-          setUsers((prevUsers) => {
-            return prevUsers.filter((User) => User.uid !== user.uid);
+        let init = async (channelName) => {
+          client.on("user-published", async (user, mediaType) => {
+            await client.subscribe(user, mediaType);
+            if (mediaType === "video") {
+              setUsers((prevUsers) => {
+                return [...prevUsers, user];
+              });
+            }
+            if (mediaType === "audio") {
+              user.audioTrack.play();
+            }
           });
-        }
-      });
-
-      client.on("user-left", (user) => {
-        setUsers((prevUsers) => {
-          return prevUsers.filter((User) => User.uid !== user.uid);
+    
+          client.on("user-unpublished", (user, mediaType) => {
+            if (mediaType === "audio") {
+              if (user.audioTrack) user.audioTrack.stop();
+            }
+            if (mediaType === "video") {
+              setUsers((prevUsers) => {
+                return prevUsers.filter((User) => User.uid !== user.uid);
+              });
+            }
+          });
+    
+        client.on("user-left", (user) => {
+            setUsers((prevUsers) => {
+              return prevUsers.filter((User) => User.uid !== user.uid);
+            });
         });
-      });
+    
 
-      try {
-        const token = await getToken(channelName);
+        const token = await generateToken(channelName);
+
+        console.log('join:', token)
+        if(!token) {
+          return;
+        }
+
         await client.join(appId, channelName, token, null);
-      } catch (error) {
-        console.log("error");
+
+        if (tracks) {
+            await client.publish([tracks[0], tracks[1]]);
+        }
+          setStart(true);
+        };
+    
+        if (ready && tracks) {
+            init(roomId);
+        }
+      }, [roomId, client, ready, tracks]);
+
+      if (!client) {
+        return null;
       }
 
-      if (tracks) {
-        await client.publish([tracks[0], tracks[1]]);
-      }
-      setStart(true);
-    };
+      return (
 
-    if (ready && tracks) {
-      try {
-        init(roomId);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }, [roomId, client, ready, tracks]);
+        <Grid container direction="column" style={{ height: "100%" }}>
+          <Grid item style={{ height: "20%" }}>
+            {ready && tracks && (
+              <Controls tracks={tracks} setStart={setStart} setInCall={setInCall} />
+            )}
+          </Grid>
+          <Grid item style={{ height: "80%" }}>
+            {start && tracks && <Video tracks={tracks} users={users} />}
+          </Grid>
+        </Grid>
 
-  if (!client || !user) {
-    return null;
-  }
-
-  return (
-    <Grid container direction="column" style={{ height: "100%" }}>
-      <Grid item style={{ height: "5%" }}>
-        {ready && tracks && (
-          <Controls tracks={tracks} setStart={setStart} setInCall={setInCall} />
-        )}
-      </Grid>
-      <Grid item style={{ height: "95%" }}>
-        {start && tracks && <Video tracks={tracks} users={users} />}
-      </Grid>
-    </Grid>
-  );
+      );
 }
