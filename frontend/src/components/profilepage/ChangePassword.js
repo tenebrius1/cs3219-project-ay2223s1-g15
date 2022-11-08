@@ -5,6 +5,8 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { changePassword } from "../../api/user/user";
 import "./profilepage.css";
+import zxcvbn from "zxcvbn";
+import { REQUIRED_PASSWORD_STRENGTH } from "../../constants";
 
 const ChangePassword = ({ setShowChangePassword }) => {
   const [currPassword, setCurrPassword] = useState("");
@@ -13,9 +15,22 @@ const ChangePassword = ({ setShowChangePassword }) => {
   const [pwChangeFail, setPwChangeFail] = useState(false);
   const [pwChangeFailMsg, setPwChangeFailMsg] = useState("");
 
+  const isPasswordSecure = () => {
+    if (zxcvbn(newPassword).score < REQUIRED_PASSWORD_STRENGTH) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
-      setPwChangeFailMsg("New passwords do not match");
+      setPwChangeFailMsg("New passwords do not match!");
+      setPwChangeFail(true);
+      return;
+    }
+    if (!isPasswordSecure()) {
+      setPwChangeFailMsg("New password is not strong enough!");
       setPwChangeFail(true);
       return;
     }

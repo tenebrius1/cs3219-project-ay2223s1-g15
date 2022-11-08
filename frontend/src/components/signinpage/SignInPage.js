@@ -10,6 +10,8 @@ import Typography from "@mui/material/Typography";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import UserContext from "../../contexts/UserContext";
 import { passwordLogin, tokenLogin } from "../../api/user/auth";
+import peerprep from "./../../logos/peerprep.png"
+import Paper from "@mui/material/Paper"
 
 function SignInPage() {
   const [username, setUsername] = useState("");
@@ -60,93 +62,104 @@ function SignInPage() {
     <Navigate to="/dashboard" replace />
   ) : (
     <Box className="mainBox">
-      <Box className="signInBox">
-        <Typography variant={"h3"} marginBottom={"2rem"} textAlign={"center"}>
-          Sign In
-        </Typography>
-      </Box>
-      <Box className="textFieldBox">
-        <TextField
-          className="TextField"
-          label="Username"
-          variant="standard"
-          color="primary"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          sx={{ marginBottom: "1rem" }}
-          autoFocus
-          required
-        />
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            marginBottom: "2rem",
-          }}
-        >
-          <TextField
-            label="Password"
-            variant="standard"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            sx={{ marginBottom: "0.5rem" }}
-            required
-          />
-          <Typography
-            component={Link}
-            to="/passwordreset"
-            color="secondary"
-            textAlign={"right"}
-          >
-            Forgot your password?
-          </Typography>
-        </Box>
-        <Box className="normalButton">
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Typography>Don't have an account?&nbsp;</Typography>
-            <Typography component={Link} to="/signup" color="secondary">
-              Sign up!
+      <Paper elevation={5} sx={{width: "50vw", height: "85vh", backgroundColor: "#3B4252"}}>
+        <Box sx={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%", width: "100%"}}>
+          <Box className="signInBox">
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "2rem" }}>
+              <Box sx={{ marginRight: "3%" }}>
+                <img src={peerprep} height={"50px"} width={"50px"} alt="PeerPrep logo" />
+              </Box>
+              {/* <a href="https://www.flaticon.com/free-icons/hands-and-gestures" title="hands and gestures icons">Hands and gestures icons created by Andrejs Kirma - Flaticon</a> */}
+              <Typography variant={"h2"} >PeerPrep</Typography>
+            </Box>
+            <Typography variant={"h3"} marginBottom={"2rem"} textAlign={"center"}>
+              Sign in
             </Typography>
           </Box>
-          <Button
-            variant={"contained"}
-            color={"secondary"}
-            onClick={handleSignin}
-          >
-            Sign in
-          </Button>
-        </Box>
-      </Box>
-
-      <Dialog open={isDialogOpen} onClose={closeDialog}>
-        <DialogTitle>
-          {dialogTitle}
-          {closeDialog ? (
-            <IconButton
-              onClick={closeDialog}
+          <Box className="textFieldBox">
+            <TextField
+              className="TextField"
+              label="Username"
+              variant="standard"
+              color="primary"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              sx={{ marginBottom: "1rem" }}
+              autoFocus
+              required
+            />
+            <Box
               sx={{
-                position: "absolute",
-                right: 12,
-                top: 12,
-                color: "#D8DEE9",
+                display: "flex",
+                flexDirection: "column",
+                marginBottom: "2rem",
               }}
             >
-              <CloseIcon />
-            </IconButton>
-          ) : null}
-        </DialogTitle>
-        <Box
-          sx={{
-            marginLeft: "9%",
-            marginRight: "9%",
-            marginBottom: "9%",
-            display: "flex",
-          }}
-        >
-          <Typography>{dialogMsg}</Typography>
+              <TextField
+                label="Password"
+                variant="standard"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                sx={{ marginBottom: "0.5rem" }}
+                required
+              />
+              <Typography
+                component={Link}
+                to="/passwordreset"
+                color="secondary"
+                textAlign={"right"}
+              >
+                Forgot your password?
+              </Typography>
+            </Box>
+            <Box className="normalButton">
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Typography>Don't have an account?&nbsp;</Typography>
+                <Typography component={Link} to="/signup" color="secondary">
+                  Sign up!
+                </Typography>
+              </Box>
+              <Button
+                variant={"contained"}
+                color={"secondary"}
+                onClick={handleSignin}
+              >
+                Sign in
+              </Button>
+            </Box>
+          </Box>
+
+          <Dialog open={isDialogOpen} onClose={closeDialog}>
+            <DialogTitle>
+              {dialogTitle}
+              {closeDialog ? (
+                <IconButton
+                  onClick={closeDialog}
+                  sx={{
+                    position: "absolute",
+                    right: 12,
+                    top: 12,
+                    color: "#D8DEE9",
+                  }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              ) : null}
+            </DialogTitle>
+            <Box
+              sx={{
+                marginLeft: "9%",
+                marginRight: "9%",
+                marginBottom: "9%",
+                display: "flex",
+              }}
+            >
+              <Typography>{dialogMsg}</Typography>
+            </Box>
+          </Dialog>
         </Box>
-      </Dialog>
+      </Paper>
     </Box>
   );
 }
