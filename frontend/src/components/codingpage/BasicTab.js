@@ -13,6 +13,7 @@ import { URL_QUESTION_SVC } from "../../configs";
 import RoomContext from "../../contexts/RoomContext";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../confirmationdialog/ConfirmationDialog";
+import Divider from "@mui/material/Divider";
 
 function BasicTab({ output }) {
   const [value, setValue] = useState(0);
@@ -110,10 +111,11 @@ function BasicTab({ output }) {
         <TabPanel
           children={
             <>
+              <Divider textAlign="left">Title</Divider>
               <Box
                 sx={{
                   display: "flex",
-                  alignItems: "center",
+                  flexDirection: "column"
                 }}
               >
                 <Typography>
@@ -128,14 +130,11 @@ function BasicTab({ output }) {
                     question.difficulty}
                 </Typography>
               </Box>
-              <br />
-              Question:{" "}
+              <Divider textAlign="left">Question</Divider>
               {question &&
                 Object.keys(question).length !== 0 &&
                 question.description}
-              <br />
-              <br />
-              Examples:
+              <Divider textAlign="left">Examples</Divider>
               {question &&
                 Object.keys(question).length !== 0 &&
                 Object.keys(question.example).map((ex) => {

@@ -142,7 +142,7 @@ function CodePad({ currentLanguage, setOutput }) {
         ) : (
           <>
             <Button variant="outlined" color="error" sx={{marginRight: "2%"}} onClick={handleEndTurn}>
-              End Turn
+              Swap roles
             </Button>
             <Typography>You are the: {role}</Typography>
           </>

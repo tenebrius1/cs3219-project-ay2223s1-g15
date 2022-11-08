@@ -17,7 +17,7 @@ function CustomAvatar() {
   const [isLogout, setIsLogout] = useState(false);
   const [isProfileClick, setIsProfileClick] = useState(false);
 
-  const { imageUrl } = useContext(UserContext);
+  const { user, imageUrl } = useContext(UserContext);
 
   const handleClick = (event) => {
     setAnchorElement(event.currentTarget);
@@ -68,7 +68,7 @@ function CustomAvatar() {
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
+        <MenuItem onClick={handleProfileClick}>{user ? user : "Profile"}</MenuItem>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
       <Dialog

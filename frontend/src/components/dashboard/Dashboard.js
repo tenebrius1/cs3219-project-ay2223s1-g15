@@ -1,5 +1,4 @@
 import Alert from "@mui/material/Alert";
-import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
@@ -153,8 +152,8 @@ function Dashboard() {
   return (
     <Box className="mainDashboardBox">
       <Box className="topBar">
-        <Box sx={{display: "flex"}}>
-          <img src={peerprep} height={"50px"} width={"50px"} />
+        <Box sx={{display: "flex", alignContent: "center"}}>
+          <img src={peerprep} height={"50px"} width={"50px"} alt="PeerPrep logo" />
           <Typography component={"h3"} variant={"h3"} sx={{marginLeft: "3%"}}>
             PeerPrep
           </Typography>
