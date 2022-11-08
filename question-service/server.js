@@ -7,7 +7,13 @@ var PORT = process.env.PORT || 8004;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors()); // config cors so that front-end can use
+app.use(
+  cors({
+    //replace with deployed endpoint
+    origin: 'http://localhost:3000',
+    credentials: true,
+  })
+); // config cors so that front-end can use
 app.options('*', cors());
 import {
   createNewQuestion,

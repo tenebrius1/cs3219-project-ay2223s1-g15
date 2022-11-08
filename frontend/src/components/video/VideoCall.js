@@ -8,8 +8,9 @@ import Video from "./Video";
 import Controls from "./Controls";
 import RoomContext from '../../contexts/RoomContext';
 import { useAuth } from '../../contexts/AuthContext';
-import { URL_VIDEO_SVC } from "./../../configs";
-import axios from 'axios';
+import { getToken } from "../../api/video/video.js";
+
+
 
 const appId = process.env.REACT_APP_AGORA_APP_ID ?? '';
 
@@ -22,20 +23,12 @@ export default function VideoCall(props) {
     const { user } = useAuth();
     const { roomId } = useContext(RoomContext);
 
-    const getToken = async (roomId) => {
-        const res = await axios
-          .get(`${URL_VIDEO_SVC}` + '/rtctoken', { roomId }, { withCredentials: true })
-          .then((res) => {
-              return res.token;
-          }).catch(err => {
-              return '';
-          });
-        return res;
+    const generateToken = async (roomId) => {
+      const token = await getToken(roomId);
+      return token;
     }
 
     useEffect(() => {
-      console.log('videocall')
-      console.log(appId)
         if (!appId) {
             return;
         }
@@ -70,8 +63,9 @@ export default function VideoCall(props) {
         });
     
 
-        const token = await getToken(channelName);
-        console.log(token)
+        const token = await generateToken(channelName);
+        console.log('join:', token)
+
         await client.join(appId, channelName, token, null);
 
 
@@ -88,20 +82,22 @@ export default function VideoCall(props) {
         }
       }, [roomId, client, ready, tracks]);
 
-      if (!client || !user) {
+      if (!client) {
         return null;
       }
 
       return (
+
         <Grid container direction="column" style={{ height: "100%" }}>
-          <Grid item style={{ height: "5%" }}>
+          <Grid item style={{ height: "20%" }}>
             {ready && tracks && (
               <Controls tracks={tracks} setStart={setStart} setInCall={setInCall} />
             )}
           </Grid>
-          <Grid item style={{ height: "95%" }}>
+          <Grid item style={{ height: "80%" }}>
             {start && tracks && <Video tracks={tracks} users={users} />}
           </Grid>
         </Grid>
+
       );
 }

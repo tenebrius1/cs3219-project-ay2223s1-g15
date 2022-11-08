@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-function TabPanel({ children, value, index, ...other }) {
+function TabPanel({ children, value, index, height, ...other }) {
   return (
     <div
       className='adminAreaDisplay'
@@ -12,7 +12,7 @@ function TabPanel({ children, value, index, ...other }) {
       {...other}
     >
       {value === index && (
-        <Box height={'70vh'} padding={'1%'} overflow={'auto'}>
+        <Box height={height} padding={'1%'} overflow={'auto'}>
           <Typography
             style={{
               whiteSpace: 'pre-line',

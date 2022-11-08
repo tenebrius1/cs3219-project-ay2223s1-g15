@@ -21,6 +21,7 @@ app.use(
     credentials: true,
   })
 ); // config cors so that front-end can use
+app.options('*', cors());
 app.use(cookieParser());
 app.use(morgan('combined'));
 
