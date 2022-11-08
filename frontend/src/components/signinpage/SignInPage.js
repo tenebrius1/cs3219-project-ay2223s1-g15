@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import UserContext from "../../contexts/UserContext";
 import { passwordLogin, tokenLogin } from "../../api/user/auth";
-import codefilled from "./../../logos/code.png"
+import peerprep from "./../../logos/peerprep.png"
 
 function SignInPage() {
   const [username, setUsername] = useState("");
@@ -63,8 +63,8 @@ function SignInPage() {
     <Box className="mainBox">
       <Box className="signInBox">
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "2rem" }}>
-          <Box sx={{ borderRadius: "100%", backgroundColor: "#ECEFF4"}}>
-            <img src={codefilled} height={"50px"} width={"50px"} />
+          <Box sx={{ marginRight: "3%" }}>
+            <img src={peerprep} height={"50px"} width={"50px"} />
           </Box>
           {/* <a href="https://www.flaticon.com/free-icons/hands-and-gestures" title="hands and gestures icons">Hands and gestures icons created by Andrejs Kirma - Flaticon</a> */}
           <Typography variant={"h2"} >PeerPrep</Typography>

@@ -16,7 +16,7 @@ import UserContext from "../../contexts/UserContext";
 import { URL_HISTORY_SVC } from "../../configs";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
-import MatchingPageDialog from "../matching/MatchingPageDialog";
+import peerprep from "./../../logos/peerprep.png"
 
 function Dashboard() {
   const [buttonToggleEasy, setButtonToggleEasy] = useState(false);
@@ -153,14 +153,17 @@ function Dashboard() {
   return (
     <Box className="mainDashboardBox">
       <Box className="topBar">
-        <Typography component={"h3"} variant={"h5"}>
-          PeerPrep
-        </Typography>
+        <Box sx={{display: "flex"}}>
+          <img src={peerprep} height={"50px"} width={"50px"} />
+          <Typography component={"h3"} variant={"h3"} sx={{marginLeft: "3%"}}>
+            PeerPrep
+          </Typography>
+        </Box>
         <CustomAvatar />
       </Box>
       <Box className="mainContent">
         <Box className="leftBox">
-          <Typography>Practice history</Typography>
+          <Typography variant={"h5"}>Practice history</Typography>
           <Divider />
           {historyList.length ? (
             <List component="nav" aria-label="history">

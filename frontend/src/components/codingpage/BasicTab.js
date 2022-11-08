@@ -189,58 +189,6 @@ function BasicTab({ output }) {
           height={tabPanelHeight}
         />
       </Box>
-      <Box className="endTurnBox">
-        {isEndTurnConfirm ? (
-          <>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-evenly",
-                alignItems: "center",
-                width: "50%",
-              }}
-            >
-              <CircularProgress
-                size={"1rem"}
-                color="inherit"
-                sx={{ marginLeft: "2%", marginRight: "5%" }}
-              />
-              <Typography variant="caption">Swapping roles...</Typography>
-            </Box>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={handleEndTurnConfirmCancel}
-            >
-              Cancel
-            </Button>
-          </>
-        ) : (
-          <>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-evenly",
-                alignItems: "center",
-                width: "50%",
-              }}
-            ></Box>
-            <Button variant="outlined" color="error" onClick={handleEndTurn}>
-              End Turn
-            </Button>
-          </>
-        )}
-      </Box>
-      <ConfirmationDialog
-        className="endTurnButtonDialog"
-        open={isEndTurn}
-        close={handleEndTurnCancel}
-        confirm={handleEndTurnConfirm}
-        title={"End turn"}
-        body={"Are you sure you want to end your turn?"}
-        accept={"Accept"}
-        decline={"Decline"}
-      />
     </>
   );
 }
