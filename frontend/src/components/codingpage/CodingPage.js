@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import BasicTab from './BasicTab';
 import CodePad from './CodePad';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import CodingLanguageSelector from './CodingLanguageSelector';
 import SocketContext from '../../contexts/SocketContext';
 import RoomContext from '../../contexts/RoomContext';
@@ -25,16 +25,16 @@ function a11yProps(index) {
 function CodingPage() {
   const [currentLanguage, setCurrentLanguage] = useState('python');
   const [output, setOutput] = useState('No output to display');
-
-  const [isRequestToChange, setIsRequestToChange] = useState(false);
+  const [notes, setNotes] = useState('');
   const [hasOtherPartyLeft, setHasOtherPartyLeft] = useState(false);
 
   const [hasClickedEndInterview, setHasClickedEndInterview] = useState(false);
 
   const navigate = useNavigate();
-  const { codingSocket } = useContext(SocketContext);
-  const { roomId } = useContext(RoomContext);
-  const { role } = useContext(RoomContext);
+  const { codingSocket, roomSocket } = useContext(SocketContext);
+  const { roomId, setRoomId, setDifficulty } = useContext(RoomContext);
+  const { role, setRole, user } = useContext(UserContext);
+  const params = useParams();
 
   const handleEndClick = () => {
     setHasClickedEndInterview(true);
@@ -45,16 +45,9 @@ function CodingPage() {
     setHasClickedEndInterview(false);
   };
 
-  const handleEndClickConfirm = () => {
+  const handleEndInterview = () => {
+    roomSocket.emit('endInterview', { roomId, notes, user });
     navigate('/dashboard', { replace: true });
-  };
-
-  const handleRequestToChange = () => {
-    setIsRequestToChange(true);
-  };
-
-  const handleRoleSwapDecline = () => {
-    setIsRequestToChange(false);
   };
 
   const handleOtherPartyLeave = () => {
@@ -66,6 +59,13 @@ function CodingPage() {
   };
 
   useEffect(() => {
+    if (!user) return;
+    if (!role) {
+      roomSocket.emit('codingPageReconnect', { roomId: params.roomId, user });
+    }
+  }, [user, role, params]);
+
+  useEffect(() => {
     codingSocket.on('languageChanged', (language) => {
       console.log('languageChanged ', language);
       setCurrentLanguage(language);
@@ -73,8 +73,21 @@ function CodingPage() {
   }, [codingSocket]);
 
   useEffect(() => {
-    // roomSocket.on('')
-  }, []);
+    roomSocket.on('reconnectSuccess', ({ roomId, role, difficulty }) => {
+      setRole(role);
+      setRoomId(roomId);
+      setDifficulty(difficulty);
+      codingSocket.emit('reconnectSuccess', roomId);
+    });
+
+    roomSocket.on('reconnectFail', () => {
+      navigate('/dashboard', { replace: true });
+    });
+
+    roomSocket.on('partnerLeft', () => {
+      handleOtherPartyLeave();
+    });
+  }, [codingSocket, navigate, roomSocket, setDifficulty, setRole, setRoomId]);
 
   return (
     <Box className='mainCodingPageBox'>
@@ -90,36 +103,21 @@ function CodingPage() {
               });
             }}
           />
-          <Button variant='contained' color='secondary' onClick={handleRequestToChange}>
-            For testing change roles dialog purposes
-          </Button>
-          <Button variant='contained' color='secondary' onClick={handleOtherPartyLeave}>
-            For testing informing other party has left dialog
-          </Button>
           <Button onClick={handleEndClick} variant='outlined' color='error'>
             End Interview
           </Button>
         </Box>
-        <CodePad currentLanguage={currentLanguage} setOutput={setOutput} />
+        <CodePad currentLanguage={currentLanguage} setOutput={setOutput} notes={notes} />
       </Box>
       <Box className='adminSpace'>
-        <BasicTab output={output} />
+        <BasicTab key={'1'} output={output} setNotes={setNotes} />
       </Box>
-      <ConfirmationDialog
-        className='requestToChangeButtonDialog'
-        open={isRequestToChange}
-        close={handleRoleSwapDecline}
-        confirm={() => {}}
-        title={'Other user has requested to swap roles'}
-        body={'Do you want to swap?'}
-        accept={'Accept'}
-        decline={'Decline'}
-      />
+
       <ConfirmationDialog
         className='hasOtherPartyLeftButtonDialog'
         open={hasOtherPartyLeft}
         close={handleOtherPartyLeaveClose}
-        confirm={handleEndClickConfirm}
+        confirm={handleEndInterview}
         title={'Other user has left the room'}
         body={'Do you want to leave?'}
         accept={'Accept'}
@@ -129,7 +127,7 @@ function CodingPage() {
         className='endInterviewButtonDialog'
         open={hasClickedEndInterview}
         close={handleEndClickCancel}
-        confirm={handleEndClickConfirm}
+        confirm={handleEndInterview}
         title={'End interview'}
         body={'Are you sure you want to exit?'}
         accept={'Accept'}

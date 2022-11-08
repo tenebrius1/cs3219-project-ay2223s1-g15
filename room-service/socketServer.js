@@ -12,19 +12,27 @@ export const startSocketServer = async (httpServer, client) => {
   io.on('connection', (socket) => {
     console.log('a user connected to room-service');
 
-    socket.on('matchSuccess', ({ roomId, difficulty, role, username }) => {
+    socket.on('matchSuccess', async ({ roomId, difficulty, role, user }) => {
+      console.log(role);
       const roomName = `ROOM:${roomId}`;
-      client.hSet(roomName, 'difficulty', difficulty);
-      client.hSet(roomName, username, role);
+      await client.hSet(roomName, 'difficulty', difficulty);
+      await client.hSet(roomName, role, user);
       socket.join(roomName);
     });
 
-    socket.on('codingReconnect', async ({ roomId, username }) => {
+    socket.on('codingPageReconnect', async ({ roomId, user }) => {
       const roomName = `ROOM:${roomId}`;
-      const role = await client.hGet(roomName, username);
-      if (role) {
+      const interviewer = await client.hGet(roomName, 'interviewer');
+      const interviewee = await client.hGet(roomName, 'interviewee');
+      const difficulty = await client.hGet(roomName, 'difficulty');
+      if (user == interviewee || user == interviewer) {
+        const userRole = user == interviewee ? 'interviewee' : 'interviewer';
         socket.join(roomName);
-        socket.emit('reconnectSuccess', role);
+        socket.emit('reconnectSuccess', { role: userRole, roomId, difficulty });
+        socket.to(roomName).emit('partnerReconnect');
+      } else {
+        console.log('reconnectFail');
+        socket.emit('reconnectFail', null);
       }
     });
 
@@ -33,26 +41,57 @@ export const startSocketServer = async (httpServer, client) => {
       socket.to(roomName).emit('receiveQuestion', question);
     });
 
-    socket.on('requestSwap', async ({ roomId }) => {
+    socket.on('requestSwap', (roomId) => {
       const roomName = `ROOM:${roomId}`;
+      console.log(roomId, 'reqswap');
       socket.to(roomName).emit('requestSwap');
     });
 
-    socket.on('roleSwap', async ({ roomId, username, role }) => {
+    socket.on('roleSwap', async ({ roomId, user, role }) => {
       const roomName = `ROOM:${roomId}`;
-      if (role == 'interviewer') {
-        client.hSet(roomName, username, 'interviewee');
-        socket.to(roomName).emit('roleSwap', 'interviewer');
-      } else {
-        client.hSet(roomName, username, 'interviewer');
+      const oldInterviewer = await client.hGet(roomName, 'interviewer');
+      const oldInterviewee = await client.hGet(roomName, 'interviewee');
+      if (role == oldInterviewee) {
+        socket.emit('sendNotes');
+        client.hSet(roomName, 'interviewer', user);
+        client.hSet(roomName, 'interviewee', oldInterviewer);
         socket.to(roomName).emit('roleSwap', 'interviewee');
+      } else {
+        client.hSet(roomName, 'interviewer', oldInterviewer);
+        client.hSet(roomName, 'interviewee', user);
+        socket.to(roomName).emit('roleSwap', 'interviewer');
       }
     });
 
-    socket.on('endInterview', ({ roomId, notes, username }) => {
+    socket.on('sendNotes', ({ roomId, notes }) => {
       const roomName = `ROOM:${roomId}`;
-      socket.to(roomName).emit('endInterview', { username, notes });
+      socket.to(roomName).emit('receiveNotes', notes);
+    });
+
+    socket.on('endInterview', async ({ roomId, notes, user, role }) => {
+      const roomName = `ROOM:${roomId}`;
+      socket.to(roomName).emit('partnerLeft', { user, notes });
+      const interviewer = await client.hGet(roomName, 'interviewer');
+      const interviewee = await client.hGet(roomName, 'interviewee');
+      if (interviewer && interviewee) {
+        await client.hDel(roomName, role);
+        await client.hSet(roomName, 'notes', notes);
+        socket.leave(roomName);
+      } else {
+        await client.hGet();
+      }
       client.del(roomName);
+      socket.leave(roomName);
+    });
+
+    socket.on('initialLoad', (roomId) => {
+      const roomName = `ROOM:${roomId}`;
+      socket.to(roomName).emit('initialLoad');
+    });
+
+    socket.on('initialLoadAck', ({ roomId, isInitialLoad }) => {
+      const roomName = `ROOM:${roomId}`;
+      socket.to(roomName).emit('initialLoadAck', isInitialLoad);
     });
   });
 };

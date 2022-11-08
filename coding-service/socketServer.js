@@ -13,14 +13,21 @@ export const startSocketServer = (httpServer) => {
   io.on('connection', (socket) => {
     console.log('a user connected to coding-service');
 
-    socket.on('connectedToRoom', (roomId) => {
+    socket.on('matchSuccess', (roomId) => {
       const roomName = `ROOM:${roomId}`;
+      socket.join(roomName);
+    });
+
+    socket.on('reconnectSuccess', (roomId) => {
+      const roomName = `ROOM:${roomId}`;
+      console.log(roomName);
       socket.join(roomName);
     });
 
     socket.on('codeChanged', (args) => {
       const { value, roomId } = args;
       const roomName = `ROOM:${roomId}`;
+
       socket.to(roomName).emit('codeChanged', value);
     });
 
@@ -74,9 +81,9 @@ const getJudgeConfig = (code, languageId) => {
     number_of_runs: null,
     stdin: 'Judge0',
     expected_output: null,
-    cpu_time_limit: 5,
-    cpu_extra_time: 2,
-    wall_time_limit: 10,
+    cpu_time_limit: null,
+    cpu_extra_time: null,
+    wall_time_limit: null,
     memory_limit: null,
     stack_limit: null,
     max_processes_and_or_threads: null,

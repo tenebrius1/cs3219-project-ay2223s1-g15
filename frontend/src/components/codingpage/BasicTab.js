@@ -1,42 +1,47 @@
-import { useEffect, useState, useContext } from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import CircularProgress from "@mui/material/CircularProgress";
-import Tab from "@mui/material/Tab";
-import Tabs from "@mui/material/Tabs";
-import TextField from "@mui/material/TextField";
-import TabPanel from "./TabPanel";
-import "./codingpage.css";
-import Typography from "@mui/material/Typography";
-import axios from "axios";
-import { URL_QUESTION_SVC } from "../../configs";
-import RoomContext from "../../contexts/RoomContext";
-import { useNavigate } from "react-router-dom";
-import ConfirmationDialog from "../confirmationdialog/ConfirmationDialog";
-import Divider from "@mui/material/Divider";
+import { useEffect, useState, useContext } from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import TextField from '@mui/material/TextField';
+import TabPanel from './TabPanel';
+import './codingpage.css';
+import Typography from '@mui/material/Typography';
+import axios from 'axios';
+import { URL_QUESTION_SVC } from '../../configs';
+import RoomContext from '../../contexts/RoomContext';
+import UserContext from '../../contexts/UserContext';
+import SocketContext from '../../contexts/SocketContext';
+import { useNavigate } from 'react-router-dom';
+import ConfirmationDialog from '../confirmationdialog/ConfirmationDialog';
+import Divider from '@mui/material/Divider';
 
-function BasicTab({ output }) {
+function BasicTab({ output, setNotes }) {
   const [value, setValue] = useState(0);
   const [isEndTurn, setIsEndTurn] = useState(false);
   const [isEndTurnConfirm, setIsEndTurnConfirm] = useState(false);
-  const [question, setQuestion] = useState({});
+  const [isInitialLoad, setIsInitialLoad] = useState(false);
+  const [question, setQuestion] = useState(null);
   const { roomId, difficulty } = useContext(RoomContext);
-  const [difficultyColor, setDifficultyColor] = useState("");
-  const tabPanelHeight = "75vh";
-  const getRandomQuestionError =
-    "Sorry but question could not be loaded at this time!";
+  const { role } = useContext(UserContext);
+  const { roomSocket } = useContext(SocketContext);
+  const [difficultyColor, setDifficultyColor] = useState('');
+  const tabPanelHeight = '75vh';
+
+  const getRandomQuestionError = 'Sorry but question could not be loaded at this time!';
 
   const navigate = useNavigate();
 
   const decideDifficultyColor = () => {
-    if (difficulty === "Easy") {
-      setDifficultyColor("green");
-    } else if (difficulty === "Medium") {
-      setDifficultyColor("orange");
-    } else if (difficulty === "Hard") {
-      setDifficultyColor("red");
+    if (difficulty === 'Easy') {
+      setDifficultyColor('green');
+    } else if (difficulty === 'Medium') {
+      setDifficultyColor('orange');
+    } else if (difficulty === 'Hard') {
+      setDifficultyColor('red');
     } else {
-      setDifficultyColor("white");
+      setDifficultyColor('white');
     }
   };
 
@@ -47,7 +52,7 @@ function BasicTab({ output }) {
   function a11yProps(index) {
     return {
       id: `simple-tab-${index}`,
-      "aria-controls": `simple-tabpanel-${index}`,
+      'aria-controls': `simple-tabpanel-${index}`,
     };
   }
 
@@ -73,9 +78,41 @@ function BasicTab({ output }) {
   };
 
   useEffect(() => {
-    if (!roomId || !difficulty) {
-      console.log("hi");
-      navigate("/dashboard", { replace: true });
+    roomSocket.on('receiveQuestion', (question) => {
+      setQuestion(question);
+      decideDifficultyColor();
+    });
+
+    roomSocket.on('partnerReconnect', () => {
+      roomSocket.emit('sendQuestion', { roomId, question });
+    });
+
+    roomSocket.on('initialLoad', () => {
+      if (role === 'interviewee') {
+        if (!question) {
+          roomSocket.emit('initialLoadAck', { roomId, isInitialLoad: true });
+        } else {
+          roomSocket.emit('initialLoadAck', { roomId, isInitialLoad: false });
+        }
+      }
+    });
+  }, [question, roomId, roomSocket]);
+
+  useEffect(() => {
+    if (!roomId || !difficulty || !role) {
+      return;
+    }
+    if (role === 'interviewer' && !isInitialLoad && !question) {
+      roomSocket.emit('initialLoad', roomId);
+      roomSocket.on('initialLoadAck', (isInitialLoad) => {
+        setIsInitialLoad(isInitialLoad);
+      });
+    }
+  }, [difficulty, role, roomId, roomSocket]);
+
+  useEffect(() => {
+    if (!roomId || !difficulty || !role) {
+      return;
     }
     const generateRandomQuestion = async () => {
       const res = await axios
@@ -83,69 +120,64 @@ function BasicTab({ output }) {
           withCredentials: true,
         })
         .then((res) => {
-          res && res.data && setQuestion(JSON.parse(res.data));
-          decideDifficultyColor();
+          if (res && res.data) {
+            setQuestion(JSON.parse(res.data));
+            decideDifficultyColor();
+            roomSocket.emit('sendQuestion', { roomId, question: JSON.parse(res.data) });
+          }
         })
         .catch((err) => console.log(err));
     };
-    generateRandomQuestion();
-  }, []);
+    if (role === 'interviewer' && isInitialLoad) {
+      generateRandomQuestion();
+      setIsInitialLoad(false);
+    }
+  }, [difficulty, roomId, role, isInitialLoad]);
 
   return (
     <>
-      <Box className="adminArea">
-        <Box sx={{ borderColor: "divider" }}>
+      <Box className='adminArea'>
+        <Box sx={{ borderColor: 'divider' }}>
           <Tabs
             value={value}
-            variant={"fullWidth"}
+            variant={'fullWidth'}
             onChange={handleChange}
-            aria-label="basic tabs example"
-            textColor={"secondary"}
-            indicatorColor={"secondary"}
+            aria-label='basic tabs example'
+            textColor={'secondary'}
+            indicatorColor={'secondary'}
           >
-            <Tab label="Question" {...a11yProps(0)} />
-            <Tab label="Notes" {...a11yProps(1)} />
-            <Tab label="Output" {...a11yProps(2)} />
+            <Tab key={'1'} label='Question' {...a11yProps(0)} />
+            <Tab key={'2'} label='Notes' {...a11yProps(1)} />
+            <Tab key={'3'} label='Output' {...a11yProps(2)} />
           </Tabs>
         </Box>
         <TabPanel
           children={
             <>
-              <Divider textAlign="left">Title</Divider>
+              <Divider textAlign='left'>Title</Divider>
               <Box
                 sx={{
-                  display: "flex",
-                  flexDirection: "column"
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
               >
                 <Typography>
-                  {question &&
-                    Object.keys(question).length !== 0 &&
-                    question.title}
+                  {question && question.title}
                   &nbsp;
                 </Typography>
                 <Typography color={difficultyColor}>
-                  {question &&
-                    Object.keys(question).length !== 0 &&
-                    question.difficulty}
+                  {question && question.difficulty}
                 </Typography>
               </Box>
-              <Divider textAlign="left">Question</Divider>
+              <Divider textAlign='left'>Question</Divider>
+              {question && question.description}
+              <Divider textAlign='left'>Examples</Divider>
               {question &&
-                Object.keys(question).length !== 0 &&
-                question.description}
-              <Divider textAlign="left">Examples</Divider>
-              {question &&
-                Object.keys(question).length !== 0 &&
                 Object.keys(question.example).map((ex) => {
                   return (
                     <>
-                      <Typography>
-                        Input: {question.example[ex].input}
-                      </Typography>
-                      <Typography>
-                        Output: {question.example[ex].output}
-                      </Typography>
+                      <Typography>Input: {question.example[ex].input}</Typography>
+                      <Typography>Output: {question.example[ex].output}</Typography>
                       <br />
                     </>
                   );
@@ -161,32 +193,28 @@ function BasicTab({ output }) {
             <TextField
               fullWidth
               multiline
-              variant="filled"
-              placeholder={"Write your notes here"}
-              color={"secondary"}
+              variant='filled'
+              placeholder={'Write your notes here'}
+              color={'secondary'}
               focused={true}
+              onChange={(e) => setNotes(e.target.value)}
               InputProps={{
                 disableUnderline: true,
                 sx: {
                   height: tabPanelHeight,
                   maxHeight: tabPanelHeight,
-                  alignItems: "flex-start",
-                  overflow: "auto",
+                  alignItems: 'flex-start',
+                  overflow: 'auto',
                 },
               }}
-              margin="none"
+              margin='none'
             />
           }
           value={value}
           index={1}
           height={tabPanelHeight}
         />
-        <TabPanel
-          children={output}
-          value={value}
-          index={2}
-          height={tabPanelHeight}
-        />
+        <TabPanel children={output} value={value} index={2} height={tabPanelHeight} />
       </Box>
     </>
   );

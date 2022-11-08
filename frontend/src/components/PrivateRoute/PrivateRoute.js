@@ -29,21 +29,21 @@ const PrivateRoute = ({ redirectPath = '/', children }) => {
     if (user) {
       setIsLoading(false);
     }
-  }, [user])
+  }, [user]);
 
-  return (
-    isPageLoad ? (
-      <>
-        {children}
-        <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={isLoading}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      </>
-    ) : (<Navigate to={redirectPath} replace />)
-  )
+  return isPageLoad ? (
+    <>
+      {children}
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={isLoading}
+      >
+        <CircularProgress color='inherit' />
+      </Backdrop>
+    </>
+  ) : (
+    <Navigate to={redirectPath} replace />
+  );
 };
 
 export default PrivateRoute;

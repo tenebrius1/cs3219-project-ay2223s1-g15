@@ -1,37 +1,51 @@
-import { useContext, useEffect, useState, useCallback, useRef } from "react";
-import CodeMirror from "@uiw/react-codemirror";
-import { githubDark } from "@uiw/codemirror-theme-github";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import { historyField } from "@codemirror/commands";
-import { loadLanguage } from "@uiw/codemirror-extensions-langs";
-import SocketContext from "../../contexts/SocketContext";
-import RoomContext from "../../contexts/RoomContext";
-import * as Automerge from "automerge";
-import CircularProgress from "@mui/material/CircularProgress";
-import ConfirmationDialog from "../confirmationdialog/ConfirmationDialog";
+import { useContext, useEffect, useState, useCallback, useRef } from 'react';
+import CodeMirror from '@uiw/react-codemirror';
+import { githubDark } from '@uiw/codemirror-theme-github';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { historyField } from '@codemirror/commands';
+import { loadLanguage } from '@uiw/codemirror-extensions-langs';
+import SocketContext from '../../contexts/SocketContext';
+import RoomContext from '../../contexts/RoomContext';
+import UserContext from '../../contexts/UserContext';
+import * as Automerge from 'automerge';
+import CircularProgress from '@mui/material/CircularProgress';
+import ConfirmationDialog from '../confirmationdialog/ConfirmationDialog';
 
 const stateFields = { history: historyField };
-const LIVE_URL =
-  process.env.ENV === "PROD" ? process.env.LIVE_URL : "http://localhost";
+const LIVE_URL = process.env.ENV === 'PROD' ? process.env.LIVE_URL : 'http://localhost';
 
 let doc = Automerge.init();
 
-function CodePad({ currentLanguage, setOutput }) {
-  const serializedState = localStorage.getItem("myEditorState");
-  const [code, setCode] = useState("");
+function CodePad({ currentLanguage, setOutput, notes }) {
+  const serializedState = localStorage.getItem('myEditorState');
+  const [code, setCode] = useState('');
   const [isEndTurn, setIsEndTurn] = useState(false);
   const [isEndTurnConfirm, setIsEndTurnConfirm] = useState(false);
+  const [isRequestToChange, setIsRequestToChange] = useState(false);
+
   const availableLanguages = {
-    python: "70",
-    java: "62",
-    c: "50",
+    python: '70',
+    java: '62',
+    c: '50',
   };
 
-  const { codingSocket } = useContext(SocketContext);
+  const { codingSocket, roomSocket } = useContext(SocketContext);
   const { roomId } = useContext(RoomContext);
-  const role = "Interviewer";
+  const { user, role, setRole } = useContext(UserContext);
+
+  useEffect(() => {
+    roomSocket.on('requestSwap', () => {
+      console.log('requestSwap');
+      setIsRequestToChange(true);
+    });
+
+    roomSocket.on('roleSwap', (role) => {
+      console.log(role);
+      setRole(role);
+    });
+  }, [isRequestToChange, roomSocket, setRole, user]);
 
   const handleEndTurn = () => {
     // actually end turn
@@ -47,6 +61,11 @@ function CodePad({ currentLanguage, setOutput }) {
     // open confirmation modal
     setIsEndTurnConfirm(true);
     setIsEndTurn(false);
+    roomSocket.emit('requestSwap', roomId);
+  };
+
+  const handleRoleSwapDecline = () => {
+    setIsRequestToChange(false);
   };
 
   const handleEndTurnConfirmCancel = () => {
@@ -55,8 +74,8 @@ function CodePad({ currentLanguage, setOutput }) {
   };
 
   useEffect(() => {
-    codingSocket.on("codeChanged", (value) => {
-      // console.log('codeChanged', value);
+    codingSocket.on('codeChanged', (value) => {
+      // console.log('codeChanged', value);x
       // setCode(value);
       const updated = new Uint8Array(value);
       let newDoc = Automerge.merge(doc, Automerge.load(updated));
@@ -64,8 +83,8 @@ function CodePad({ currentLanguage, setOutput }) {
       setCode(doc.text);
     });
 
-    codingSocket.on("runCodeResults", (results) => {
-      console.log("runCodeResults", results);
+    codingSocket.on('runCodeResults', (results) => {
+      console.log('runCodeResults', results);
       setOutput(results);
     });
   }, [codingSocket]);
@@ -78,15 +97,27 @@ function CodePad({ currentLanguage, setOutput }) {
       });
 
       let binary = Automerge.save(newDoc);
-      codingSocket.emit("codeChanged", { value: binary, roomId: roomId });
+      codingSocket.emit('codeChanged', { value: binary, roomId: roomId });
       doc = newDoc;
     } catch (err) {
       console.log(err);
     }
   };
 
+  useEffect(() => {
+    roomSocket.on('partnerReconnect', () => {
+      updateDocument(code);
+    });
+  }, [code]);
+
+  useEffect(() => {
+    roomSocket.on('sendNotes', () => {
+      roomSocket.emit('sendNotes', { roomId, notes });
+    });
+  }, [notes]);
+
   const submitCode = () => {
-    codingSocket.emit("runCode", {
+    codingSocket.emit('runCode', {
       code: code,
       languageId: availableLanguages[currentLanguage],
       roomId: roomId,
@@ -98,12 +129,12 @@ function CodePad({ currentLanguage, setOutput }) {
       <CodeMirror
         value={code}
         theme={githubDark}
-        height={"70vh"}
+        height={'70vh'}
         extensions={[loadLanguage(currentLanguage)]}
         initialState={
           serializedState
             ? {
-                json: JSON.parse(serializedState || ""),
+                json: JSON.parse(serializedState || ''),
                 fields: stateFields,
               }
             : undefined
@@ -116,15 +147,15 @@ function CodePad({ currentLanguage, setOutput }) {
         }}
       />
       <Box
-        display={"flex"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        marginTop={"1rem"}
+        display={'flex'}
+        justifyContent={'space-between'}
+        alignItems={'center'}
+        marginTop={'1rem'}
       >
-        <Box className="endTurnBox">
-        {isEndTurnConfirm ? (
-          <>
-            {/* <Button
+        <Box className='endTurnBox'>
+          {isEndTurnConfirm ? (
+            <>
+              {/* <Button
               variant="outlined"
               color="error"
               onClick={handleEndTurnConfirmCancel}
@@ -133,35 +164,57 @@ function CodePad({ currentLanguage, setOutput }) {
               Cancel
             </Button> */}
               <CircularProgress
-                size={"1rem"}
-                color="inherit"
-                sx={{ marginRight: "2%" }}
+                size={'1rem'}
+                color='inherit'
+                sx={{ marginRight: '2%' }}
               />
               <Typography>Swapping roles...</Typography>
-          </>
-        ) : (
-          <>
-            <Button variant="outlined" color="error" sx={{marginRight: "2%"}} onClick={handleEndTurn}>
-              Swap roles
-            </Button>
-            <Typography>You are the: {role}</Typography>
-          </>
-        )}
-      </Box>
-      <ConfirmationDialog
-        className="endTurnButtonDialog"
-        open={isEndTurn}
-        close={handleEndTurnCancel}
-        confirm={handleEndTurnConfirm}
-        title={"End turn"}
-        body={"Are you sure you want to end your turn?"}
-        accept={"Accept"}
-        decline={"Decline"}
-      />
-        <Button variant={"contained"} color={"secondary"} onClick={submitCode}>
+            </>
+          ) : (
+            <>
+              <Button
+                variant='outlined'
+                color='error'
+                sx={{ marginRight: '2%' }}
+                onClick={handleEndTurn}
+              >
+                Swap roles
+              </Button>
+              <Typography>You are the: {role}</Typography>
+            </>
+          )}
+        </Box>
+        <ConfirmationDialog
+          className='endTurnButtonDialog'
+          open={isEndTurn}
+          close={handleEndTurnCancel}
+          confirm={handleEndTurnConfirm}
+          title={'End turn'}
+          body={'Are you sure you want to end your turn?'}
+          accept={'Accept'}
+          decline={'Decline'}
+        />
+        <Button variant={'contained'} color={'secondary'} onClick={submitCode}>
           Run code
         </Button>
       </Box>
+      <ConfirmationDialog
+        className='requestToChangeButtonDialog'
+        open={isRequestToChange}
+        close={handleRoleSwapDecline}
+        confirm={() => {
+          roomSocket.emit('roleSwap', { roomId, user, role });
+          if (role === 'interviewer') {
+            setRole('interviewee');
+          } else {
+            setRole('interviewer');
+          }
+        }}
+        title={'Other user has requested to swap roles'}
+        body={'Do you want to swap?'}
+        accept={'Accept'}
+        decline={'Decline'}
+      />
     </>
   );
 }
