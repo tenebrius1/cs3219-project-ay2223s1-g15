@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cors()); // config cors so that front-end can use
 app.options('*', cors());
 
-var PORT = process.env.PORT || 8002;
+var PORT = process.env.PORT || 8006;
 
 const server = http.createServer(app);
 
