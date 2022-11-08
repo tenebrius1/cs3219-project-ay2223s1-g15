@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import CircularProgress from "@mui/material/CircularProgress";
+import { Backdrop, CircularProgress } from '@mui/material';
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
@@ -32,6 +32,7 @@ function BasicTab({ output,inCall }) {
   const [question, setQuestion] = useState({});
   const { roomId, difficulty } = useContext(RoomContext);
   const [difficultyColor, setDifficultyColor] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const getRandomQuestionError =
     "Sorry but question could not be loaded at this time!";
 
@@ -95,6 +96,7 @@ function BasicTab({ output,inCall }) {
         .then((res) => {
           res && res.data && setQuestion(JSON.parse(res.data));
           decideDifficultyColor();
+          setIsLoading(false);
         })
         .catch((err) => console.log(err));
     };
@@ -103,7 +105,16 @@ function BasicTab({ output,inCall }) {
 
   return (
     <>
+
       <Box className="adminArea">
+        <>
+          <Backdrop
+            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={isLoading}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        </>
         <Box sx={{ borderColor: "divider" }}>
           <Tabs
             value={value}
