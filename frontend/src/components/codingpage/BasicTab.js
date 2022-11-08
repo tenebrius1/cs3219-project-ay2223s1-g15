@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import CircularProgress from "@mui/material/CircularProgress";
+import { Backdrop, CircularProgress } from '@mui/material';
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
@@ -15,14 +15,24 @@ import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../confirmationdialog/ConfirmationDialog";
 import Divider from "@mui/material/Divider";
 
-function BasicTab({ output }) {
+function BasicTab({ output,inCall }) {
   const [value, setValue] = useState(0);
+  const [tabPanelHeight, setTabPanelHeight] = useState("80vh");
+
+  useEffect(()=> {
+    console.log(inCall)
+    if (inCall) {
+      setTabPanelHeight("60vh")
+    } else {
+      setTabPanelHeight("80vh")
+    }
+  }, [inCall])
   const [isEndTurn, setIsEndTurn] = useState(false);
   const [isEndTurnConfirm, setIsEndTurnConfirm] = useState(false);
   const [question, setQuestion] = useState({});
   const { roomId, difficulty } = useContext(RoomContext);
   const [difficultyColor, setDifficultyColor] = useState("");
-  const tabPanelHeight = "75vh";
+  const [isLoading, setIsLoading] = useState(true);
   const getRandomQuestionError =
     "Sorry but question could not be loaded at this time!";
 
@@ -43,6 +53,7 @@ function BasicTab({ output }) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
 
   function a11yProps(index) {
     return {
@@ -85,6 +96,7 @@ function BasicTab({ output }) {
         .then((res) => {
           res && res.data && setQuestion(JSON.parse(res.data));
           decideDifficultyColor();
+          setIsLoading(false);
         })
         .catch((err) => console.log(err));
     };
@@ -93,7 +105,16 @@ function BasicTab({ output }) {
 
   return (
     <>
+
       <Box className="adminArea">
+        <>
+          <Backdrop
+            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={isLoading}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        </>
         <Box sx={{ borderColor: "divider" }}>
           <Tabs
             value={value}
@@ -159,23 +180,23 @@ function BasicTab({ output }) {
         <TabPanel
           children={
             <TextField
-              fullWidth
-              multiline
-              variant="filled"
-              placeholder={"Write your notes here"}
-              color={"secondary"}
-              focused={true}
-              InputProps={{
-                disableUnderline: true,
-                sx: {
-                  height: tabPanelHeight,
-                  maxHeight: tabPanelHeight,
-                  alignItems: "flex-start",
-                  overflow: "auto",
-                },
-              }}
-              margin="none"
-            />
+            fullWidth
+            multiline
+            variant="filled"
+            placeholder={"Write your notes here"}
+            color={"secondary"}
+            focused={true}
+            InputProps={{
+              disableUnderline: true,
+              sx: {
+                height: tabPanelHeight,
+                maxHeight: tabPanelHeight,
+                alignItems: "flex-start",
+                overflow: "auto",
+              },
+            }}
+            margin="none"
+          />
           }
           value={value}
           index={1}
