@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { Backdrop, CircularProgress } from '@mui/material';
+import { Backdrop, CircularProgress } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
@@ -15,18 +15,18 @@ import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../confirmationdialog/ConfirmationDialog";
 import Divider from "@mui/material/Divider";
 
-function BasicTab({ output,inCall }) {
+function BasicTab({ output, inCall }) {
   const [value, setValue] = useState(0);
   const [tabPanelHeight, setTabPanelHeight] = useState("80vh");
 
-  useEffect(()=> {
-    console.log(inCall)
+  useEffect(() => {
+    console.log(inCall);
     if (inCall) {
-      setTabPanelHeight("60vh")
+      setTabPanelHeight("60vh");
     } else {
-      setTabPanelHeight("80vh")
+      setTabPanelHeight("80vh");
     }
-  }, [inCall])
+  }, [inCall]);
   const [isEndTurn, setIsEndTurn] = useState(false);
   const [isEndTurnConfirm, setIsEndTurnConfirm] = useState(false);
   const [question, setQuestion] = useState({});
@@ -53,7 +53,6 @@ function BasicTab({ output,inCall }) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
 
   function a11yProps(index) {
     return {
@@ -105,11 +104,10 @@ function BasicTab({ output,inCall }) {
 
   return (
     <>
-
       <Box className="adminArea">
         <>
           <Backdrop
-            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
             open={isLoading}
           >
             <CircularProgress color="inherit" />
@@ -136,7 +134,7 @@ function BasicTab({ output,inCall }) {
               <Box
                 sx={{
                   display: "flex",
-                  flexDirection: "column"
+                  flexDirection: "column",
                 }}
               >
                 <Typography>
@@ -158,9 +156,10 @@ function BasicTab({ output,inCall }) {
               <Divider textAlign="left">Examples</Divider>
               {question &&
                 Object.keys(question).length !== 0 &&
-                Object.keys(question.example).map((ex) => {
+                Object.keys(question.example).map((ex, index) => {
                   return (
-                    <>
+                    <Box key={index}>
+                      <Typography>Example {index + 1}:</Typography>
                       <Typography>
                         Input: {question.example[ex].input}
                       </Typography>
@@ -168,7 +167,7 @@ function BasicTab({ output,inCall }) {
                         Output: {question.example[ex].output}
                       </Typography>
                       <br />
-                    </>
+                    </Box>
                   );
                 })}
             </>
@@ -180,23 +179,23 @@ function BasicTab({ output,inCall }) {
         <TabPanel
           children={
             <TextField
-            fullWidth
-            multiline
-            variant="filled"
-            placeholder={"Write your notes here"}
-            color={"secondary"}
-            focused={true}
-            InputProps={{
-              disableUnderline: true,
-              sx: {
-                height: tabPanelHeight,
-                maxHeight: tabPanelHeight,
-                alignItems: "flex-start",
-                overflow: "auto",
-              },
-            }}
-            margin="none"
-          />
+              fullWidth
+              multiline
+              variant="filled"
+              placeholder={"Write your notes here"}
+              color={"secondary"}
+              focused={true}
+              InputProps={{
+                disableUnderline: true,
+                sx: {
+                  height: tabPanelHeight,
+                  maxHeight: tabPanelHeight,
+                  alignItems: "flex-start",
+                  overflow: "auto",
+                },
+              }}
+              margin="none"
+            />
           }
           value={value}
           index={1}

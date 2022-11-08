@@ -15,7 +15,7 @@ import UserContext from "../../contexts/UserContext";
 import { URL_HISTORY_SVC } from "../../configs";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
-import peerprep from "./../../logos/peerprep.png"
+import peerprep from "./../../logos/peerprep.png";
 
 function Dashboard() {
   const [buttonToggleEasy, setButtonToggleEasy] = useState(false);
@@ -152,9 +152,14 @@ function Dashboard() {
   return (
     <Box className="mainDashboardBox">
       <Box className="topBar">
-        <Box sx={{display: "flex", alignContent: "center"}}>
-          <img src={peerprep} height={"50px"} width={"50px"} alt="PeerPrep logo" />
-          <Typography component={"h3"} variant={"h3"} sx={{marginLeft: "3%"}}>
+        <Box sx={{ display: "flex", alignContent: "center" }}>
+          <img
+            src={peerprep}
+            height={"50px"}
+            width={"50px"}
+            alt="PeerPrep logo"
+          />
+          <Typography component={"h3"} variant={"h3"} sx={{ marginLeft: "3%" }}>
             PeerPrep
           </Typography>
         </Box>
@@ -162,7 +167,12 @@ function Dashboard() {
       </Box>
       <Box className="mainContent">
         <Box className="leftBox">
-          <Typography variant={"h5"} sx={{marginBottom: "1rem", marginTop: "1rem"}}>Practice history</Typography>
+          <Typography
+            variant={"h5"}
+            sx={{ marginBottom: "1rem", marginTop: "1rem" }}
+          >
+            Practice history
+          </Typography>
           <Divider />
           {historyList.length ? (
             <List component="nav" aria-label="history">
@@ -179,7 +189,7 @@ function Dashboard() {
                   timestamp,
                 }) => {
                   return (
-                    <>
+                    <Box key={_id}>
                       <ListItem
                         key={_id}
                         button
@@ -201,7 +211,7 @@ function Dashboard() {
                         Conducted by: {interviewer}
                       </ListItem>
                       <Divider />
-                    </>
+                    </Box>
                   );
                 }
               )}
@@ -226,7 +236,7 @@ function Dashboard() {
             variant={"h5"}
             sx={{
               marginBottom: "1rem",
-              marginTop: "1rem"
+              marginTop: "1rem",
             }}
           >
             Difficulty
