@@ -5,35 +5,46 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TabPanel from "../codingpage/TabPanel";
 
 const HistoryPage = () => {
   let decideColor = "";
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location.state);
+  console.log(location);
   const [tab, setTab] = useState(0);
 
-  const title = location.state.title ? location.state.title : "No title";
-  const date = location.state.date ? location.state.date : "Date unknown";
-  const time = location.state.time ? location.state.time : "Time unknown";
-  const interviewer = location.state.interviewer
-    ? location.state.interviewer
-    : "Interviwer unknown";
-  const difficulty = location.state.difficulty
-    ? location.state.difficulty
-    : "Difficulty unknown";
-  const code = location.state.code ? location.state.code : "No code";
-  const question = location.state.question
-    ? location.state.question
-    : "No question";
-  const interviewerNotes = location.state.interviewerNotes
-    ? location.state.interviewerNotes
-    : "No interviewer notes";
-  const personalNotes = location.state.personalNotes
-    ? location.state.personalNotes
-    : "No personal notes";
+  const title =
+    location.state && location.state.title ? location.state.title : "No title";
+  const timestamp =
+    location.state && location.state.timestamp
+      ? location.state.timestamp
+      : "Time unknown";
+  const interviewer =
+    location.state && location.state.interviewer
+      ? location.state.interviewer
+      : "Interviwer unknown";
+  const difficulty =
+    location.state && location.state.difficulty
+      ? location.state.difficulty
+      : "Difficulty unknown";
+  const code =
+    location.state && location.state.code ? location.state.code : "No code";
+  const question =
+    location.state && location.state.question
+      ? location.state.question
+      : "No question";
+  const interviewerNotes =
+    location.state && location.state.interviewerNotes
+      ? location.state.interviewerNotes
+      : "No interviewer notes";
+  const personalNotes =
+    location.state && location.state.personalNotes
+      ? location.state.personalNotes
+      : "No personal notes";
+
+  console.log(location.state);
 
   const onDashboardClick = () => {
     navigate("/dashboard");
@@ -61,6 +72,12 @@ const HistoryPage = () => {
       "aria-controls": `simple-tabpanel-${index}`,
     };
   }
+
+  useEffect(() => {
+    if (!location.state) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, []);
 
   return (
     <>
@@ -118,9 +135,7 @@ const HistoryPage = () => {
                   <Typography color={decideColor}>{difficulty}</Typography>
                 </Box>
                 <Typography>Interviewer: {interviewer}</Typography>
-                <Typography>
-                  {time}, {date}
-                </Typography>
+                <Typography>{timestamp}</Typography>
               </Box>
             </Box>
             <Box>

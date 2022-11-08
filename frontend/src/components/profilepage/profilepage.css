@@ -1,13 +1,14 @@
 .mainProfilePageBox.MuiBox-root {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: space-evenly;
+  height: 50%
 }
 
 .profilePageVerticalBox.MuiBox-root {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
@@ -26,8 +27,9 @@
 
 .avatarButtonSection {
   position: relative;
-  transform: translate(-100px, 32px);
+  justify-content: center;
   cursor: pointer;
+  transform: translate(-115px, 0);
 }
 
 .avatarButton.MuiAvatar-root {
@@ -46,7 +48,8 @@
 }
 
 .profilePageAdminPage {
-  transform: translate(25px, 270px);
+  transform: translate(0px, 250px);
+  justify-content: center;
 }
 
 .profilePageTextField .MuiOutlinedInput-root fieldset {

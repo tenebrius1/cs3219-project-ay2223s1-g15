@@ -8,12 +8,20 @@ const LIVE_URL = process.env.ENV === 'PROD' ? process.env.LIVE_URL : 'http://loc
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors()); // config cors so that front-end can use
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  })
+); // config cors so that front-end can use
 app.options('*', cors());
 import { addHistory, getUserHistory } from './controller/history-controller.js';
 
-app.get('/', getUserHistory);
-app.post('/', addHistory);
+const router = express.Router();
+router.get('/', getUserHistory);
+router.post('/', addHistory);
+
+app.use('/history', router);
 
 export const httpServer = createServer(app);
 

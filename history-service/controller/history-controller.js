@@ -5,10 +5,10 @@ import {
 
 export const addHistory = async (req, res) => {
   try {
-    const { user, code, notes, question, difficulty, interviewer } = req.body;
+    const { user, title, code, interviewerNotes, personalNotes, question, difficulty, interviewer } = req.body;
     // skip checking of notes since it could be empty 
-    if (user && code && question && difficulty && interviewer) {
-      const resp = await _addHistory(user, code, notes, question, difficulty, interviewer);
+    if (user && title && code && question && difficulty && interviewer) {
+      const resp = await _addHistory(user, title, code, interviewerNotes, personalNotes, question, difficulty, interviewer);
       if (resp.err) {
         return res.status(400).json({ message: "Could not add history" });
       } 
