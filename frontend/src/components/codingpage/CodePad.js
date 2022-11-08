@@ -24,6 +24,7 @@ function CodePad({ currentLanguage, setOutput }) {
   const { codingSocket } = useContext(SocketContext);
   const { roomId } = useContext(RoomContext);
 
+
   var reqBody = {
     source_code: `${code}`,
     language_id: `${availableLanguages[currentLanguage]}`,
@@ -68,7 +69,7 @@ function CodePad({ currentLanguage, setOutput }) {
       <CodeMirror
         value={code}
         theme={githubDark}
-        height={'70vh'}
+        height={'80vh'}
         extensions={[loadLanguage(currentLanguage)]}
         initialState={
           serializedState
