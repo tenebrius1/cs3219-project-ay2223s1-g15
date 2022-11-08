@@ -162,7 +162,7 @@ function Dashboard() {
       </Box>
       <Box className="mainContent">
         <Box className="leftBox">
-          <Typography variant={"h5"}>Practice history</Typography>
+          <Typography variant={"h5"} sx={{marginBottom: "1rem", marginTop: "1rem"}}>Practice history</Typography>
           <Divider />
           {historyList.length ? (
             <List component="nav" aria-label="history">
@@ -215,7 +215,6 @@ function Dashboard() {
                 padding: "10%",
               }}
             >
-              <CircularProgress sx={{ marginBottom: "2%", color: "inherit" }} />
               <Typography>No history to show. Get to practising!</Typography>
             </Box>
           )}
@@ -225,6 +224,10 @@ function Dashboard() {
             className="difficultyButton"
             component={"h3"}
             variant={"h5"}
+            sx={{
+              marginBottom: "1rem",
+              marginTop: "1rem"
+            }}
           >
             Difficulty
           </Typography>
