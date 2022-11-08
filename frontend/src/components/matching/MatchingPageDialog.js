@@ -32,6 +32,11 @@ function MatchingPageDialog({ open, close, setIsStartMatch }) {
     console.log(difficulty);
   }, [difficulty]);
 
+  useEffect(() => {
+    setIsMatchFail(false);
+    console.log("hi", isMatchFail);
+  }, [open]);
+
   //Send match event when countdown timer starts
   useEffect(() => {
     if (open && user && difficulty) {
@@ -88,7 +93,6 @@ function MatchingPageDialog({ open, close, setIsStartMatch }) {
     matchingSocket.emit("matchCancel", user);
     // navigate("/dashboard", { replace: true });
     setIsStartMatch(false);
-    setIsMatchFail(false);
   };
 
   return (
@@ -119,7 +123,7 @@ function MatchingPageDialog({ open, close, setIsStartMatch }) {
         <CountdownCircleTimer
           key={key}
           isPlaying={isPlaying}
-          duration={COUNTDOWN_DURATION}
+          duration={10}
           size={400}
           colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
           colorsTime={[30, 20, 10, 0]}
