@@ -1,4 +1,4 @@
-import { useEffect, useContext, useEffect, useState, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import BasicTab from "./BasicTab";
@@ -8,10 +8,7 @@ import { useNavigate } from "react-router-dom";
 import CodingLanguageSelector from "./CodingLanguageSelector";
 import RoomContext from '../../contexts/RoomContext';
 import SocketContext from "../../contexts/SocketContext";
-import RoomContext from "../../contexts/RoomContext";
 import "./codingpage.css";
-
-import VideoCall from "../video/VideoCall";
 import ConfirmationDialog from "../confirmationdialog/ConfirmationDialog";
 
 function a11yProps(index) {

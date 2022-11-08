@@ -14,9 +14,9 @@ const URI_VIDEO_SVC =
     ? process.env.URI_VIDEO_SVC
     : "http://localhost:8003";
 
-const PREFIX_VIDEO_SVC = "/rtctoken";
+const PREFIX_VIDEO_SVC = "/video";
 
 export const URL_USER_SVC = URI_GATEWAY + PREFIX_USER_SVC;
-export const URL_VIDEO_SVC = URI_VIDEO_SVC + PREFIX_VIDEO_SVC;
+export const URL_VIDEO_SVC = URI_GATEWAY + PREFIX_VIDEO_SVC;
 export const URL_HISTORY_SVC = URI_GATEWAY + PREFIX_HISTORY_SVC;
 export const URL_QUESTION_SVC = URI_GATEWAY + PREFIX_QUESTION_SVC;
