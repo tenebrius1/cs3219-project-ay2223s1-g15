@@ -1,4 +1,5 @@
 import Alert from "@mui/material/Alert";
+import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
@@ -24,7 +25,6 @@ function Dashboard() {
   const [isMatchWithoutDifficulty, setIsMatchWithoutDifficulty] =
     useState(false);
   const [historyList, setHistoryList] = useState([]);
-  const [isStartMatch, setIsStartMatch] = useState(false);
 
   const navigate = useNavigate();
   const { difficulty, setDifficulty } = useContext(RoomContext);
@@ -33,12 +33,7 @@ function Dashboard() {
   const startMatch = async () => {
     console.log("user", user);
     console.log("difficulty", difficulty);
-    // navigate("/matching", { replace: true });
-    setIsStartMatch(true);
-  };
-
-  const handleStartMatchCancel = () => {
-    setIsStartMatch(false);
+    navigate("/matching", { replace: true });
   };
 
   const toggleButtonEasy = (event) => {
@@ -285,11 +280,6 @@ function Dashboard() {
           )}
         </Box>
       </Box>
-      <MatchingPageDialog
-        open={isStartMatch}
-        close={handleStartMatchCancel}
-        setIsStartMatch={setIsStartMatch}
-      />
     </Box>
   );
 }

@@ -169,8 +169,8 @@ function BasicTab({ output }) {
               InputProps={{
                 disableUnderline: true,
                 sx: {
-                  height: "75vh",
-                  maxHeight: "75vh",
+                  height: tabPanelHeight,
+                  maxHeight: tabPanelHeight,
                   alignItems: "flex-start",
                   overflow: "auto",
                 },

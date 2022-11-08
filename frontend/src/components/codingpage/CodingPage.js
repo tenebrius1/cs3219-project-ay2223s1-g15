@@ -74,6 +74,7 @@ function CodingPage() {
   useEffect(() => {
     if (!roomId) {
       navigate("/dashboard", { replace: true });
+      return
     }
   }, []);
 

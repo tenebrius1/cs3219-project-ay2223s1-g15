@@ -35,6 +35,10 @@ function MatchingPageDialog({ open, close, setIsStartMatch }) {
   useEffect(() => {
     setIsMatchFail(false);
     console.log("hi", isMatchFail);
+    // if (!open) {
+    //   setIsPlaying(false);
+    // }
+    // setKey(key => key + 1)
   }, [open]);
 
   //Send match event when countdown timer starts
@@ -120,6 +124,8 @@ function MatchingPageDialog({ open, close, setIsStartMatch }) {
             <Typography variant={"h4"}>No match found :(</Typography>
           )}
         </Box>
+        {
+          open &&
         <CountdownCircleTimer
           key={key}
           isPlaying={isPlaying}
@@ -132,6 +138,7 @@ function MatchingPageDialog({ open, close, setIsStartMatch }) {
         >
           {renderTime}
         </CountdownCircleTimer>
+        }
         <Grid
           container
           className="mainGrid"
