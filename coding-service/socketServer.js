@@ -13,7 +13,12 @@ export const startSocketServer = (httpServer) => {
   io.on('connection', (socket) => {
     console.log('a user connected to coding-service');
 
-    socket.on('connectedToRoom', (roomId) => {
+    socket.on('matchSuccess', (roomId) => {
+      const roomName = `ROOM:${roomId}`;
+      socket.join(roomName);
+    });
+
+    socket.on('reconnectSuccess', (roomId) => {
       const roomName = `ROOM:${roomId}`;
       socket.join(roomName);
     });
@@ -21,12 +26,12 @@ export const startSocketServer = (httpServer) => {
     socket.on('codeChanged', (args) => {
       const { value, roomId } = args;
       const roomName = `ROOM:${roomId}`;
+
       socket.to(roomName).emit('codeChanged', value);
     });
 
     socket.on('languageChanged', (args) => {
       const { language, roomId } = args;
-      console.log('languageChanged ', language);
       const roomName = `ROOM:${roomId}`;
       socket.to(roomName).emit('languageChanged', language);
     });
@@ -41,7 +46,6 @@ export const startSocketServer = (httpServer) => {
       await axios
         .post(`${judgeURL}/submissions/?base64_encoded=true&wait=true`, judgeConfig)
         .then((res) => {
-          console.log(res.data);
           var result = '';
           if (res.data.stdout) {
             result = decodeBase64(res.data.stdout);
@@ -53,7 +57,6 @@ export const startSocketServer = (httpServer) => {
           io.in(roomName).emit('runCodeResults', result);
         })
         .catch((err) => {
-          console.log('err', err.response);
           io.in(roomName).emit('runCodeResults', 'Error occurred while running code');
         });
     });
@@ -74,9 +77,9 @@ const getJudgeConfig = (code, languageId) => {
     number_of_runs: null,
     stdin: 'Judge0',
     expected_output: null,
-    cpu_time_limit: 5,
-    cpu_extra_time: 2,
-    wall_time_limit: 10,
+    cpu_time_limit: null,
+    cpu_extra_time: null,
+    wall_time_limit: null,
     memory_limit: null,
     stack_limit: null,
     max_processes_and_or_threads: null,

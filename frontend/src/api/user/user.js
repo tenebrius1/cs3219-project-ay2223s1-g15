@@ -38,7 +38,6 @@ export const changePassword = async (currPassword, newPassword) => {
       }
     })
     .catch((err) => {
-      console.log(err.response.status);
       return { isSuccess: false, message: err.response.data.message };
     });
   return res;

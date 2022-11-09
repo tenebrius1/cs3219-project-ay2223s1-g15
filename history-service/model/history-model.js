@@ -1,8 +1,6 @@
 import mongoose from 'mongoose';
 import moment from 'moment-timezone';
 
-const dateSingapore = moment.tz(Date.now(), "Asia/Singapore").format("HH:mm:ss DD-MM-YYYY");
-
 var Schema = mongoose.Schema;
 let HistoryModelSchema = new Schema({
   user: {
@@ -16,10 +14,7 @@ let HistoryModelSchema = new Schema({
   code: {
     type: String,
   },
-  interviewerNotes: {
-    type: String,
-  },
-  personalNotes: {
+  notes: {
     type: String,
   },
   question: {
@@ -30,14 +25,10 @@ let HistoryModelSchema = new Schema({
     type: String,
     required: true,
   },
-  interviewer: {
-    type: String,
-    required: true,
-  },
   timestamp: {
     type: String,
-    default: dateSingapore
-  }
+    default: moment.tz(Date.now(), 'Asia/Singapore').format('HH:mm:ss DD-MM-YYYY'),
+  },
 });
 
 export default mongoose.model('HistoryModel', HistoryModelSchema);

@@ -5,19 +5,36 @@ export const RoomContext = createContext({
   setDifficulty: (difficulty) => {},
   roomId: '',
   setRoomId: (roomId) => {},
+  partner: '',
+  setPartner: (partner) => {},
   tracks: '',
-  setTracks: (tracks)=> {},
+  setTracks: (tracks) => {},
   client: '',
-  setClient: (client)=> {}
+  setClient: (client) => {},
 });
 
 export const RoomContextProvider = ({ children }) => {
   const [difficulty, setDifficulty] = useState('');
   const [roomId, setRoomId] = useState('');
+  const [partner, setPartner] = useState('');
   const [tracks, setTracks] = useState('');
   const [client, setClient] = useState('');
+
   return (
-    <RoomContext.Provider value={{ difficulty, setDifficulty, roomId, setRoomId, tracks, setTracks, client, setClient }}>
+    <RoomContext.Provider
+      value={{
+        difficulty,
+        setDifficulty,
+        roomId,
+        setRoomId,
+        tracks,
+        setTracks,
+        client,
+        setClient,
+        partner,
+        setPartner,
+      }}
+    >
       {children}
     </RoomContext.Provider>
   );
