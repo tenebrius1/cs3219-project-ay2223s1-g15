@@ -1,11 +1,24 @@
-import {
-  addHistory,
-  getUserHistory,
-} from './repository.js'
+import { addHistory, getUserHistory } from './repository.js';
 
-export const ormAddHistory = async (user, title, code, interviewerNotes, personalNotes, question, difficulty, interviewer) => {
+export const ormAddHistory = async (
+  user,
+  title,
+  code,
+  notes,
+  question,
+  difficulty,
+  interviewer
+) => {
   try {
-    const newUserHistory = await addHistory({ user, title, code, interviewerNotes, personalNotes, question, difficulty, interviewer });
+    const newUserHistory = await addHistory({
+      user,
+      title,
+      code,
+      notes,
+      question,
+      difficulty,
+      interviewer,
+    });
     newUserHistory.save();
     return true;
   } catch (err) {
@@ -20,10 +33,10 @@ export const ormGetUserHistory = async (user) => {
 
     if (history.length) {
       return history;
-    } 
+    }
 
     return {};
   } catch (err) {
-    return { err }
+    return { err };
   }
 };

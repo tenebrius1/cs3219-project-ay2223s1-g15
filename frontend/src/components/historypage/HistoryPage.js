@@ -1,65 +1,55 @@
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Divider from "@mui/material/Divider";
-import Tab from "@mui/material/Tab";
-import Tabs from "@mui/material/Tabs";
-import Typography from "@mui/material/Typography";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import TabPanel from "../codingpage/TabPanel";
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import Typography from '@mui/material/Typography';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import TabPanel from '../codingpage/TabPanel';
 
 const HistoryPage = () => {
-  let decideColor = "";
+  let decideColor = '';
   const navigate = useNavigate();
   const location = useLocation();
   console.log(location);
   const [tab, setTab] = useState(0);
 
   const title =
-    location.state && location.state.title ? location.state.title : "No title";
+    location.state && location.state.title ? location.state.title : 'No title';
   const timestamp =
     location.state && location.state.timestamp
       ? location.state.timestamp
-      : "Time unknown";
+      : 'Time unknown';
   const interviewer =
     location.state && location.state.interviewer
       ? location.state.interviewer
-      : "Interviwer unknown";
+      : 'Interviwer unknown';
   const difficulty =
     location.state && location.state.difficulty
       ? location.state.difficulty
-      : "Difficulty unknown";
-  const code =
-    location.state && location.state.code ? location.state.code : "No code";
+      : 'Difficulty unknown';
+  const code = location.state && location.state.code ? location.state.code : 'No code';
   const question =
-    location.state && location.state.question
-      ? location.state.question
-      : "No question";
-  const interviewerNotes =
-    location.state && location.state.interviewerNotes
-      ? location.state.interviewerNotes
-      : "No interviewer notes";
-  const personalNotes =
-    location.state && location.state.personalNotes
-      ? location.state.personalNotes
-      : "No personal notes";
+    location.state && location.state.question ? location.state.question : 'No question';
+  const notes = location.state && location.state.notes ? location.state.notes : 'Notes';
 
   console.log(location.state);
 
   const onDashboardClick = () => {
-    navigate("/dashboard");
+    navigate('/dashboard');
   };
 
-  const tabPanelHeight = "80vh";
+  const tabPanelHeight = '80vh';
 
-  if (difficulty === "Easy") {
-    decideColor = "green";
-  } else if (difficulty === "Medium") {
-    decideColor = "orange";
-  } else if (difficulty === "Hard") {
-    decideColor = "red";
+  if (difficulty === 'Easy') {
+    decideColor = 'green';
+  } else if (difficulty === 'Medium') {
+    decideColor = 'orange';
+  } else if (difficulty === 'Hard') {
+    decideColor = 'red';
   } else {
-    decideColor = "white";
+    decideColor = 'white';
   }
 
   const handleTabChange = (event, newValue) => {
@@ -69,69 +59,69 @@ const HistoryPage = () => {
   function a11yProps(index) {
     return {
       id: `simple-tab-${index}`,
-      "aria-controls": `simple-tabpanel-${index}`,
+      'aria-controls': `simple-tabpanel-${index}`,
     };
   }
 
   useEffect(() => {
     if (!location.state) {
-      navigate("/dashboard", { replace: true });
+      navigate('/dashboard', { replace: true });
     }
   }, []);
 
   return (
     <>
       <Box
-        className="mainHistoryPageBox"
+        className='mainHistoryPageBox'
         sx={{
-          marginTop: "2%",
-          padding: "0 10%",
-          display: "flex",
-          justifyContent: "space-between",
+          marginTop: '2%',
+          padding: '0 10%',
+          display: 'flex',
+          justifyContent: 'space-between',
         }}
       >
         <Box
-          className="leftHistoryPageBox"
+          className='leftHistoryPageBox'
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "75%",
-            height: "90vh",
-            marginRight: "2%",
-            backgroundColor: "#2a2e38",
+            display: 'flex',
+            flexDirection: 'column',
+            width: '75%',
+            height: '90vh',
+            marginRight: '2%',
+            backgroundColor: '#2a2e38',
           }}
         >
           <Box
-            className="topBarHistoryPage"
+            className='topBarHistoryPage'
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: "2%",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '2%',
             }}
           >
             <Box
-              className="historyPageQuestionInfo"
+              className='historyPageQuestionInfo'
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
               }}
             >
               <Box
-                className="historyPageCombinedInfo"
+                className='historyPageCombinedInfo'
                 sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
                 }}
               >
                 <Box
-                  className="historyPageTitleDifficulty"
-                  sx={{ display: "flex", alignItems: "center" }}
+                  className='historyPageTitleDifficulty'
+                  sx={{ display: 'flex', alignItems: 'center' }}
                 >
-                  <Typography variant={"h5"}>{title}&nbsp;</Typography>
+                  <Typography variant={'h5'}>{title}&nbsp;</Typography>
                   <Typography color={decideColor}>{difficulty}</Typography>
                 </Box>
                 <Typography>Interviewer: {interviewer}</Typography>
@@ -139,54 +129,49 @@ const HistoryPage = () => {
               </Box>
             </Box>
             <Box>
-              <Button
-                color="secondary"
-                variant="contained"
-                onClick={onDashboardClick}
-              >
+              <Button color='secondary' variant='contained' onClick={onDashboardClick}>
                 Dashboard
               </Button>
             </Box>
           </Box>
           <Box
-            className="historyPageCode"
-            sx={{ paddingLeft: "2%", paddingRight: "2%", overflow: "auto" }}
+            className='historyPageCode'
+            sx={{ paddingLeft: '2%', paddingRight: '2%', overflow: 'auto' }}
           >
-            <Divider textAlign="left" sx={{ marginBottom: "1%" }}>
+            <Divider textAlign='left' sx={{ marginBottom: '1%' }}>
               Code
             </Divider>
             <Typography>{code}</Typography>
           </Box>
         </Box>
         <Box
-          className="historyPageInterviewerComments"
+          className='historyPageInterviewerComments'
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "25%",
-            height: "90vh",
-            borderColor: "divider",
-            backgroundColor: "#2a2e38",
+            display: 'flex',
+            flexDirection: 'column',
+            width: '25%',
+            height: '90vh',
+            borderColor: 'divider',
+            backgroundColor: '#2a2e38',
           }}
         >
           <Tabs
             value={tab}
-            variant={"fullWidth"}
+            variant={'fullWidth'}
             onChange={handleTabChange}
-            aria-label="basic tabs example"
-            textColor={"secondary"}
-            indicatorColor={"secondary"}
+            aria-label='basic tabs example'
+            textColor={'secondary'}
+            indicatorColor={'secondary'}
           >
-            <Tab label="Question" wrapped {...a11yProps(0)} />
-            <Tab label="Interviewer notes" wrapped {...a11yProps(1)} />
-            <Tab label="Personal notes" wrapped {...a11yProps(1)} />
+            <Tab label='Question' wrapped {...a11yProps(0)} />
+            <Tab label='Notes' wrapped {...a11yProps(1)} />
           </Tabs>
 
           <TabPanel
             children={
               <Typography
-                style={{ wordWrap: "break-word" }}
-                sx={{ marginTop: "5%", marginLeft: "2%", marginRight: "2%" }}
+                style={{ wordWrap: 'break-word' }}
+                sx={{ marginTop: '5%', marginLeft: '2%', marginRight: '2%' }}
               >
                 {question}
               </Typography>
@@ -198,27 +183,14 @@ const HistoryPage = () => {
           <TabPanel
             children={
               <Typography
-                style={{ wordWrap: "break-word" }}
-                sx={{ marginTop: "5%", marginLeft: "2%", marginRight: "2%" }}
+                style={{ wordWrap: 'break-word' }}
+                sx={{ marginTop: '5%', marginLeft: '2%', marginRight: '2%' }}
               >
-                {interviewerNotes}
+                {notes}
               </Typography>
             }
             value={tab}
             index={1}
-            height={tabPanelHeight}
-          />
-          <TabPanel
-            children={
-              <Typography
-                style={{ wordWrap: "break-word" }}
-                sx={{ marginTop: "5%", marginLeft: "2%", marginRight: "2%" }}
-              >
-                {personalNotes}
-              </Typography>
-            }
-            value={tab}
-            index={2}
             height={tabPanelHeight}
           />
         </Box>

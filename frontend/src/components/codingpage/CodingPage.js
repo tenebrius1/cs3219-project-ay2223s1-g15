@@ -8,6 +8,7 @@ import CodingLanguageSelector from './CodingLanguageSelector';
 import SocketContext from '../../contexts/SocketContext';
 import RoomContext from '../../contexts/RoomContext';
 import UserContext from '../../contexts/UserContext';
+import { addHistory } from '../../api/history';
 
 import './codingpage.css';
 
@@ -27,12 +28,13 @@ function CodingPage() {
   const [output, setOutput] = useState('No output to display');
   const [notes, setNotes] = useState('');
   const [hasOtherPartyLeft, setHasOtherPartyLeft] = useState(false);
-
+  const [question, setQuestion] = useState(null);
   const [hasClickedEndInterview, setHasClickedEndInterview] = useState(false);
-
+  const [code, setCode] = useState('');
   const navigate = useNavigate();
   const { codingSocket, roomSocket } = useContext(SocketContext);
-  const { roomId, setRoomId, setDifficulty } = useContext(RoomContext);
+  const { roomId, setRoomId, difficulty, setDifficulty, partner, setPartner } =
+    useContext(RoomContext);
   const { role, setRole, user } = useContext(UserContext);
   const params = useParams();
 
@@ -45,8 +47,22 @@ function CodingPage() {
     setHasClickedEndInterview(false);
   };
 
-  const handleEndInterview = () => {
-    roomSocket.emit('endInterview', { roomId, notes, user });
+  const handleEndInterview = async () => {
+    roomSocket.emit('endInterview', { roomId, user, role });
+    if (role === 'interviewee') {
+      console.log('interviewee end');
+      await addHistory(
+        user,
+        question.title,
+        code,
+        notes,
+        question.description,
+        difficulty,
+        partner,
+        role
+      );
+    }
+
     navigate('/dashboard', { replace: true });
   };
 
@@ -70,6 +86,7 @@ function CodingPage() {
       console.log('languageChanged ', language);
       setCurrentLanguage(language);
     });
+    return () => codingSocket.off('langugageChanged');
   }, [codingSocket]);
 
   useEffect(() => {
@@ -81,13 +98,25 @@ function CodingPage() {
     });
 
     roomSocket.on('reconnectFail', () => {
+      console.log('reconnectFail');
       navigate('/dashboard', { replace: true });
     });
 
     roomSocket.on('partnerLeft', () => {
       handleOtherPartyLeave();
     });
-  }, [codingSocket, navigate, roomSocket, setDifficulty, setRole, setRoomId]);
+
+    roomSocket.on('handshake', (partner) => {
+      setPartner(partner);
+    });
+
+    return () => {
+      roomSocket.off('reconnectSuccess');
+      roomSocket.off('reconnectFail');
+      roomSocket.off('partnerLeft');
+      roomSocket.off('handshake');
+    };
+  }, [codingSocket, navigate, roomSocket, setDifficulty, setPartner, setRole, setRoomId]);
 
   return (
     <Box className='mainCodingPageBox'>
@@ -107,10 +136,24 @@ function CodingPage() {
             End Interview
           </Button>
         </Box>
-        <CodePad currentLanguage={currentLanguage} setOutput={setOutput} notes={notes} />
+        <CodePad
+          currentLanguage={currentLanguage}
+          setOutput={setOutput}
+          notes={notes}
+          question={question}
+          setQuestion={setQuestion}
+          code={code}
+          setCode={setCode}
+        />
       </Box>
       <Box className='adminSpace'>
-        <BasicTab key={'1'} output={output} setNotes={setNotes} />
+        <BasicTab
+          key={'1'}
+          output={output}
+          setNotes={setNotes}
+          question={question}
+          setQuestion={setQuestion}
+        />
       </Box>
 
       <ConfirmationDialog

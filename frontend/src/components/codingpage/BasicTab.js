@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -16,24 +16,31 @@ import SocketContext from '../../contexts/SocketContext';
 import { useNavigate } from 'react-router-dom';
 import ConfirmationDialog from '../confirmationdialog/ConfirmationDialog';
 import Divider from '@mui/material/Divider';
+import { addHistory } from '../../api/history';
+import { generateRandomQuestion } from '../../api/question';
 
-function BasicTab({ output, setNotes }) {
+function BasicTab({ output, setNotes, question, setQuestion }) {
   const [value, setValue] = useState(0);
   const [isEndTurn, setIsEndTurn] = useState(false);
   const [isEndTurnConfirm, setIsEndTurnConfirm] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(false);
-  const [question, setQuestion] = useState(null);
-  const { roomId, difficulty } = useContext(RoomContext);
-  const { role } = useContext(UserContext);
+  const { roomId, difficulty, setPartner, setDifficulty } = useContext(RoomContext);
+  const { role, setRole, user } = useContext(UserContext);
   const { roomSocket } = useContext(SocketContext);
   const [difficultyColor, setDifficultyColor] = useState('');
   const tabPanelHeight = '75vh';
-
+  const defaultQuestion = {
+    title: 'test',
+    difficulty: 'easy',
+    description: '',
+    example: {},
+    constraint: {},
+  };
   const getRandomQuestionError = 'Sorry but question could not be loaded at this time!';
 
   const navigate = useNavigate();
 
-  const decideDifficultyColor = () => {
+  const decideDifficultyColor = useCallback(() => {
     if (difficulty === 'Easy') {
       setDifficultyColor('green');
     } else if (difficulty === 'Medium') {
@@ -43,7 +50,7 @@ function BasicTab({ output, setNotes }) {
     } else {
       setDifficultyColor('white');
     }
-  };
+  }, [difficulty]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -56,39 +63,28 @@ function BasicTab({ output, setNotes }) {
     };
   }
 
-  const handleEndTurn = () => {
-    // actually end turn
-    setIsEndTurn(true);
-  };
-
-  const handleEndTurnCancel = () => {
-    // cancel ending turn process
-    setIsEndTurn(false);
-  };
-
-  const handleEndTurnConfirm = () => {
-    // open confirmation modal
-    setIsEndTurnConfirm(true);
-    setIsEndTurn(false);
-  };
-
-  const handleEndTurnConfirmCancel = () => {
-    // closes confirmation modal
-    setIsEndTurnConfirm(false);
-  };
-
+  useEffect(() => {
+    getQuestion(difficulty);
+  }, []);
   useEffect(() => {
     roomSocket.on('receiveQuestion', (question) => {
       setQuestion(question);
       decideDifficultyColor();
     });
+    return () => roomSocket.off('receiveQuestion');
+  }, [question]);
 
+  useEffect(() => {
     roomSocket.on('partnerReconnect', () => {
       roomSocket.emit('sendQuestion', { roomId, question });
     });
+    return () => roomSocket.off('partnerReconnect');
+  }, [roomId, question]);
 
-    roomSocket.on('initialLoad', () => {
-      if (role === 'interviewee') {
+  useEffect(() => {
+    roomSocket.on('initialLoad', (partner) => {
+      setPartner(partner);
+      if (role !== 'interviewer') {
         if (!question) {
           roomSocket.emit('initialLoadAck', { roomId, isInitialLoad: true });
         } else {
@@ -96,43 +92,48 @@ function BasicTab({ output, setNotes }) {
         }
       }
     });
-  }, [question, roomId, roomSocket]);
+  }, [role, roomId]);
+
+  const getQuestion = useCallback(async () => {
+    await generateRandomQuestion(difficulty)
+      .then((res) => {
+        setQuestion(res);
+        decideDifficultyColor();
+        roomSocket.emit('sendQuestion', { roomId, question: res });
+      })
+      .catch((err) => console.log(err));
+  }, [decideDifficultyColor, difficulty, roomId, roomSocket, setQuestion]);
 
   useEffect(() => {
-    if (!roomId || !difficulty || !role) {
+    if (!roomId || !role) {
       return;
     }
-    if (role === 'interviewer' && !isInitialLoad && !question) {
-      roomSocket.emit('initialLoad', roomId);
+    if (role === 'interviewer' && isInitialLoad && !question) {
+      console.log('interivwer initial');
+      getQuestion(difficulty);
+      setIsInitialLoad(false);
+    }
+    console.log('basic tab line 124');
+  }, [difficulty, roomId, role, isInitialLoad]);
+
+  useEffect(() => {
+    decideDifficultyColor();
+  }, [decideDifficultyColor, question]);
+
+  useEffect(() => {
+    console.log('1');
+    if (!roomId) {
+      return;
+    }
+
+    if (!isInitialLoad && !question) {
+      roomSocket.emit('initialLoad', { roomId, user });
       roomSocket.on('initialLoadAck', (isInitialLoad) => {
+        console.log('isInitialLoad ', isInitialLoad);
         setIsInitialLoad(isInitialLoad);
       });
     }
-  }, [difficulty, role, roomId, roomSocket]);
-
-  useEffect(() => {
-    if (!roomId || !difficulty || !role) {
-      return;
-    }
-    const generateRandomQuestion = async () => {
-      const res = await axios
-        .get(URL_QUESTION_SVC + `/randomQuestion/?difficulty=${difficulty}`, {
-          withCredentials: true,
-        })
-        .then((res) => {
-          if (res && res.data) {
-            setQuestion(JSON.parse(res.data));
-            decideDifficultyColor();
-            roomSocket.emit('sendQuestion', { roomId, question: JSON.parse(res.data) });
-          }
-        })
-        .catch((err) => console.log(err));
-    };
-    if (role === 'interviewer' && isInitialLoad) {
-      generateRandomQuestion();
-      setIsInitialLoad(false);
-    }
-  }, [difficulty, roomId, role, isInitialLoad]);
+  }, [roomId]);
 
   return (
     <>

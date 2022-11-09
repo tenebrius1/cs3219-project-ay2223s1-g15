@@ -12,15 +12,24 @@ import UserContext from '../../contexts/UserContext';
 import * as Automerge from 'automerge';
 import CircularProgress from '@mui/material/CircularProgress';
 import ConfirmationDialog from '../confirmationdialog/ConfirmationDialog';
+import { addHistory } from '../../api/history';
+import { generateRandomQuestion } from '../../api/question';
 
 const stateFields = { history: historyField };
 const LIVE_URL = process.env.ENV === 'PROD' ? process.env.LIVE_URL : 'http://localhost';
 
 let doc = Automerge.init();
 
-function CodePad({ currentLanguage, setOutput, notes }) {
+function CodePad({
+  currentLanguage,
+  setOutput,
+  notes,
+  question,
+  setQuestion,
+  code,
+  setCode,
+}) {
   const serializedState = localStorage.getItem('myEditorState');
-  const [code, setCode] = useState('');
   const [isEndTurn, setIsEndTurn] = useState(false);
   const [isEndTurnConfirm, setIsEndTurnConfirm] = useState(false);
   const [isRequestToChange, setIsRequestToChange] = useState(false);
@@ -32,45 +41,103 @@ function CodePad({ currentLanguage, setOutput, notes }) {
   };
 
   const { codingSocket, roomSocket } = useContext(SocketContext);
-  const { roomId } = useContext(RoomContext);
+  const { roomId, difficulty, partner } = useContext(RoomContext);
   const { user, role, setRole } = useContext(UserContext);
+
+  const updateDocument = useCallback(
+    (code) => {
+      try {
+        let newDoc = Automerge.change(doc, (doc) => {
+          if (!doc.text) doc.text = code;
+          doc.text = code;
+        });
+
+        let binary = Automerge.save(newDoc);
+        codingSocket.emit('codeChanged', { value: binary, roomId: roomId });
+        doc = newDoc;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [codingSocket, roomId]
+  );
 
   useEffect(() => {
     roomSocket.on('requestSwap', () => {
       console.log('requestSwap');
+
       setIsRequestToChange(true);
     });
 
-    roomSocket.on('roleSwap', (role) => {
-      console.log(role);
-      setRole(role);
+    roomSocket.on('roleSwap', async (args) => {
+      const newRole = args.role;
+      console.log(newRole);
+      if (!question) {
+        return;
+      }
+      if (role === 'interviewee') {
+        addHistory(
+          user,
+          question.title,
+          code,
+          notes,
+          question.description,
+          difficulty,
+          partner,
+          role
+        );
+        await generateRandomQuestion(difficulty)
+          .then((res) => {
+            setQuestion(res);
+            roomSocket.emit('sendQuestion', {
+              roomId,
+              question: res,
+            });
+          })
+          .catch((err) => console.log(err));
+      }
+      console.log('roleswap');
+      setRole(newRole);
+      setCode('');
+      updateDocument('');
+      setIsEndTurnConfirm(false);
     });
-  }, [isRequestToChange, roomSocket, setRole, user]);
+    return () => {
+      roomSocket.off('requestSwap');
+      roomSocket.off('roleSwap');
+    };
+  }, [
+    isRequestToChange,
+    roomSocket,
+    setRole,
+    user,
+    question,
+    code,
+    role,
+    notes,
+    difficulty,
+    partner,
+    setCode,
+    updateDocument,
+    setQuestion,
+    roomId,
+  ]);
 
   const handleEndTurn = () => {
     // actually end turn
     setIsEndTurn(true);
   };
 
-  const handleEndTurnCancel = () => {
-    // cancel ending turn process
-    setIsEndTurn(false);
-  };
-
   const handleEndTurnConfirm = () => {
     // open confirmation modal
     setIsEndTurnConfirm(true);
     setIsEndTurn(false);
-    roomSocket.emit('requestSwap', roomId);
+    roomSocket.emit('requestSwap', { roomId, user });
   };
 
   const handleRoleSwapDecline = () => {
     setIsRequestToChange(false);
-  };
-
-  const handleEndTurnConfirmCancel = () => {
-    // closes confirmation modal
-    setIsEndTurnConfirm(false);
+    roomSocket.emit('rejectRoleSwap', roomId);
   };
 
   useEffect(() => {
@@ -87,34 +154,25 @@ function CodePad({ currentLanguage, setOutput, notes }) {
       console.log('runCodeResults', results);
       setOutput(results);
     });
+
+    return () => {
+      codingSocket.off('codeChanged');
+      codingSocket.off('runCodeResults');
+    };
   }, [codingSocket]);
-
-  const updateDocument = (code) => {
-    try {
-      let newDoc = Automerge.change(doc, (doc) => {
-        if (!doc.text) doc.text = code;
-        doc.text = code;
-      });
-
-      let binary = Automerge.save(newDoc);
-      codingSocket.emit('codeChanged', { value: binary, roomId: roomId });
-      doc = newDoc;
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   useEffect(() => {
     roomSocket.on('partnerReconnect', () => {
       updateDocument(code);
     });
+    return () => roomSocket.off('partnerReconnect');
   }, [code]);
 
   useEffect(() => {
-    roomSocket.on('sendNotes', () => {
-      roomSocket.emit('sendNotes', { roomId, notes });
+    roomSocket.on('rejectRoleSwap', () => {
+      setIsEndTurnConfirm(false);
     });
-  }, [notes]);
+  });
 
   const submitCode = () => {
     codingSocket.emit('runCode', {
@@ -180,17 +238,17 @@ function CodePad({ currentLanguage, setOutput, notes }) {
               >
                 Swap roles
               </Button>
-              <Typography>You are the: {role}</Typography>
+              <Typography>You are the {role}</Typography>
             </>
           )}
         </Box>
         <ConfirmationDialog
           className='endTurnButtonDialog'
           open={isEndTurn}
-          close={handleEndTurnCancel}
+          close={() => setIsEndTurn(false)}
           confirm={handleEndTurnConfirm}
-          title={'End turn'}
-          body={'Are you sure you want to end your turn?'}
+          title={'Swap roles'}
+          body={'Are you sure you want to swap roles?'}
           accept={'Accept'}
           decline={'Decline'}
         />
@@ -202,13 +260,39 @@ function CodePad({ currentLanguage, setOutput, notes }) {
         className='requestToChangeButtonDialog'
         open={isRequestToChange}
         close={handleRoleSwapDecline}
-        confirm={() => {
-          roomSocket.emit('roleSwap', { roomId, user, role });
+        confirm={async () => {
+          console.log(role);
+          roomSocket.emit('roleSwap', { roomId, user });
           if (role === 'interviewer') {
             setRole('interviewee');
           } else {
             setRole('interviewer');
           }
+          setIsRequestToChange(false);
+          if (role === 'interviewee') {
+            addHistory(
+              user,
+              question.title,
+              code,
+              notes,
+              question.description,
+              difficulty,
+              partner,
+              role
+            );
+            await generateRandomQuestion(difficulty)
+              .then((res) => {
+                setQuestion(res);
+                roomSocket.emit('sendQuestion', {
+                  roomId,
+                  question: res,
+                });
+              })
+              .catch((err) => console.log(err));
+          }
+
+          setCode('');
+          updateDocument('');
         }}
         title={'Other user has requested to swap roles'}
         body={'Do you want to swap?'}
