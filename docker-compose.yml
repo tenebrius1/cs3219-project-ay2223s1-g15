@@ -10,6 +10,8 @@ x-common-variables:
   VIDEO_URL: http://video:8003
   QUESTION_URL: http://question:8004
   HISTORY_URL: http://history:8005
+  ROOM_URL: http://room:8006
+  JUDGE0_URL: http://server:2358
   LIVE_URL: https://peerprep.live
   URI_GATEWAY: https://peerprep.live:8080
   URI_VIDEO_SVC: https://peerprep.live:8003
@@ -48,6 +50,8 @@ services:
     restart: on-failure
     environment:
       <<: *common-backend-variables
+      REACT_APP_AGORA_APP_ID: d98a05dd04294d1e8233eb34ccfae645
+      REACT_APP_AGORA_APP_CERTIFICATE: 49561092f8324742be88874a6b34e331
 
   user:
     container_name: user
@@ -96,6 +100,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./video-service
+    image: cs3219.azurecr.io/video
     volumes:
       - ./video-service:/home/node/app/video_service
     expose:
@@ -103,6 +108,8 @@ services:
     restart: on-failure
     environment:
       <<: *common-backend-variables
+      AGORA_APP_CERTIFICATE: 49561092f8324742be88874a6b34e331
+      AGORA_APP_ID: d98a05dd04294d1e8233eb34ccfae645
 
   question:
     container_name: question
@@ -136,14 +143,28 @@ services:
       <<: *common-backend-variables
       DB_CLOUD_URI: 'mongodb+srv://cs3219-history:cs3219-history@cs3219-history.u9n8v5t.mongodb.net/?retryWrites=true&w=majority'
 
+  room:
+    container_name: room
+    build:
+      dockerfile: Dockerfile
+      context: ./room-service
+    image: cs3219.azurecr.io/room
+    volumes:
+      - ./room-service:/home/node/app/room_service
+    expose:
+      - 8005
+    restart: on-failure
+    environment:
+      <<: *common-backend-variables
+
 
   # Judge0
   server:
       image: judge0/judge0:1.13.0
       volumes:
         - ./judge0.conf:/judge0.conf:ro
-      ports:
-        - "2358:2358"
+      expose:
+        - 2358
       privileged: true
       <<: *default-logging
       restart: always
@@ -184,9 +205,9 @@ volumes:
   matching-service: 
   user-service:
   history-service:
+  room-service:
   frontend:
   gateway:
-  history:
   postgres-data:
   redis-data:
 
