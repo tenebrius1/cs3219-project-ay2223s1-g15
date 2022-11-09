@@ -33,6 +33,7 @@ function CodePad({
   const [isEndTurn, setIsEndTurn] = useState(false);
   const [isEndTurnConfirm, setIsEndTurnConfirm] = useState(false);
   const [isRequestToChange, setIsRequestToChange] = useState(false);
+  const [allowSwap, setAllowSwap] = useState(true);
 
   const availableLanguages = {
     python: '70',
@@ -98,6 +99,7 @@ function CodePad({
       setCode('');
       updateDocument('');
       setIsEndTurnConfirm(false);
+      setAllowSwap(false);
     });
     return () => {
       roomSocket.off('requestSwap');
@@ -174,7 +176,7 @@ function CodePad({
       <CodeMirror
         value={code}
         theme={githubDark}
-        height={'70vh'}
+        height={'80vh'}
         extensions={[loadLanguage(currentLanguage)]}
         initialState={
           serializedState
@@ -198,9 +200,11 @@ function CodePad({
         marginTop={'1rem'}
       >
         <Box className='endTurnBox'>
-          {isEndTurnConfirm ? (
-            <>
-              {/* <Button
+          {allowSwap
+            ? () => {
+                isEndTurnConfirm ? (
+                  <>
+                    {/* <Button
               variant="outlined"
               color="error"
               onClick={handleEndTurnConfirmCancel}
@@ -208,26 +212,28 @@ function CodePad({
             >
               Cancel
             </Button> */}
-              <CircularProgress
-                size={'1rem'}
-                color='inherit'
-                sx={{ marginRight: '2%' }}
-              />
-              <Typography>Swapping roles...</Typography>
-            </>
-          ) : (
-            <>
-              <Button
-                variant='outlined'
-                color='error'
-                sx={{ marginRight: '2%' }}
-                onClick={handleEndTurn}
-              >
-                Swap roles
-              </Button>
-              <Typography>You are the {role}</Typography>
-            </>
-          )}
+                    <CircularProgress
+                      size={'1rem'}
+                      color='inherit'
+                      sx={{ marginRight: '2%' }}
+                    />
+                    <Typography>Swapping roles...</Typography>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant='outlined'
+                      color='error'
+                      sx={{ marginRight: '2%' }}
+                      onClick={handleEndTurn}
+                    >
+                      Swap roles
+                    </Button>
+                    <Typography>You are the {role}</Typography>
+                  </>
+                );
+              }
+            : () => <></>}
         </Box>
         <ConfirmationDialog
           className='endTurnButtonDialog'

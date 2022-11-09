@@ -91,6 +91,19 @@ services:
     environment:
       <<: *common-backend-variables
 
+  video:
+    container_name: video
+    build:
+      dockerfile: Dockerfile
+      context: ./video-service
+    volumes:
+      - ./video-service:/home/node/app/video_service
+    expose:
+      - 8003
+    restart: on-failure
+    environment:
+      <<: *common-backend-variables
+
   question:
     container_name: question
     build:
@@ -166,6 +179,7 @@ services:
     
 volumes: 
   question-service:
+  video-service:
   coding-service:
   matching-service: 
   user-service:

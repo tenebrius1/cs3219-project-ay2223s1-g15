@@ -9,12 +9,9 @@ import SocketContext from '../../contexts/SocketContext';
 import RoomContext from '../../contexts/RoomContext';
 import UserContext from '../../contexts/UserContext';
 import { addHistory } from '../../api/history';
-
-import './codingpage.css';
-
-import VideoCall from '../video/VideoCall';
-import Video from '../video/Video';
 import ConfirmationDialog from '../confirmationdialog/ConfirmationDialog';
+import VideoCall from '../video/VideoCall.js';
+import './codingpage.css';
 
 function a11yProps(index) {
   return {
@@ -27,18 +24,20 @@ function CodingPage() {
   const [currentLanguage, setCurrentLanguage] = useState('python');
   const [output, setOutput] = useState('No output to display');
   const [notes, setNotes] = useState('');
+  const [inCall, setInCall] = useState(false);
+  const [isRequestToChange, setIsRequestToChange] = useState(false);
   const [hasOtherPartyLeft, setHasOtherPartyLeft] = useState(false);
   const [question, setQuestion] = useState(null);
   const [hasClickedEndInterview, setHasClickedEndInterview] = useState(false);
   const [code, setCode] = useState('');
   const navigate = useNavigate();
   const { codingSocket, roomSocket } = useContext(SocketContext);
-  const { roomId, setRoomId, difficulty, setDifficulty, partner } =
+  const { roomId, setRoomId, difficulty, setDifficulty, partner, client, tracks } =
     useContext(RoomContext);
   const { role, setRole, user } = useContext(UserContext);
   const params = useParams();
 
-  const handleEndClick = () => {
+  const handleEndClick = async () => {
     setHasClickedEndInterview(true);
   };
 
@@ -60,7 +59,12 @@ function CodingPage() {
         role
       );
     }
-
+    if (inCall) {
+      await client.leave();
+      client.removeAllListeners();
+      tracks[0].close();
+      tracks[1].close();
+    }
     navigate('/dashboard', { replace: true });
   };
 
@@ -70,6 +74,10 @@ function CodingPage() {
 
   const handleOtherPartyLeaveClose = () => {
     setHasOtherPartyLeft(false);
+  };
+
+  const handleJoinCallClick = () => {
+    setInCall(true);
   };
 
   useEffect(() => {
@@ -125,9 +133,21 @@ function CodingPage() {
           setNotes={setNotes}
           question={question}
           setQuestion={setQuestion}
+          inCall={inCall}
         />
+        <Box display={'flex'} justifyContent={'flex-end'} marginTop={'1rem'}>
+          {!inCall && (
+            <Button variant='outlined' color='secondary' onClick={handleJoinCallClick}>
+              Join Call
+            </Button>
+          )}
+        </Box>
+        {inCall && (
+          <Box className='videoCall'>
+            <VideoCall setInCall={setInCall} />
+          </Box>
+        )}
       </Box>
-
       <ConfirmationDialog
         className='hasOtherPartyLeftButtonDialog'
         open={hasOtherPartyLeft}

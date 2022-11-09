@@ -24,6 +24,7 @@ app.use(
     credentials: true,
   })
 ); // config cors so that front-end can use
+app.options('*', cors());
 app.use(cookieParser());
 // app.use(morgan('combined'));
 
@@ -32,7 +33,7 @@ app.use(matchingProxy);
 app.use(codingProxy);
 app.use(roomProxy);
 
-app.use('/video', authenticate, videoProxy);
+app.use('/video', videoProxy);
 app.use('/question', authenticate, questionProxy);
 app.use('/history', authenticate, historyProxy);
 

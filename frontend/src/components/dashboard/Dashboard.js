@@ -5,7 +5,6 @@ import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
-
 import { useNavigate } from 'react-router-dom';
 import './dashboard.css';
 import { useState, useContext, useEffect } from 'react';
@@ -156,14 +155,16 @@ function Dashboard() {
       </Box>
       <Box className='mainContent'>
         <Box className='leftBox'>
-          <Typography variant={'h5'}>Practice history</Typography>
+          <Typography variant={'h5'} sx={{ marginBottom: '1rem', marginTop: '1rem' }}>
+            Practice history
+          </Typography>
           <Divider />
           {historyList.length ? (
             <List component='nav' aria-label='history'>
               {historyList.map(
                 ({ _id, title, code, notes, question, difficulty, timestamp }) => {
                   return (
-                    <>
+                    <Box key={_id}>
                       <ListItem
                         key={_id}
                         button
@@ -183,7 +184,7 @@ function Dashboard() {
                         Difficulty: {difficulty}
                       </ListItem>
                       <Divider />
-                    </>
+                    </Box>
                   );
                 }
               )}
@@ -197,13 +198,20 @@ function Dashboard() {
                 padding: '10%',
               }}
             >
-              <CircularProgress sx={{ marginBottom: '2%', color: 'inherit' }} />
               <Typography>No history to show. Get to practising!</Typography>
             </Box>
           )}
         </Box>
         <Box className='rightBox'>
-          <Typography className='difficultyButton' component={'h3'} variant={'h5'}>
+          <Typography
+            className='difficultyButton'
+            component={'h3'}
+            variant={'h5'}
+            sx={{
+              marginBottom: '1rem',
+              marginTop: '1rem',
+            }}
+          >
             Difficulty
           </Typography>
           <Button

@@ -1,15 +1,14 @@
-import { useState, useEffect, useContext } from "react";
-import { useClient, useMicrophoneAndCameraTracks } from "./settings.js";
-import Video from "./Video";
-import Controls from "./Controls";
-import RoomContext from "../../contexts/RoomContext";
-import { useAuth } from "../../contexts/AuthContext";
-import { URL_VIDEO_SVC } from "./../../configs";
-import axios from "axios";
-import Grid from "@mui/material/Grid";
+import { useState, useEffect, useContext } from 'react';
+import Grid from '@mui/material/Grid';
+import { useClient, useMicrophoneAndCameraTracks } from './settings.js';
+import Video from './Video';
+import Controls from './Controls';
+import RoomContext from '../../contexts/RoomContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { getToken } from '../../api/video/video.js';
 
-const appId = process.env.AGORA_APP_ID ?? "";
-
+const appId = process.env.REACT_APP_AGORA_APP_ID ?? '';
+console.log('appid', appId);
 export default function VideoCall(props) {
   const { setInCall } = props;
   const [users, setUsers] = useState([]);
@@ -19,17 +18,10 @@ export default function VideoCall(props) {
   const { user } = useAuth();
   const { roomId } = useContext(RoomContext);
 
-  const getToken = async (roomId) => {
-    const res = await axios
-      .post(`${URL_VIDEO_SVC}`, { roomId })
-      .then((res) => {
-        console.log(res);
-        return res.token;
-      })
-      .catch((err) => {
-        return "";
-      });
-    return res;
+  const generateToken = async (roomId) => {
+    const token = await getToken(roomId);
+    console.log(token);
+    return token;
   };
 
   useEffect(() => {
@@ -37,41 +29,43 @@ export default function VideoCall(props) {
       return;
     }
     let init = async (channelName) => {
-      client.on("user-published", async (user, mediaType) => {
+      client.on('user-published', async (user, mediaType) => {
         await client.subscribe(user, mediaType);
-        if (mediaType === "video") {
+        if (mediaType === 'video') {
           setUsers((prevUsers) => {
             return [...prevUsers, user];
           });
         }
-        if (mediaType === "audio") {
+        if (mediaType === 'audio') {
           user.audioTrack.play();
         }
       });
 
-      client.on("user-unpublished", (user, mediaType) => {
-        if (mediaType === "audio") {
+      client.on('user-unpublished', (user, mediaType) => {
+        if (mediaType === 'audio') {
           if (user.audioTrack) user.audioTrack.stop();
         }
-        if (mediaType === "video") {
+        if (mediaType === 'video') {
           setUsers((prevUsers) => {
             return prevUsers.filter((User) => User.uid !== user.uid);
           });
         }
       });
 
-      client.on("user-left", (user) => {
+      client.on('user-left', (user) => {
         setUsers((prevUsers) => {
           return prevUsers.filter((User) => User.uid !== user.uid);
         });
       });
 
-      try {
-        const token = await getToken(channelName);
-        await client.join(appId, channelName, token, null);
-      } catch (error) {
-        console.log("error");
+      const token = await generateToken(channelName);
+
+      console.log('join:', token);
+      if (!token) {
+        return;
       }
+
+      await client.join(appId, channelName, token, null);
 
       if (tracks) {
         await client.publish([tracks[0], tracks[1]]);
@@ -80,26 +74,22 @@ export default function VideoCall(props) {
     };
 
     if (ready && tracks) {
-      try {
-        init(roomId);
-      } catch (error) {
-        console.log(error);
-      }
+      init(roomId);
     }
   }, [roomId, client, ready, tracks]);
 
-  if (!client || !user) {
+  if (!client) {
     return null;
   }
 
   return (
-    <Grid container direction="column" style={{ height: "100%" }}>
-      <Grid item style={{ height: "5%" }}>
+    <Grid container direction='column' style={{ height: '100%' }}>
+      <Grid item style={{ height: '20%' }}>
         {ready && tracks && (
           <Controls tracks={tracks} setStart={setStart} setInCall={setInCall} />
         )}
       </Grid>
-      <Grid item style={{ height: "95%" }}>
+      <Grid item style={{ height: '80%' }}>
         {start && tracks && <Video tracks={tracks} users={users} />}
       </Grid>
     </Grid>

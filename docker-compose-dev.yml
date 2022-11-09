@@ -43,6 +43,9 @@ services:
     ports:
       - 3000:3000
     restart: on-failure
+    environment:
+      ENV REACT_APP_AGORA_APP_ID d98a05dd04294d1e8233eb34ccfae645
+      ENV REACT_APP_AGORA_APP_CERTIFICATE 49561092f8324742be88874a6b34e331
 
   user:
     container_name: user
@@ -85,6 +88,21 @@ services:
     restart: on-failure
     environment:
       <<: *common-backend-variables
+
+  video:
+    container_name: video
+    build:
+      dockerfile: Dockerfile
+      context: ./video-service
+    volumes:
+      - ./video-service:/home/node/app/video_service
+    expose:
+      - 8003
+    restart: on-failure
+    environment:
+      <<: *common-backend-variables
+      AGORA_APP_CERTIFICATE: 49561092f8324742be88874a6b34e331
+      AGORA_APP_ID: d98a05dd04294d1e8233eb34ccfae645
 
   question:
     container_name: question

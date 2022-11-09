@@ -1,14 +1,15 @@
 import { useEffect, useState, useContext, useCallback } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+
 import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import TextField from '@mui/material/TextField';
 import TabPanel from './TabPanel';
 import './codingpage.css';
 import Typography from '@mui/material/Typography';
-import axios from 'axios';
+
 import { URL_QUESTION_SVC } from '../../configs';
 import RoomContext from '../../contexts/RoomContext';
 import UserContext from '../../contexts/UserContext';
@@ -19,23 +20,26 @@ import Divider from '@mui/material/Divider';
 import { addHistory } from '../../api/history';
 import { generateRandomQuestion } from '../../api/question';
 
-function BasicTab({ output, setNotes, question, setQuestion }) {
+function BasicTab({ output, setNotes, question, setQuestion, inCall }) {
   const [value, setValue] = useState(0);
+  const [tabPanelHeight, setTabPanelHeight] = useState('80vh');
+
+  useEffect(() => {
+    console.log(inCall);
+    if (inCall) {
+      setTabPanelHeight('60vh');
+    } else {
+      setTabPanelHeight('80vh');
+    }
+  }, [inCall]);
   const [isEndTurn, setIsEndTurn] = useState(false);
   const [isEndTurnConfirm, setIsEndTurnConfirm] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(false);
   const { roomId, difficulty, setPartner, setDifficulty } = useContext(RoomContext);
   const { role, setRole, user } = useContext(UserContext);
   const { roomSocket } = useContext(SocketContext);
+  const [isLoading, setIsLoading] = useState(true);
   const [difficultyColor, setDifficultyColor] = useState('');
-  const tabPanelHeight = '75vh';
-  const defaultQuestion = {
-    title: 'test',
-    difficulty: 'easy',
-    description: '',
-    example: {},
-    constraint: {},
-  };
   const getRandomQuestionError = 'Sorry but question could not be loaded at this time!';
 
   const navigate = useNavigate();
@@ -66,6 +70,7 @@ function BasicTab({ output, setNotes, question, setQuestion }) {
   useEffect(() => {
     roomSocket.on('receiveQuestion', (question) => {
       setQuestion(question);
+      setIsLoading(false);
       decideDifficultyColor();
     });
     return () => roomSocket.off('receiveQuestion');
@@ -77,6 +82,7 @@ function BasicTab({ output, setNotes, question, setQuestion }) {
         setQuestion(res);
         decideDifficultyColor();
         roomSocket.emit('sendQuestion', { roomId, question: res });
+        setIsLoading(false);
       })
       .catch((err) => console.log(err));
   }, [decideDifficultyColor, difficulty, roomId, roomSocket, setQuestion]);
@@ -87,7 +93,6 @@ function BasicTab({ output, setNotes, question, setQuestion }) {
     }
     if (role === 'interviewer' && !question) {
       getQuestion(difficulty);
-      setIsInitialLoad(false);
     }
   }, [difficulty, roomId, role, isInitialLoad]);
 
@@ -98,6 +103,14 @@ function BasicTab({ output, setNotes, question, setQuestion }) {
   return (
     <>
       <Box className='adminArea'>
+        <>
+          <Backdrop
+            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={isLoading}
+          >
+            <CircularProgress color='inherit' />
+          </Backdrop>
+        </>
         <Box sx={{ borderColor: 'divider' }}>
           <Tabs
             value={value}
@@ -134,13 +147,26 @@ function BasicTab({ output, setNotes, question, setQuestion }) {
               {question && question.description}
               <Divider textAlign='left'>Examples</Divider>
               {question &&
-                Object.keys(question.example).map((ex) => {
+                Object.keys(question.example).map((ex, index) => {
                   return (
-                    <>
+                    <Box key={index}>
+                      <Typography>Example {index + 1}:</Typography>
                       <Typography>Input: {question.example[ex].input}</Typography>
                       <Typography>Output: {question.example[ex].output}</Typography>
                       <br />
-                    </>
+                    </Box>
+                  );
+                })}
+              <Divider textAlign='left'>Constraints</Divider>
+              {question &&
+                Object.keys(question).length !== 0 &&
+                Object.keys(question.constraint).map((constraints, index) => {
+                  return (
+                    <Box key={index}>
+                      <Typography>Constraint {index + 1}:</Typography>
+                      <Typography>{question.constraint[constraints]}</Typography>
+                      <br />
+                    </Box>
                   );
                 })}
             </>
