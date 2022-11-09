@@ -8,53 +8,24 @@ export const addHistory = async (
   notes,
   question,
   difficulty,
-  partner,
   role
 ) => {
-  var res;
-  if (role === 'interviewee') {
-    res = await axios
-      .post(
-        URL_HISTORY_SVC,
-        {
-          user,
-          title,
-          code,
-          notes,
-          question,
-          difficulty,
-          interviewer: partner,
-        },
-        { withCredentials: true }
-      )
-      .then((res) => {
-        console.log('history posted');
-      })
-      .catch((err) => {
-        console.log(err.response);
-        console.log('could not post history');
-      });
-  } else {
-    res = await axios
-      .post(
-        URL_HISTORY_SVC,
-        {
-          user: partner,
-          title,
-          code,
-          notes,
-          question,
-          difficulty,
-          interviewer: user,
-        },
-        { withCredentials: true }
-      )
-      .then((res) => {
-        console.log('history posted');
-      })
-      .catch((err) => {
-        console.log(err.response);
-        console.log('could not post history');
-      });
-  }
+  console.log(role);
+  const res = await axios
+    .post(
+      URL_HISTORY_SVC,
+      {
+        user,
+        title,
+        code,
+        notes,
+        question,
+        difficulty,
+      },
+      { withCredentials: true }
+    )
+    .then((res) => {})
+    .catch((err) => {
+      console.log('could not post history');
+    });
 };

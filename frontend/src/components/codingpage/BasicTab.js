@@ -25,7 +25,6 @@ function BasicTab({ output, setNotes, question, setQuestion, inCall }) {
   const [tabPanelHeight, setTabPanelHeight] = useState('80vh');
 
   useEffect(() => {
-    console.log(inCall);
     if (inCall) {
       setTabPanelHeight('60vh');
     } else {

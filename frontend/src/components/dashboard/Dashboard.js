@@ -83,6 +83,18 @@ function Dashboard() {
   const handleClickMedium = () => (buttonToggleMedium ? 'contained' : 'outlined');
   const handleClickHard = () => (buttonToggleHard ? 'contained' : 'outlined');
 
+  const decideDifficultyColor = (difficulty) => {
+    if (difficulty === 'Easy') {
+      return 'green';
+    } else if (difficulty === 'Medium') {
+      return 'orange';
+    } else if (difficulty === 'Hard') {
+      return 'red';
+    } else {
+      return 'white';
+    }
+  };
+
   const handleStartMatchWithoutDifficulty = () => {
     setIsMatchWithoutDifficulty(true);
   };
@@ -131,7 +143,7 @@ function Dashboard() {
                 hist.title &&
                 hist.timestamp &&
                 hist.difficulty &&
-                setHistoryList((histList) => [...histList, hist])
+                setHistoryList((histList) => [hist, ...histList])
             )
         )
         .then()
@@ -158,7 +170,11 @@ function Dashboard() {
           </Typography>
           <Divider />
           {historyList.length ? (
-            <List component='nav' aria-label='history'>
+            <List
+              component='nav'
+              aria-label='history'
+              style={{ maxHeight: '65vh', overflow: 'auto' }}
+            >
               {historyList.map(
                 ({ _id, title, code, notes, question, difficulty, timestamp }) => {
                   return (
@@ -177,9 +193,23 @@ function Dashboard() {
                           })
                         }
                       >
-                        Problem: {title} <br />
+                        {/* Problem: {title} <br />
                         Done at: {timestamp} <br />
-                        Difficulty: {difficulty}
+                        Difficulty: {difficulty} */}
+                        <Box key={_id} sx={{ display: 'flex', flexDirection: 'column' }}>
+                          <Typography>
+                            Problem: {title} <br />
+                          </Typography>
+                          <Typography>
+                            Done at: {timestamp} <br />
+                          </Typography>
+                          <Box sx={{ display: 'flex' }}>
+                            <Typography>Difficulty:&nbsp; </Typography>
+                            <Typography color={decideDifficultyColor(difficulty)}>
+                              {difficulty}
+                            </Typography>
+                          </Box>
+                        </Box>
                       </ListItem>
                       <Divider />
                     </Box>

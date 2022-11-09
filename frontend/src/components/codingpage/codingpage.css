@@ -8,7 +8,7 @@
 
 .codingSpace.MuiBox-root {
   width: 65%;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   margin-right: 2rem;
@@ -16,7 +16,7 @@
 
 .adminSpace.MuiBox-root {
   width: 35%;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
 }

@@ -46,9 +46,7 @@ function CodingPage() {
         code,
         notes,
         question.description,
-        difficulty,
-        partner,
-        role
+        difficulty
       );
     }
     if (inCall) {

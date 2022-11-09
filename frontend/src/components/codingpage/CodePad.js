@@ -60,19 +60,18 @@ function CodePad({
       setIsRequestToChange(true);
     });
 
-    roomSocket.on('roleSwap', async (role) => {
+    roomSocket.on('roleSwap', async (partnerRole) => {
       if (!question) {
         return;
       }
       if (role === 'interviewee') {
-        addHistory(
+        await addHistory(
           user,
           question.title,
           code,
           notes,
           question.description,
           difficulty,
-          partner,
           role
         );
         await generateRandomQuestion(difficulty)
@@ -85,7 +84,7 @@ function CodePad({
           })
           .catch((err) => console.log(err));
       }
-      setRole(role);
+      setRole(partnerRole);
       setCode('');
       updateDocument('');
       setIsEndTurnConfirm(false);
@@ -232,21 +231,14 @@ function CodePad({
         close={handleRoleSwapDecline}
         confirm={async () => {
           roomSocket.emit('roleSwap', { roomId, role });
-          if (role === 'interviewer') {
-            setRole('interviewee');
-          } else {
-            setRole('interviewer');
-          }
-          setIsRequestToChange(false);
           if (role === 'interviewee') {
-            addHistory(
+            await addHistory(
               user,
               question.title,
               code,
               notes,
               question.description,
               difficulty,
-              partner,
               role
             );
             await generateRandomQuestion(difficulty)
@@ -259,6 +251,13 @@ function CodePad({
               })
               .catch((err) => {});
           }
+
+          if (role === 'interviewer') {
+            setRole('interviewee');
+          } else {
+            setRole('interviewer');
+          }
+          setIsRequestToChange(false);
 
           setCode('');
           updateDocument('');
