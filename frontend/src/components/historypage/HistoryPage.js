@@ -186,7 +186,7 @@ const HistoryPage = () => {
             children={
               <Typography
                 style={{ wordWrap: "break-word" }}
-                sx={{ marginTop: "5%", marginLeft: "2%", marginRight: "2%" }}
+                sx={{ marginTop: "2%", marginLeft: "2%", marginRight: "2%" }}
               >
                 {question}
               </Typography>
@@ -199,7 +199,7 @@ const HistoryPage = () => {
             children={
               <Typography
                 style={{ wordWrap: "break-word" }}
-                sx={{ marginTop: "5%", marginLeft: "2%", marginRight: "2%" }}
+                sx={{ marginTop: "2%", marginLeft: "2%", marginRight: "2%" }}
               >
                 {interviewerNotes}
               </Typography>
@@ -212,7 +212,7 @@ const HistoryPage = () => {
             children={
               <Typography
                 style={{ wordWrap: "break-word" }}
-                sx={{ marginTop: "5%", marginLeft: "2%", marginRight: "2%" }}
+                sx={{ marginTop: "2%", marginLeft: "2%", marginRight: "2%" }}
               >
                 {personalNotes}
               </Typography>
