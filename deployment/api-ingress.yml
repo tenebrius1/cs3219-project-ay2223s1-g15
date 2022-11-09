@@ -3,17 +3,15 @@ kind: Ingress
 metadata:
   name: peerprep-api-ingress
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
-    nginx.ingress.kubernetes.io/affinity: 'cookie'
-    nginx.ingress.kubernetes.io/session-cookie-name: 'route'
-    nginx.ingress.kubernetes.io/session-cookie-expires: '172800'
-    nginx.ingress.kubernetes.io/session-cookie-max-age: '172800'
+    kubernetes.io/ingress.class: azure/application-gateway
+    appgw.ingress.kubernetes.io/backend-path-prefix: "/api/"
 spec:
   rules:
-    - http:
+    - host: 'peerprep.live'
+      http:
         paths:
-          - path: /*
-            pathType: ImplementationSpecific
+          - path: /
+            pathType: Prefix
             backend:
               service:
                 name: gateway

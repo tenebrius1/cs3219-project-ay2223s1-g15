@@ -1,4 +1,4 @@
-const URI_GATEWAY = process.env.ENV === "PROD" ? process.env.URI_GATEWAY : 'http://localhost:8080';
+const URI_GATEWAY = process.env.REACT_APP_ENV === "PROD" ? process.env.REACT_APP_URI_GATEWAY : 'http://localhost:8080';
 
 const PREFIX_USER_SVC = '/user';
 const PREFIX_MATCHING_SVC = '/matching';

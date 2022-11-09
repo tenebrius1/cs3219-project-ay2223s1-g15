@@ -24,10 +24,10 @@ spec:
           resources:
             limits:
               memory: 512Mi
-              cpu: '250m'
+              cpu: "250m"
             requests:
               memory: 256Mi
-              cpu: '250m'
+              cpu: "250m"
       imagePullSecrets:
         - name: azureregistrykey
 ---
@@ -60,7 +60,7 @@ spec:
               cpu: "250m"
           envFrom:
             - configMapRef:
-                name: peerprep-config
+                name: peerprep-frontend-config
       imagePullSecrets:
         - name: azureregistrykey
 ---

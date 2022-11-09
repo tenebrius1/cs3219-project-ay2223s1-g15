@@ -1,33 +1,29 @@
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
+const API_PREFIX = process.env.ENV  === "PROD" ? process.env.API_PREFIX : "";
+
 export const userProxy = createProxyMiddleware({
   target: process.env.USER_URL,
-  changeOrigin: true,
 });
 
-export const matchingProxy = createProxyMiddleware('/matching', {
+export const matchingProxy = createProxyMiddleware(`${API_PREFIX}/matching`, {
   target: process.env.MATCHING_URL,
-  changeOrigin: true,
   ws: true,
 });
 
-export const codingProxy = createProxyMiddleware('/coding', {
+export const codingProxy = createProxyMiddleware(`${API_PREFIX}/coding`, {
   target: process.env.CODING_URL,
-  changeOrigin: true,
   ws: true,
 });
 
 export const videoProxy = createProxyMiddleware({
   target: process.env.VIDEO_URL,
-  changeOrigin: true,
 });
 
 export const questionProxy = createProxyMiddleware({
   target: process.env.QUESTION_URL,
-  changeOrigin: true,
 });
 
 export const historyProxy = createProxyMiddleware({
   target: process.env.HISTORY_URL,
-  changeOrigin: true,
 });
