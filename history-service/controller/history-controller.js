@@ -7,18 +7,11 @@ export const addHistory = async (req, res) => {
   try {
     const { user, title, code, notes, question, difficulty } = req.body;
     // skip checking of notes since it could be empty
-    console.log(user, 'user');
-    console.log(title, 'title');
-    console.log(code, 'code');
-    console.log(question, 'question');
-    console.log(difficulty, 'difficulty');
     if (user && title && question && difficulty) {
       const resp = await _addHistory(user, title, code, notes, question, difficulty);
       if (resp.err) {
-        console.log(resp.err);
         return res.status(400).json({ message: 'Could not add history' });
       }
-      console.log(`Added new history record for ${user}`);
       return res.status(201).json({ message: `Created new history record for ${user}` });
     } else {
       return res.status(400).json({ message: 'Field/s missing!' });

@@ -32,9 +32,9 @@ export const startSocketServer = async (httpServer) => {
       socket.to(roomName).emit('rejectRoleSwap');
     });
 
-    socket.on('roleSwap', async ({ roomId, user }) => {
+    socket.on('roleSwap', async ({ roomId, role }) => {
       const roomName = `ROOM:${roomId}`;
-      socket.to(roomName).emit('roleSwap');
+      socket.to(roomName).emit('roleSwap', role);
     });
 
     socket.on('endInterview', async ({ roomId, user, role }) => {

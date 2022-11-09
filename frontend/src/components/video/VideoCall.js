@@ -7,7 +7,6 @@ import RoomContext from '../../contexts/RoomContext';
 import { getToken } from '../../api/video/video.js';
 
 const appId = process.env.REACT_APP_AGORA_APP_ID ?? '';
-console.log('appid', appId);
 export default function VideoCall(props) {
   const { setInCall } = props;
   const [users, setUsers] = useState([]);
@@ -18,7 +17,6 @@ export default function VideoCall(props) {
 
   const generateToken = async (roomId) => {
     const token = await getToken(roomId);
-    console.log(token);
     return token;
   };
 
@@ -58,7 +56,6 @@ export default function VideoCall(props) {
 
       const token = await generateToken(channelName);
 
-      console.log('join:', token);
       if (!token) {
         return;
       }

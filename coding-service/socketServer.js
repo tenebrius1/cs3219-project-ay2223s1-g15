@@ -20,7 +20,6 @@ export const startSocketServer = (httpServer) => {
 
     socket.on('reconnectSuccess', (roomId) => {
       const roomName = `ROOM:${roomId}`;
-      console.log(roomName);
       socket.join(roomName);
     });
 
@@ -33,7 +32,6 @@ export const startSocketServer = (httpServer) => {
 
     socket.on('languageChanged', (args) => {
       const { language, roomId } = args;
-      console.log('languageChanged ', language);
       const roomName = `ROOM:${roomId}`;
       socket.to(roomName).emit('languageChanged', language);
     });
@@ -48,7 +46,6 @@ export const startSocketServer = (httpServer) => {
       await axios
         .post(`${judgeURL}/submissions/?base64_encoded=true&wait=true`, judgeConfig)
         .then((res) => {
-          console.log(res.data);
           var result = '';
           if (res.data.stdout) {
             result = decodeBase64(res.data.stdout);
@@ -60,7 +57,6 @@ export const startSocketServer = (httpServer) => {
           io.in(roomName).emit('runCodeResults', result);
         })
         .catch((err) => {
-          console.log('err', err.response);
           io.in(roomName).emit('runCodeResults', 'Error occurred while running code');
         });
     });

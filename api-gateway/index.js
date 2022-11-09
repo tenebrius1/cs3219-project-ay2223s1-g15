@@ -33,7 +33,7 @@ app.use(matchingProxy);
 app.use(codingProxy);
 app.use(roomProxy);
 
-app.use('/video', videoProxy);
+app.use('/video', authenticate, videoProxy);
 app.use('/question', authenticate, questionProxy);
 app.use('/history', authenticate, historyProxy);
 

@@ -7,12 +7,13 @@ import Typography from '@mui/material/Typography';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import TabPanel from '../codingpage/TabPanel';
+import CodeMirror from '@uiw/react-codemirror';
+import { githubDark } from '@uiw/codemirror-theme-github';
 
 const HistoryPage = () => {
   let decideColor = '';
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location);
   const [tab, setTab] = useState(0);
 
   const title =
@@ -29,8 +30,6 @@ const HistoryPage = () => {
   const question =
     location.state && location.state.question ? location.state.question : 'No question';
   const notes = location.state && location.state.notes ? location.state.notes : 'Notes';
-
-  console.log(location.state);
 
   const onDashboardClick = () => {
     navigate('/dashboard');
@@ -136,7 +135,12 @@ const HistoryPage = () => {
             <Divider textAlign='left' sx={{ marginBottom: '1%' }}>
               Code
             </Divider>
-            <Typography>{code}</Typography>
+            <CodeMirror
+              value={code}
+              theme={githubDark}
+              height={'70vh'}
+              editable={false}
+            />
           </Box>
         </Box>
         <Box

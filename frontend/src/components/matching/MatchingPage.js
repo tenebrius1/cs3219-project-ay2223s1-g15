@@ -24,17 +24,12 @@ function MatchingPage() {
   const { user, setRole } = useContext(UserContext);
   const { matchingSocket, codingSocket, roomSocket } = useContext(SocketContext);
 
-  useEffect(() => {
-    console.log(difficulty);
-  }, [difficulty]);
-
   //Send match event when countdown timer starts
   useEffect(() => {
     if (!difficulty || !user) {
       navigate('/dashboard', { replace: true }); // if access this screen directly rather than from dashboard
       return;
     }
-    console.log('match event sent');
     matchingSocket.emit('match', user, difficulty);
   }, [key]);
 
@@ -43,9 +38,7 @@ function MatchingPage() {
       navigate('/dashboard', { replace: true }); // if access this screen directly rather than from dashboard
       return;
     }
-    console.log('match success tracking');
     matchingSocket.on('matchFail', () => {
-      console.log('matchfail');
       setIsMatchFail(true);
     });
     matchingSocket.on('matchSuccess', ({ roomId, role, partner }) => {

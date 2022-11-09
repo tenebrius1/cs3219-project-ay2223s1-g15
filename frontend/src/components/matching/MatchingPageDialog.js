@@ -1,21 +1,21 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import CloseIcon from "@mui/icons-material/Close";
-import Dialog from "@mui/material/Dialog";
-import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Zoom from "@mui/material/Zoom";
-import { useState, useEffect, useContext } from "react";
-import { COUNTDOWN_DURATION } from "../../constants";
-import { CountdownCircleTimer } from "react-countdown-circle-timer";
-import "./matchingpage.css";
-import RoomContext from "../../contexts/RoomContext";
-import UserContext from "../../contexts/UserContext";
-import SocketContext from "../../contexts/SocketContext";
-import { DialogTitle } from "@mui/material";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CloseIcon from '@mui/icons-material/Close';
+import Dialog from '@mui/material/Dialog';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Zoom from '@mui/material/Zoom';
+import { useState, useEffect, useContext } from 'react';
+import { COUNTDOWN_DURATION } from '../../constants';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import './matchingpage.css';
+import RoomContext from '../../contexts/RoomContext';
+import UserContext from '../../contexts/UserContext';
+import SocketContext from '../../contexts/SocketContext';
+import { DialogTitle } from '@mui/material';
 
 function MatchingPageDialog({ open, close, setIsStartMatch }) {
   const [isMatchFail, setIsMatchFail] = useState(false);
@@ -29,12 +29,7 @@ function MatchingPageDialog({ open, close, setIsStartMatch }) {
   const { matchingSocket, codingSocket } = useContext(SocketContext);
 
   useEffect(() => {
-    console.log(difficulty);
-  }, [difficulty]);
-
-  useEffect(() => {
     setIsMatchFail(false);
-    console.log("hi", isMatchFail);
     // if (!open) {
     //   setIsPlaying(false);
     // }
@@ -44,22 +39,20 @@ function MatchingPageDialog({ open, close, setIsStartMatch }) {
   //Send match event when countdown timer starts
   useEffect(() => {
     if (open && user && difficulty) {
-      console.log("match event sent");
-      matchingSocket.emit("match", user, difficulty);
+      matchingSocket.emit('match', user, difficulty);
     }
   }, [key, open]);
 
   useEffect(() => {
     if (open && user && difficulty) {
-      matchingSocket.on("matchFail", () => {
-        console.log("matchfail");
+      matchingSocket.on('matchFail', () => {
         setIsMatchFail(true);
       });
-      matchingSocket.on("matchSuccess", (roomId) => {
+      matchingSocket.on('matchSuccess', (roomId) => {
         setIsMatchSuccess(true);
-        codingSocket.emit("connectedToRoom", roomId);
+        codingSocket.emit('connectedToRoom', roomId);
         setRoomId(roomId);
-        navigate("/codingpage", { replace: true });
+        navigate('/codingpage', { replace: true });
       });
     }
   }, [codingSocket, matchingSocket, open]);
@@ -67,7 +60,7 @@ function MatchingPageDialog({ open, close, setIsStartMatch }) {
   const renderTime = ({ remainingTime }) => {
     if (remainingTime === 0) {
       return (
-        <Typography variant={"h5"} color={"#aaa"}>
+        <Typography variant={'h5'} color={'#aaa'}>
           Do you want to retry?
         </Typography>
       );
@@ -75,13 +68,13 @@ function MatchingPageDialog({ open, close, setIsStartMatch }) {
     return (
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
         }}
       >
-        <Typography variant={"h3"}>{remainingTime}</Typography>
-        <Typography variant={"h5"} color={"#aaa"}>
+        <Typography variant={'h3'}>{remainingTime}</Typography>
+        <Typography variant={'h5'} color={'#aaa'}>
           seconds
         </Typography>
       </Box>
@@ -94,7 +87,7 @@ function MatchingPageDialog({ open, close, setIsStartMatch }) {
   };
 
   const handleBack = () => {
-    matchingSocket.emit("matchCancel", user);
+    matchingSocket.emit('matchCancel', user);
     // navigate("/dashboard", { replace: true });
     setIsStartMatch(false);
   };
@@ -106,59 +99,54 @@ function MatchingPageDialog({ open, close, setIsStartMatch }) {
           <IconButton
             onClick={handleBack}
             sx={{
-              position: "absolute",
+              position: 'absolute',
               right: 12,
               top: 12,
-              color: "#D8DEE9",
+              color: '#D8DEE9',
             }}
           >
             <CloseIcon />
           </IconButton>
         )}
       </DialogTitle>
-      <Box className="mainBox">
-        <Box className="statusBox">
+      <Box className='mainBox'>
+        <Box className='statusBox'>
           {!isMatchFail ? (
-            <Typography variant={"h4"}>Matching in progress...</Typography>
+            <Typography variant={'h4'}>Matching in progress...</Typography>
           ) : (
-            <Typography variant={"h4"}>No match found :(</Typography>
+            <Typography variant={'h4'}>No match found :(</Typography>
           )}
         </Box>
-        {
-          open &&
-        <CountdownCircleTimer
-          key={key}
-          isPlaying={isPlaying}
-          duration={10}
-          size={400}
-          colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
-          colorsTime={[30, 20, 10, 0]}
-          trailColor="#d6d6d6"
-          onComplete={() => setIsMatchFail(true)}
-        >
-          {renderTime}
-        </CountdownCircleTimer>
-        }
+        {open && (
+          <CountdownCircleTimer
+            key={key}
+            isPlaying={isPlaying}
+            duration={10}
+            size={400}
+            colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+            colorsTime={[30, 20, 10, 0]}
+            trailColor='#d6d6d6'
+            onComplete={() => setIsMatchFail(true)}
+          >
+            {renderTime}
+          </CountdownCircleTimer>
+        )}
         <Grid
           container
-          className="mainGrid"
-          sx={{ marginTop: "2rem", marginBottom: "2rem" }}
+          className='mainGrid'
+          sx={{ marginTop: '2rem', marginBottom: '2rem' }}
         >
-          <Zoom in={true} sx={{ transitionDelay: "1500ms" }}>
-            <Grid container item xs={3} justifyContent="center">
-              <Button variant={"outlined"} onClick={handleBack} color={"error"}>
+          <Zoom in={true} sx={{ transitionDelay: '1500ms' }}>
+            <Grid container item xs={3} justifyContent='center'>
+              <Button variant={'outlined'} onClick={handleBack} color={'error'}>
                 Cancel match
               </Button>
             </Grid>
           </Zoom>
           {isMatchFail && (
-            <Zoom in={true} sx={{ transitionDelay: "1500ms" }}>
-              <Grid container item xs={3} justifyContent="center">
-                <Button
-                  variant={"contained"}
-                  onClick={handleRetry}
-                  color={"secondary"}
-                >
+            <Zoom in={true} sx={{ transitionDelay: '1500ms' }}>
+              <Grid container item xs={3} justifyContent='center'>
+                <Button variant={'contained'} onClick={handleRetry} color={'secondary'}>
                   Retry
                 </Button>
               </Grid>

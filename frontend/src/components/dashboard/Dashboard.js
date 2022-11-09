@@ -28,8 +28,6 @@ function Dashboard() {
   const { user } = useContext(UserContext);
 
   const startMatch = async () => {
-    console.log('user', user);
-    console.log('difficulty', difficulty);
     navigate('/matching', { replace: true });
   };
 
@@ -136,8 +134,8 @@ function Dashboard() {
                 setHistoryList((histList) => [...histList, hist])
             )
         )
-        .then(console.log('historylist', historyList))
-        .catch((err) => console.log(err));
+        .then()
+        .catch();
     };
     getHistory();
   }, [user]);

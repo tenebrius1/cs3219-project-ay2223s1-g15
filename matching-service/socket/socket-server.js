@@ -18,7 +18,6 @@ export const startServer = () => {
     // listen to match event
     socket.on('match', async (username, difficulty) => {
       // puts user in queue and tries to match user
-      console.log('match received');
       if (await createWaitingUser(username, difficulty, socket.id)) {
         const { roomId, firstUserSocketId, secondUserSocketId, firstUser, secondUser } =
           await matchWaitingUser(username);
@@ -47,7 +46,5 @@ export const startServer = () => {
     socket.on('matchCancel', async (username) => {
       deleteWaitingUser(username);
     });
-
-    socket.on('disconnect', () => console.log('User disconnected from matching-service'));
   });
 };

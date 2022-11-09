@@ -1,10 +1,9 @@
-import { useContext, useEffect, useState, useCallback, useRef } from 'react';
+import { useContext, useEffect, useState, useCallback } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { githubDark } from '@uiw/codemirror-theme-github';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { historyField } from '@codemirror/commands';
 import { loadLanguage } from '@uiw/codemirror-extensions-langs';
 import SocketContext from '../../contexts/SocketContext';
 import RoomContext from '../../contexts/RoomContext';
@@ -15,7 +14,6 @@ import ConfirmationDialog from '../confirmationdialog/ConfirmationDialog';
 import { addHistory } from '../../api/history';
 import { generateRandomQuestion } from '../../api/question';
 
-const stateFields = { history: historyField };
 const LIVE_URL = process.env.ENV === 'PROD' ? process.env.LIVE_URL : 'http://localhost';
 
 let doc = Automerge.init();
@@ -29,11 +27,9 @@ function CodePad({
   code,
   setCode,
 }) {
-  const serializedState = localStorage.getItem('myEditorState');
   const [isEndTurn, setIsEndTurn] = useState(false);
   const [isEndTurnConfirm, setIsEndTurnConfirm] = useState(false);
   const [isRequestToChange, setIsRequestToChange] = useState(false);
-  const [allowSwap, setAllowSwap] = useState(true);
 
   const availableLanguages = {
     python: '70',
@@ -47,18 +43,14 @@ function CodePad({
 
   const updateDocument = useCallback(
     (code) => {
-      try {
-        let newDoc = Automerge.change(doc, (doc) => {
-          if (!doc.text) doc.text = code;
-          doc.text = code;
-        });
+      let newDoc = Automerge.change(doc, (doc) => {
+        if (!doc.text) doc.text = code;
+        doc.text = code;
+      });
 
-        let binary = Automerge.save(newDoc);
-        codingSocket.emit('codeChanged', { value: binary, roomId: roomId });
-        doc = newDoc;
-      } catch (err) {
-        console.log(err);
-      }
+      let binary = Automerge.save(newDoc);
+      codingSocket.emit('codeChanged', { value: binary, roomId: roomId });
+      doc = newDoc;
     },
     [codingSocket, roomId]
   );
@@ -68,9 +60,7 @@ function CodePad({
       setIsRequestToChange(true);
     });
 
-    roomSocket.on('roleSwap', async (args) => {
-      const newRole = args.role;
-      console.log(newRole);
+    roomSocket.on('roleSwap', async (role) => {
       if (!question) {
         return;
       }
@@ -95,11 +85,10 @@ function CodePad({
           })
           .catch((err) => console.log(err));
       }
-      setRole(newRole);
+      setRole(role);
       setCode('');
       updateDocument('');
       setIsEndTurnConfirm(false);
-      setAllowSwap(false);
     });
     return () => {
       roomSocket.off('requestSwap');
@@ -178,14 +167,6 @@ function CodePad({
         theme={githubDark}
         height={'80vh'}
         extensions={[loadLanguage(currentLanguage)]}
-        initialState={
-          serializedState
-            ? {
-                json: JSON.parse(serializedState || ''),
-                fields: stateFields,
-              }
-            : undefined
-        }
         onChange={(value, viewUpdate) => {
           setCode(value);
           if (viewUpdate.transactions[0].annotations.length > 1) {
@@ -200,11 +181,9 @@ function CodePad({
         marginTop={'1rem'}
       >
         <Box className='endTurnBox'>
-          {allowSwap
-            ? () => {
-                isEndTurnConfirm ? (
-                  <>
-                    {/* <Button
+          {isEndTurnConfirm ? (
+            <>
+              {/* <Button
               variant="outlined"
               color="error"
               onClick={handleEndTurnConfirmCancel}
@@ -212,28 +191,26 @@ function CodePad({
             >
               Cancel
             </Button> */}
-                    <CircularProgress
-                      size={'1rem'}
-                      color='inherit'
-                      sx={{ marginRight: '2%' }}
-                    />
-                    <Typography>Swapping roles...</Typography>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      variant='outlined'
-                      color='error'
-                      sx={{ marginRight: '2%' }}
-                      onClick={handleEndTurn}
-                    >
-                      Swap roles
-                    </Button>
-                    <Typography>You are the {role}</Typography>
-                  </>
-                );
-              }
-            : () => <></>}
+              <CircularProgress
+                size={'1rem'}
+                color='inherit'
+                sx={{ marginRight: '2%' }}
+              />
+              <Typography>Swapping roles...</Typography>
+            </>
+          ) : (
+            <>
+              <Button
+                variant='outlined'
+                color='error'
+                sx={{ marginRight: '2%' }}
+                onClick={handleEndTurn}
+              >
+                Swap roles
+              </Button>
+              <Typography>You are the {role}</Typography>
+            </>
+          )}
         </Box>
         <ConfirmationDialog
           className='endTurnButtonDialog'
@@ -254,8 +231,7 @@ function CodePad({
         open={isRequestToChange}
         close={handleRoleSwapDecline}
         confirm={async () => {
-          console.log(role);
-          roomSocket.emit('roleSwap', { roomId, user });
+          roomSocket.emit('roleSwap', { roomId, role });
           if (role === 'interviewer') {
             setRole('interviewee');
           } else {
@@ -281,7 +257,7 @@ function CodePad({
                   question: res,
                 });
               })
-              .catch((err) => console.log(err));
+              .catch((err) => {});
           }
 
           setCode('');
