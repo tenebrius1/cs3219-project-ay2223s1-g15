@@ -64,8 +64,6 @@ function CodePad({
 
   useEffect(() => {
     roomSocket.on('requestSwap', () => {
-      console.log('requestSwap');
-
       setIsRequestToChange(true);
     });
 
@@ -96,7 +94,6 @@ function CodePad({
           })
           .catch((err) => console.log(err));
       }
-      console.log('roleswap');
       setRole(newRole);
       setCode('');
       updateDocument('');
@@ -142,8 +139,6 @@ function CodePad({
 
   useEffect(() => {
     codingSocket.on('codeChanged', (value) => {
-      // console.log('codeChanged', value);x
-      // setCode(value);
       const updated = new Uint8Array(value);
       let newDoc = Automerge.merge(doc, Automerge.load(updated));
       doc = newDoc;
@@ -151,7 +146,6 @@ function CodePad({
     });
 
     codingSocket.on('runCodeResults', (results) => {
-      console.log('runCodeResults', results);
       setOutput(results);
     });
 
@@ -160,13 +154,6 @@ function CodePad({
       codingSocket.off('runCodeResults');
     };
   }, [codingSocket]);
-
-  useEffect(() => {
-    roomSocket.on('partnerReconnect', () => {
-      updateDocument(code);
-    });
-    return () => roomSocket.off('partnerReconnect');
-  }, [code]);
 
   useEffect(() => {
     roomSocket.on('rejectRoleSwap', () => {

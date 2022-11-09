@@ -20,7 +20,7 @@ function MatchingPage() {
   const [key, setKey] = useState(0);
   const navigate = useNavigate();
 
-  const { difficulty, setRoomId } = useContext(RoomContext);
+  const { difficulty, setRoomId, setPartner } = useContext(RoomContext);
   const { user, setRole } = useContext(UserContext);
   const { matchingSocket, codingSocket, roomSocket } = useContext(SocketContext);
 
@@ -48,9 +48,10 @@ function MatchingPage() {
       console.log('matchfail');
       setIsMatchFail(true);
     });
-    matchingSocket.on('matchSuccess', ({ roomId, role }) => {
+    matchingSocket.on('matchSuccess', ({ roomId, role, partner }) => {
       setRole(role);
       setRoomId(roomId);
+      setPartner(partner);
       setIsMatchSuccess(true);
       roomSocket.emit('matchSuccess', { roomId, difficulty, role, user });
       codingSocket.emit('matchSuccess', roomId);

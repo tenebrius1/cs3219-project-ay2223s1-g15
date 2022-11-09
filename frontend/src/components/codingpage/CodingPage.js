@@ -33,14 +33,13 @@ function CodingPage() {
   const [code, setCode] = useState('');
   const navigate = useNavigate();
   const { codingSocket, roomSocket } = useContext(SocketContext);
-  const { roomId, setRoomId, difficulty, setDifficulty, partner, setPartner } =
+  const { roomId, setRoomId, difficulty, setDifficulty, partner } =
     useContext(RoomContext);
   const { role, setRole, user } = useContext(UserContext);
   const params = useParams();
 
   const handleEndClick = () => {
     setHasClickedEndInterview(true);
-    console.log('interview ended');
   };
 
   const handleEndClickCancel = () => {
@@ -50,7 +49,6 @@ function CodingPage() {
   const handleEndInterview = async () => {
     roomSocket.emit('endInterview', { roomId, user, role });
     if (role === 'interviewee') {
-      console.log('interviewee end');
       await addHistory(
         user,
         question.title,
@@ -75,48 +73,22 @@ function CodingPage() {
   };
 
   useEffect(() => {
-    if (!user) return;
-    if (!role) {
-      roomSocket.emit('codingPageReconnect', { roomId: params.roomId, user });
-    }
-  }, [user, role, params]);
-
-  useEffect(() => {
     codingSocket.on('languageChanged', (language) => {
-      console.log('languageChanged ', language);
       setCurrentLanguage(language);
     });
     return () => codingSocket.off('langugageChanged');
   }, [codingSocket]);
 
   useEffect(() => {
-    roomSocket.on('reconnectSuccess', ({ roomId, role, difficulty }) => {
-      setRole(role);
-      setRoomId(roomId);
-      setDifficulty(difficulty);
-      codingSocket.emit('reconnectSuccess', roomId);
-    });
-
-    roomSocket.on('reconnectFail', () => {
-      console.log('reconnectFail');
-      navigate('/dashboard', { replace: true });
-    });
-
     roomSocket.on('partnerLeft', () => {
       handleOtherPartyLeave();
     });
 
-    roomSocket.on('handshake', (partner) => {
-      setPartner(partner);
-    });
-
     return () => {
-      roomSocket.off('reconnectSuccess');
-      roomSocket.off('reconnectFail');
       roomSocket.off('partnerLeft');
       roomSocket.off('handshake');
     };
-  }, [codingSocket, navigate, roomSocket, setDifficulty, setPartner, setRole, setRoomId]);
+  }, [codingSocket, navigate, roomSocket, setDifficulty, setRole, setRoomId]);
 
   return (
     <Box className='mainCodingPageBox'>

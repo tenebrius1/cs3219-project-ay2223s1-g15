@@ -64,35 +64,12 @@ function BasicTab({ output, setNotes, question, setQuestion }) {
   }
 
   useEffect(() => {
-    getQuestion(difficulty);
-  }, []);
-  useEffect(() => {
     roomSocket.on('receiveQuestion', (question) => {
       setQuestion(question);
       decideDifficultyColor();
     });
     return () => roomSocket.off('receiveQuestion');
   }, [question]);
-
-  useEffect(() => {
-    roomSocket.on('partnerReconnect', () => {
-      roomSocket.emit('sendQuestion', { roomId, question });
-    });
-    return () => roomSocket.off('partnerReconnect');
-  }, [roomId, question]);
-
-  useEffect(() => {
-    roomSocket.on('initialLoad', (partner) => {
-      setPartner(partner);
-      if (role !== 'interviewer') {
-        if (!question) {
-          roomSocket.emit('initialLoadAck', { roomId, isInitialLoad: true });
-        } else {
-          roomSocket.emit('initialLoadAck', { roomId, isInitialLoad: false });
-        }
-      }
-    });
-  }, [role, roomId]);
 
   const getQuestion = useCallback(async () => {
     await generateRandomQuestion(difficulty)
@@ -105,35 +82,18 @@ function BasicTab({ output, setNotes, question, setQuestion }) {
   }, [decideDifficultyColor, difficulty, roomId, roomSocket, setQuestion]);
 
   useEffect(() => {
-    if (!roomId || !role) {
+    if (!roomId || !difficulty || !role) {
       return;
     }
-    if (role === 'interviewer' && isInitialLoad && !question) {
-      console.log('interivwer initial');
+    if (role === 'interviewer' && !question) {
       getQuestion(difficulty);
       setIsInitialLoad(false);
     }
-    console.log('basic tab line 124');
   }, [difficulty, roomId, role, isInitialLoad]);
 
   useEffect(() => {
     decideDifficultyColor();
   }, [decideDifficultyColor, question]);
-
-  useEffect(() => {
-    console.log('1');
-    if (!roomId) {
-      return;
-    }
-
-    if (!isInitialLoad && !question) {
-      roomSocket.emit('initialLoad', { roomId, user });
-      roomSocket.on('initialLoadAck', (isInitialLoad) => {
-        console.log('isInitialLoad ', isInitialLoad);
-        setIsInitialLoad(isInitialLoad);
-      });
-    }
-  }, [roomId]);
 
   return (
     <>

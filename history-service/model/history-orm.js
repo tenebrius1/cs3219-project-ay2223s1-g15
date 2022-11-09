@@ -1,14 +1,6 @@
 import { addHistory, getUserHistory } from './repository.js';
 
-export const ormAddHistory = async (
-  user,
-  title,
-  code,
-  notes,
-  question,
-  difficulty,
-  interviewer
-) => {
+export const ormAddHistory = async (user, title, code, notes, question, difficulty) => {
   try {
     const newUserHistory = await addHistory({
       user,
@@ -17,7 +9,6 @@ export const ormAddHistory = async (
       notes,
       question,
       difficulty,
-      interviewer,
     });
     newUserHistory.save();
     return true;

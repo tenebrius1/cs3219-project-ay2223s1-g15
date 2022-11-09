@@ -99,7 +99,6 @@ function Dashboard() {
     question,
     code,
     timestamp,
-    interviewer,
     difficulty,
     notes,
   }) => {
@@ -109,7 +108,6 @@ function Dashboard() {
         question,
         code,
         timestamp,
-        interviewer,
         difficulty,
         notes,
       },
@@ -135,7 +133,7 @@ function Dashboard() {
               (hist) =>
                 hist.title &&
                 hist.timestamp &&
-                hist.interviewer &&
+                hist.difficulty &&
                 setHistoryList((histList) => [...histList, hist])
             )
         )
@@ -163,16 +161,7 @@ function Dashboard() {
           {historyList.length ? (
             <List component='nav' aria-label='history'>
               {historyList.map(
-                ({
-                  _id,
-                  title,
-                  code,
-                  notes,
-                  question,
-                  difficulty,
-                  interviewer,
-                  timestamp,
-                }) => {
+                ({ _id, title, code, notes, question, difficulty, timestamp }) => {
                   return (
                     <>
                       <ListItem
@@ -185,14 +174,13 @@ function Dashboard() {
                             code: code,
                             notes: notes,
                             difficulty: difficulty,
-                            interviewer: interviewer,
                             timestamp: timestamp,
                           })
                         }
                       >
                         Problem: {title} <br />
                         Done at: {timestamp} <br />
-                        Conducted by: {interviewer}
+                        Difficulty: {difficulty}
                       </ListItem>
                       <Divider />
                     </>

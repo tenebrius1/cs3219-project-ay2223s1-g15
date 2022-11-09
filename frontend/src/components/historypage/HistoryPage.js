@@ -21,10 +21,6 @@ const HistoryPage = () => {
     location.state && location.state.timestamp
       ? location.state.timestamp
       : 'Time unknown';
-  const interviewer =
-    location.state && location.state.interviewer
-      ? location.state.interviewer
-      : 'Interviwer unknown';
   const difficulty =
     location.state && location.state.difficulty
       ? location.state.difficulty
@@ -124,7 +120,6 @@ const HistoryPage = () => {
                   <Typography variant={'h5'}>{title}&nbsp;</Typography>
                   <Typography color={decideColor}>{difficulty}</Typography>
                 </Box>
-                <Typography>Interviewer: {interviewer}</Typography>
                 <Typography>{timestamp}</Typography>
               </Box>
             </Box>

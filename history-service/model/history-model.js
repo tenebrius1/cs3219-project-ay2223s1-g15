@@ -25,10 +25,6 @@ let HistoryModelSchema = new Schema({
     type: String,
     required: true,
   },
-  interviewer: {
-    type: String,
-    required: true,
-  },
   timestamp: {
     type: String,
     default: moment.tz(Date.now(), 'Asia/Singapore').format('HH:mm:ss DD-MM-YYYY'),
