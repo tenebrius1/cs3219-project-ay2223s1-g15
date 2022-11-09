@@ -13,19 +13,11 @@ import ConfirmationDialog from '../confirmationdialog/ConfirmationDialog';
 import VideoCall from '../video/VideoCall.js';
 import './codingpage.css';
 
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
-
 function CodingPage() {
   const [currentLanguage, setCurrentLanguage] = useState('python');
   const [output, setOutput] = useState('No output to display');
   const [notes, setNotes] = useState('');
   const [inCall, setInCall] = useState(false);
-  const [isRequestToChange, setIsRequestToChange] = useState(false);
   const [hasOtherPartyLeft, setHasOtherPartyLeft] = useState(false);
   const [question, setQuestion] = useState(null);
   const [hasClickedEndInterview, setHasClickedEndInterview] = useState(false);
@@ -79,6 +71,12 @@ function CodingPage() {
   const handleJoinCallClick = () => {
     setInCall(true);
   };
+
+  useEffect(() => {
+    if (!roomId || !difficulty) {
+      navigate('/dashboard', { replace: true });
+    }
+  });
 
   useEffect(() => {
     codingSocket.on('languageChanged', (language) => {

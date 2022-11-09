@@ -32,15 +32,11 @@ function BasicTab({ output, setNotes, question, setQuestion, inCall }) {
       setTabPanelHeight('80vh');
     }
   }, [inCall]);
-  const [isEndTurn, setIsEndTurn] = useState(false);
-  const [isEndTurnConfirm, setIsEndTurnConfirm] = useState(false);
-  const [isInitialLoad, setIsInitialLoad] = useState(false);
-  const { roomId, difficulty, setPartner, setDifficulty } = useContext(RoomContext);
-  const { role, setRole, user } = useContext(UserContext);
+  const { roomId, difficulty } = useContext(RoomContext);
+  const { role } = useContext(UserContext);
   const { roomSocket } = useContext(SocketContext);
   const [isLoading, setIsLoading] = useState(true);
   const [difficultyColor, setDifficultyColor] = useState('');
-  const getRandomQuestionError = 'Sorry but question could not be loaded at this time!';
 
   const navigate = useNavigate();
 
@@ -94,7 +90,7 @@ function BasicTab({ output, setNotes, question, setQuestion, inCall }) {
     if (role === 'interviewer' && !question) {
       getQuestion(difficulty);
     }
-  }, [difficulty, roomId, role, isInitialLoad]);
+  }, [difficulty, roomId, role]);
 
   useEffect(() => {
     decideDifficultyColor();

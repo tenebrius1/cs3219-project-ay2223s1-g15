@@ -4,7 +4,6 @@ import { useClient, useMicrophoneAndCameraTracks } from './settings.js';
 import Video from './Video';
 import Controls from './Controls';
 import RoomContext from '../../contexts/RoomContext';
-import { useAuth } from '../../contexts/AuthContext';
 import { getToken } from '../../api/video/video.js';
 
 const appId = process.env.REACT_APP_AGORA_APP_ID ?? '';
@@ -15,7 +14,6 @@ export default function VideoCall(props) {
   const [start, setStart] = useState(false);
   const client = useClient();
   const { ready, tracks } = useMicrophoneAndCameraTracks();
-  const { user } = useAuth();
   const { roomId } = useContext(RoomContext);
 
   const generateToken = async (roomId) => {

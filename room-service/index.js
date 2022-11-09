@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import http from 'http';
-import redis from 'redis';
 import { startSocketServer } from './socketServer.js';
 import 'dotenv/config';
 
@@ -15,18 +14,11 @@ var PORT = process.env.PORT || 8006;
 
 const server = http.createServer(app);
 
-const client = redis.createClient({
-  url: `redis://${process.env.REDIS_URL}:6380`,
-});
-client.on('connect', () => console.log('connected to Redis'));
-client.on('error', () => console.log('Error connecting to Redis'));
-await client.connect();
-
 app.get('/room', (req, res) => {
   res.send('Hello World from room-service');
 });
 
-startSocketServer(server, client);
+startSocketServer(server);
 
 server.listen(PORT, () => {
   console.log(`listening on ${PORT}`);

@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 
-export const startSocketServer = async (httpServer, client) => {
+export const startSocketServer = async (httpServer) => {
   const io = new Server(httpServer, {
     // config socket.io cors so that front-end can use
     cors: {
@@ -14,25 +14,8 @@ export const startSocketServer = async (httpServer, client) => {
 
     socket.on('matchSuccess', async ({ roomId, difficulty, role, user }) => {
       const roomName = `ROOM:${roomId}`;
-      await client.hSet(roomName, 'difficulty', difficulty);
-      await client.hSet(roomName, role, user);
       socket.join(roomName);
     });
-
-    // socket.on('codingPageReconnect', async ({ roomId, user }) => {
-    //   const roomName = `ROOM:${roomId}`;
-    //   const interviewer = await client.hGet(roomName, 'interviewer');
-    //   const interviewee = await client.hGet(roomName, 'interviewee');
-    //   const difficulty = await client.hGet(roomName, 'difficulty');
-    //   if (user == interviewee || user == interviewer) {
-    //     const userRole = user == interviewee ? 'interviewee' : 'interviewer';
-    //     socket.join(roomName);
-    //     socket.emit('reconnectSuccess', { role: userRole, roomId, difficulty });
-    //     socket.to(roomName).emit('partnerReconnect');
-    //   } else {
-    //     socket.emit('reconnectFail', null);
-    //   }
-    // });
 
     socket.on('sendQuestion', ({ roomId, question }) => {
       const roomName = `ROOM:${roomId}`;
@@ -51,48 +34,13 @@ export const startSocketServer = async (httpServer, client) => {
 
     socket.on('roleSwap', async ({ roomId, user }) => {
       const roomName = `ROOM:${roomId}`;
-      const oldInterviewer = await client.hGet(roomName, 'interviewer');
-      const oldInterviewee = await client.hGet(roomName, 'interviewee');
-      if (user == oldInterviewee) {
-        await client.hSet(roomName, 'interviewer', user);
-        await client.hSet(roomName, 'interviewee', oldInterviewer);
-        socket.to(roomName).emit('roleSwap', { role: 'interviewee', user });
-      } else {
-        await client.hSet(roomName, 'interviewer', oldInterviewer);
-        await client.hSet(roomName, 'interviewee', user);
-        socket.to(roomName).emit('roleSwap', { role: 'interviewer', user });
-      }
+      socket.to(roomName).emit('roleSwap');
     });
 
     socket.on('endInterview', async ({ roomId, user, role }) => {
       const roomName = `ROOM:${roomId}`;
       socket.to(roomName).emit('partnerLeft', { user, role });
-      const interviewer = await client.hGet(roomName, 'interviewer');
-      const interviewee = await client.hGet(roomName, 'interviewee');
-      if (interviewer && interviewee) {
-        if (user == interviewee) {
-          await client.hDel(roomName, 'interviewee');
-        } else {
-          await client.hDel(roomName, 'interviewer');
-        }
-
-        // await client.hSet(roomName, 'notes', notes);
-      } else {
-        await client.del(roomName);
-      }
-
       socket.leave(roomName);
     });
-
-    // socket.on('initialLoad', ({ roomId, user }) => {
-    //   const roomName = `ROOM:${roomId}`;
-    //   socket.to(roomName).emit('initialLoad', user);
-    //   console.log('initial load');
-    // });
-
-    // socket.on('initialLoadAck', ({ roomId, isInitialLoad }) => {
-    //   const roomName = `ROOM:${roomId}`;
-    //   socket.to(roomName).emit('initialLoadAck', isInitialLoad);
-    // });
   });
 };
