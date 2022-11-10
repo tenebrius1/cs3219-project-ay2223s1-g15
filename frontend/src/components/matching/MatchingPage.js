@@ -20,32 +20,41 @@ function MatchingPage() {
   const [key, setKey] = useState(0);
   const navigate = useNavigate();
 
-  const { difficulty, setRoomId } = useContext(RoomContext);
-  const { user } = useContext(UserContext);
-  const { matchingSocket, codingSocket } = useContext(SocketContext);
-
-  useEffect(() => {
-    console.log(difficulty);
-  }, [difficulty]);
+  const { difficulty, setRoomId, setPartner } = useContext(RoomContext);
+  const { user, setRole } = useContext(UserContext);
+  const { matchingSocket, codingSocket, roomSocket } = useContext(SocketContext);
 
   //Send match event when countdown timer starts
   useEffect(() => {
-    console.log('match event sent');
+    if (!difficulty || !user) {
+      navigate('/dashboard', { replace: true }); // if access this screen directly rather than from dashboard
+      return;
+    }
     matchingSocket.emit('match', user, difficulty);
   }, [key]);
 
   useEffect(() => {
+    if (!difficulty || !user) {
+      navigate('/dashboard', { replace: true }); // if access this screen directly rather than from dashboard
+      return;
+    }
     matchingSocket.on('matchFail', () => {
-      console.log('matchfail');
       setIsMatchFail(true);
     });
-    matchingSocket.on('matchSuccess', (roomId) => {
-      setIsMatchSuccess(true);
-      codingSocket.emit('connectedToRoom', roomId);
+    matchingSocket.on('matchSuccess', ({ roomId, role, partner }) => {
+      setRole(role);
       setRoomId(roomId);
-      navigate('/codingpage', { replace: true });
+      setPartner(partner);
+      setIsMatchSuccess(true);
+      roomSocket.emit('matchSuccess', { roomId, difficulty, role, user });
+      codingSocket.emit('matchSuccess', roomId);
+      navigate(`/codingpage/${roomId}`, { replace: true });
     });
   }, [codingSocket, matchingSocket]);
+
+  useEffect(() => {
+    roomSocket.on('matchSuccess');
+  });
 
   const renderTime = ({ remainingTime }) => {
     if (remainingTime === 0) {

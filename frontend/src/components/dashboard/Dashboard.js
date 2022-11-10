@@ -1,31 +1,33 @@
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import List from '@mui/material/List';
-import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
+import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
-
 import { useNavigate } from 'react-router-dom';
 import './dashboard.css';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import CustomAvatar from './CustomAvatar';
 import RoomContext from '../../contexts/RoomContext';
 import UserContext from '../../contexts/UserContext';
+import { URL_HISTORY_SVC } from '../../configs';
+import axios from 'axios';
+import CircularProgress from '@mui/material/CircularProgress';
+import peerprep from './../../logos/peerprep.png';
 
 function Dashboard() {
   const [buttonToggleEasy, setButtonToggleEasy] = useState(false);
   const [buttonToggleMedium, setButtonToggleMedium] = useState(false);
   const [buttonToggleHard, setButtonToggleHard] = useState(false);
+  const [isMatchWithoutDifficulty, setIsMatchWithoutDifficulty] = useState(false);
+  const [historyList, setHistoryList] = useState([]);
 
   const navigate = useNavigate();
   const { difficulty, setDifficulty } = useContext(RoomContext);
   const { user } = useContext(UserContext);
 
   const startMatch = async () => {
-    console.log('user', user);
-    console.log('difficulty', difficulty);
     navigate('/matching', { replace: true });
   };
 
@@ -81,33 +83,163 @@ function Dashboard() {
   const handleClickMedium = () => (buttonToggleMedium ? 'contained' : 'outlined');
   const handleClickHard = () => (buttonToggleHard ? 'contained' : 'outlined');
 
+  const decideDifficultyColor = (difficulty) => {
+    if (difficulty === 'Easy') {
+      return 'green';
+    } else if (difficulty === 'Medium') {
+      return 'orange';
+    } else if (difficulty === 'Hard') {
+      return 'red';
+    } else {
+      return 'white';
+    }
+  };
+
+  const handleStartMatchWithoutDifficulty = () => {
+    setIsMatchWithoutDifficulty(true);
+  };
+
+  const handleStartMatchWithoutDifficultyClose = () => {
+    setIsMatchWithoutDifficulty(false);
+  };
+
+  const handleHistoryClick = ({
+    title,
+    question,
+    code,
+    timestamp,
+    difficulty,
+    notes,
+  }) => {
+    navigate('/history', {
+      state: {
+        title,
+        question,
+        code,
+        timestamp,
+        difficulty,
+        notes,
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (isMatchWithoutDifficulty) {
+      setTimeout(() => {
+        handleStartMatchWithoutDifficultyClose();
+      }, 3000);
+    }
+  }, [isMatchWithoutDifficulty]);
+
+  useEffect(() => {
+    const getHistory = async () => {
+      const res = await axios
+        .get(URL_HISTORY_SVC + `/?user=${user}`, { withCredentials: true })
+        .then(
+          (res) =>
+            res.data.length &&
+            res.data.map(
+              (hist) =>
+                hist.title &&
+                hist.timestamp &&
+                hist.difficulty &&
+                setHistoryList((histList) => [hist, ...histList])
+            )
+        )
+        .then()
+        .catch();
+    };
+    getHistory();
+  }, [user]);
+
   return (
     <Box className='mainDashboardBox'>
       <Box className='topBar'>
-        <Typography component={'h3'} variant={'h5'}>
-          PeerPrep
-        </Typography>
+        <Box sx={{ display: 'flex', alignContent: 'center' }}>
+          <img src={peerprep} height={'50px'} width={'50px'} alt='PeerPrep logo' />
+          <Typography component={'h3'} variant={'h3'} sx={{ marginLeft: '3%' }}>
+            PeerPrep
+          </Typography>
+        </Box>
         <CustomAvatar />
       </Box>
       <Box className='mainContent'>
         <Box className='leftBox'>
-          <Typography>Practice History</Typography>
-          <List component='nav' aria-label='mailbox folders'>
-            <Divider />
-            <ListItem button>
-              <Card>test</Card>
-            </ListItem>
-            <Divider />
-            <ListItem button divider>
-              <ListItemText primary='Drafts' />
-            </ListItem>
-            <ListItem button>
-              <ListItemText primary='Trash' />
-            </ListItem>
-          </List>
+          <Typography variant={'h5'} sx={{ marginBottom: '1rem', marginTop: '1rem' }}>
+            Practice history
+          </Typography>
+          <Divider />
+          {historyList.length ? (
+            <List
+              component='nav'
+              aria-label='history'
+              style={{ maxHeight: '65vh', overflow: 'auto' }}
+            >
+              {historyList.map(
+                ({ _id, title, code, notes, question, difficulty, timestamp }) => {
+                  return (
+                    <Box key={_id}>
+                      <ListItem
+                        key={_id}
+                        button
+                        onClick={() =>
+                          handleHistoryClick({
+                            title: title,
+                            question: question,
+                            code: code,
+                            notes: notes,
+                            difficulty: difficulty,
+                            timestamp: timestamp,
+                          })
+                        }
+                      >
+                        {/* Problem: {title} <br />
+                        Done at: {timestamp} <br />
+                        Difficulty: {difficulty} */}
+                        <Box key={_id} sx={{ display: 'flex', flexDirection: 'column' }}>
+                          <Typography>
+                            Problem: {title} <br />
+                          </Typography>
+                          <Typography>
+                            Done at: {timestamp} <br />
+                          </Typography>
+                          <Box sx={{ display: 'flex' }}>
+                            <Typography>Difficulty:&nbsp; </Typography>
+                            <Typography color={decideDifficultyColor(difficulty)}>
+                              {difficulty}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </ListItem>
+                      <Divider />
+                    </Box>
+                  );
+                }
+              )}
+            </List>
+          ) : (
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                padding: '10%',
+              }}
+            >
+              <Typography>No history to show. Get to practising!</Typography>
+            </Box>
+          )}
         </Box>
         <Box className='rightBox'>
-          <Typography className='difficultyButton' component={'h3'} variant={'h5'}>
+          <Typography
+            className='difficultyButton'
+            component={'h3'}
+            variant={'h5'}
+            sx={{
+              marginBottom: '1rem',
+              marginTop: '1rem',
+            }}
+          >
             Difficulty
           </Typography>
           <Button
@@ -134,27 +266,33 @@ function Dashboard() {
           >
             Hard
           </Button>
-          {buttonToggleEasy || buttonToggleMedium || buttonToggleHard ? (
-            <Button
-              className='queueUpButton'
-              color={'info'}
-              variant={'contained'}
-              onClick={startMatch}
+          <Button
+            className='queueUpButton'
+            color={'secondary'}
+            variant={
+              buttonToggleEasy || buttonToggleMedium || buttonToggleHard
+                ? 'contained'
+                : 'outlined'
+            }
+            onClick={
+              buttonToggleEasy || buttonToggleMedium || buttonToggleHard
+                ? startMatch
+                : handleStartMatchWithoutDifficulty
+            }
+          >
+            Practise
+          </Button>
+          {isMatchWithoutDifficulty && (
+            <Alert
+              variant='filled'
+              severity='error'
+              onClose={handleStartMatchWithoutDifficultyClose}
+              sx={{
+                marginTop: '5%',
+              }}
             >
-              Practise
-            </Button>
-          ) : (
-            <Button
-              className='queueUpButton'
-              color={'info'}
-              variant={
-                buttonToggleEasy || buttonToggleMedium || buttonToggleHard
-                  ? 'contained'
-                  : 'outlined'
-              }
-            >
-              Practise
-            </Button>
+              Please select a difficulty first!
+            </Alert>
           )}
         </Box>
       </Box>

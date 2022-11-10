@@ -16,6 +16,7 @@ const DeleteSuccessModal = ({ isOpen, handleClose }) => {
     <Dialog
       open={isOpen}
       onClose={onClose}
+      scroll={'paper'}
       PaperProps={{
         sx: {
           width: '30%',

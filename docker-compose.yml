@@ -10,11 +10,18 @@ x-common-variables:
   VIDEO_URL: http://video:8003
   QUESTION_URL: http://question:8004
   HISTORY_URL: http://history:8005
+  ROOM_URL: http://room:8006
   LIVE_URL: https://peerprep.live
 
 networks:
   frontend:
   backend:
+
+x-logging: &default-logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100m
 
 services:
   gateway:
@@ -100,6 +107,24 @@ services:
     environment:
       <<: *common-backend-variables
 
+  video:
+    container_name: video
+    build:
+      dockerfile: Dockerfile
+      context: ./video-service
+    image: cs3219.azurecr.io/video
+    volumes:
+      - ./video-service:/home/node/app/video_service
+    expose:
+      - 8003
+    restart: on-failure
+    networks:
+      - backend
+    environment:
+      <<: *common-backend-variables
+      AGORA_APP_CERTIFICATE: 49561092f8324742be88874a6b34e331
+      AGORA_APP_ID: d98a05dd04294d1e8233eb34ccfae645
+
   question:
     container_name: question
     build:
@@ -135,12 +160,31 @@ services:
     environment:
       <<: *common-backend-variables
       DB_CLOUD_URI: 'mongodb+srv://cs3219-history:cs3219-history@cs3219-history.u9n8v5t.mongodb.net/?retryWrites=true&w=majority'
+  
+  room:
+    container_name: room
+    build:
+      dockerfile: Dockerfile
+      context: ./room-service
+    image: cs3219.azurecr.io/room
+    volumes:
+      - ./room-service:/home/node/app/room_service
+    expose:
+      - 8006
+    restart: on-failure
+    networks:
+      - backend
+    environment:
+      <<: *common-backend-variables
 
 volumes: 
   question-service:
+  video-service:
   coding-service:
   matching-service: 
   user-service:
+  history-service:
+  room-service:
   frontend:
   gateway:
   history:

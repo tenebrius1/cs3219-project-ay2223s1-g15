@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import morgan from 'morgan';
+// import morgan from "morgan";
 import cookieParser from 'cookie-parser';
 import 'dotenv/config';
 import {
@@ -10,6 +10,7 @@ import {
   videoProxy,
   questionProxy,
   historyProxy,
+  roomProxy,
 } from './proxy.js';
 import authenticate from './middleware/auth.js';
 
@@ -23,12 +24,14 @@ app.use(
     credentials: true,
   })
 ); // config cors so that front-end can use
+app.options('*', cors());
 app.use(cookieParser());
-app.use(morgan('combined'));
+// app.use(morgan('combined'));
 
 app.use(`/user`, userProxy);
 app.use(matchingProxy);
 app.use(codingProxy);
+app.use(roomProxy);
 
 app.use(`/video`, authenticate, videoProxy);
 app.use(`/question`, authenticate, questionProxy);

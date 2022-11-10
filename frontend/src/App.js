@@ -14,6 +14,7 @@ import './styles.css';
 import { RoomContextProvider } from './contexts/RoomContext';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import { UserContextProvider } from './contexts/UserContext';
+import NotFoundPage from './components/notfoundpage/NotFoundPage';
 
 export const theme = createTheme({
   palette: {
@@ -61,7 +62,7 @@ function App() {
                   }
                 />
                 <Route
-                  path='/codingpage'
+                  path='/codingpage/:roomId'
                   element={
                     <PrivateRoute>
                       <CodingPage />
@@ -84,6 +85,7 @@ function App() {
                     </PrivateRoute>
                   }
                 />
+                <Route path='*' element={<NotFoundPage />} />
               </Routes>
             </Router>
           </Box>

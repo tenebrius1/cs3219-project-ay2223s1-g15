@@ -1,67 +1,72 @@
 .mainProfilePageBox.MuiBox-root {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: space-evenly;
+  height: 50%
 }
 
 .profilePageVerticalBox.MuiBox-root {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .profilePageConfirmationBox.MuiBox-root {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 10%;
 }
 
 .changePasswordBox.MuiBox-root {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 5%;
 }
 
 .avatarButtonSection {
-    position: relative;
-    transform: translate(-100px, 32px);
-    cursor: pointer;
+  position: relative;
+  justify-content: center;
+  cursor: pointer;
+  transform: translate(-115px, 0);
 }
 
 .avatarButton.MuiAvatar-root {
-    position: absolute;
-    width: 230px;
-    height: 230px;
+  position: absolute;
+  width: 230px;
+  height: 230px;
 }
 
 .editAvatarButton.MuiButton-root {
-    position: absolute;
-    transform: translate(8px, 186px);
+  position: absolute;
+  transform: translate(8px, 186px);
 }
 
 .editAvatarButton.MuiButton-root:hover {
-    background-color: #3B4252;
+  background-color: #3b4252;
 }
 
 .profilePageAdminPage {
-    transform: translate(10px, 290px);
+  transform: translate(0px, 250px);
+  justify-content: center;
 }
 
 .profilePageTextField .MuiOutlinedInput-root fieldset {
-    border-color: rgb(192, 192, 192);
+  border-color: rgb(192, 192, 192);
 }
 
 .profilePageTextField .MuiOutlinedInput-root.Mui-focused fieldset {
-    border-color: rgb(192, 192, 192);
+  border-color: rgb(192, 192, 192);
 }
 
 .profilePageResponseMsg {
-    color:red;
-    font-size: 12px;
-    font-family: "Roboto",sans-serif;
+  color: red;
+  font-size: 12px;
+  font-family: "Roboto", sans-serif;
 }
 
 .profilePageDeleteSuccess {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }

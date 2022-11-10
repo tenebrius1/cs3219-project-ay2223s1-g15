@@ -49,11 +49,11 @@ export const tokenLogin = async (req, res) => {
     const { token } = req.cookies;
     if (token) {
       const { user } = await _tokenLogin(token);
-      if (user.err) {
-        return res.status(401).json({ message: 'Invalid JWT token' });
-      }
       if (user === null) {
         return res.status(401).json({ message: 'JWT token provided was blacklisted' });
+      }
+      if (user.err) {
+        return res.status(401).json({ message: 'Invalid JWT token' });
       }
       return res.status(200).json({
         message: 'Successfully authenticated',

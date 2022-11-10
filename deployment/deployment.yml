@@ -24,10 +24,10 @@ spec:
           resources:
             limits:
               memory: 512Mi
-              cpu: "250m"
+              cpu: "100m"
             requests:
               memory: 256Mi
-              cpu: "250m"
+              cpu: "100m"
       imagePullSecrets:
         - name: azureregistrykey
 ---
@@ -54,10 +54,10 @@ spec:
           resources:
             limits:
               memory: 1024Mi
-              cpu: "250m"
+              cpu: "100m"
             requests:
               memory: 256Mi
-              cpu: "250m"
+              cpu: "100m"
           envFrom:
             - configMapRef:
                 name: peerprep-frontend-config
@@ -87,10 +87,10 @@ spec:
           resources:
             limits:
               memory: 512Mi
-              cpu: "250m"
+              cpu: "100m"
             requests:
               memory: 256Mi
-              cpu: "250m"
+              cpu: "100m"
           envFrom:
             - configMapRef:
                 name: peerprep-config
@@ -120,10 +120,10 @@ spec:
           resources:
             limits:
               memory: 512Mi
-              cpu: "250m"
+              cpu: "100m"
             requests:
               memory: 256Mi
-              cpu: "250m"
+              cpu: "100m"
           envFrom:
             - configMapRef:
                 name: peerprep-config
@@ -156,10 +156,10 @@ spec:
           resources:
             limits:
               memory: 512Mi
-              cpu: "250m"
+              cpu: "100m"
             requests:
               memory: 256Mi
-              cpu: "250m"
+              cpu: "100m"
           envFrom:
             - configMapRef:
                 name: peerprep-config
@@ -189,10 +189,10 @@ spec:
           resources:
             limits:
               memory: 512Mi
-              cpu: "250m"
+              cpu: "100m"
             requests:
               memory: 256Mi
-              cpu: "250m"
+              cpu: "100m"
           envFrom:
             - configMapRef:
                 name: peerprep-config
@@ -222,10 +222,43 @@ spec:
           resources:
             limits:
               memory: 512Mi
-              cpu: "250m"
+              cpu: "100m"
             requests:
               memory: 256Mi
-              cpu: "250m"
+              cpu: "100m"
+          envFrom:
+            - configMapRef:
+                name: peerprep-config
+      imagePullSecrets:
+        - name: azureregistrykey
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: video
+  template:
+    metadata:
+      labels:
+        app: video
+    spec:
+      containers:
+        - name: video
+          image: cs3219.azurecr.io/video
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8003
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "100m"
+            requests:
+              memory: 256Mi
+              cpu: "100m"
           envFrom:
             - configMapRef:
                 name: peerprep-config

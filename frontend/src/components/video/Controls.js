@@ -1,17 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useClient } from "./settings";
-import { Grid, Button } from "@material-ui/core";
-import MicIcon from "@material-ui/icons/Mic";
-import MicOffIcon from "@material-ui/icons/MicOff";
-import VideocamIcon from "@material-ui/icons/Videocam";
-import VideocamOffIcon from "@material-ui/icons/VideocamOff";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import MicIcon from "@mui/icons-material/Mic";
+import MicOffIcon from "@mui/icons-material/MicOff";
+import VideocamIcon from "@mui/icons-material/Videocam";
+import VideocamOffIcon from "@mui/icons-material/VideocamOff";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import RoomContext from '../../contexts/RoomContext';
 
 export default function Controls(props) {
     const client = useClient();
+
     const { tracks, setStart, setInCall } = props;
     const [trackState, setTrackState] = useState({ video: true, audio: true });
-  
+    const { setClient } = useContext(RoomContext);
+    const { setTracks } = useContext(RoomContext);
+
+    useEffect(()=> {
+      setClient(client);
+      setTracks(tracks)
+    },[])
+
     const mute = async (type) => {
       if (type === "audio") {
         await tracks[0].setEnabled(!trackState.audio);
@@ -24,6 +34,7 @@ export default function Controls(props) {
           return { ...ps, video: !ps.video };
         });
       }
+      setTracks(tracks)
     };
   
     const leaveChannel = async () => {
@@ -58,7 +69,7 @@ export default function Controls(props) {
         <Grid item>
           <Button
             variant="contained"
-            color="default"
+            color="error"
             onClick={() => leaveChannel()}
           >
             Leave
@@ -66,5 +77,5 @@ export default function Controls(props) {
           </Button>
         </Grid>
       </Grid>
-    );
-  }
+  );
+}

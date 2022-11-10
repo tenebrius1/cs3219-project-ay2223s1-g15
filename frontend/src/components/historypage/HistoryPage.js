@@ -1,106 +1,197 @@
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography";
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import Typography from '@mui/material/Typography';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import TabPanel from '../codingpage/TabPanel';
+import CodeMirror from '@uiw/react-codemirror';
+import { githubDark } from '@uiw/codemirror-theme-github';
 
-const HistoryPage = ({ title, date, time, interviewer, difficulty }) => {
-  const ptitle = "Two sum";
-  const pdate = "5 October 2022";
-  const ptime = "20:20";
-  const pinterviewer = "Me";
-  const pdifficulty = "Easy";
-  let decideColor = "";
+const HistoryPage = () => {
+  let decideColor = '';
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [tab, setTab] = useState(0);
 
-  if (pdifficulty === "Easy") {
-    decideColor = "green";
-  } else if (pdifficulty === "Medium") {
-    decideColor = "orange";
-  } else if (pdifficulty === "Hard") {
-    decideColor = "red";
+  const title =
+    location.state && location.state.title ? location.state.title : 'No title';
+  const timestamp =
+    location.state && location.state.timestamp
+      ? location.state.timestamp
+      : 'Time unknown';
+  const difficulty =
+    location.state && location.state.difficulty
+      ? location.state.difficulty
+      : 'Difficulty unknown';
+  const code = location.state && location.state.code ? location.state.code : 'No code';
+  const question =
+    location.state && location.state.question ? location.state.question : 'No question';
+  const notes = location.state && location.state.notes ? location.state.notes : 'Notes';
+
+  const onDashboardClick = () => {
+    navigate('/dashboard');
+  };
+
+  const tabPanelHeight = '80vh';
+
+  if (difficulty === 'Easy') {
+    decideColor = 'green';
+  } else if (difficulty === 'Medium') {
+    decideColor = 'orange';
+  } else if (difficulty === 'Hard') {
+    decideColor = 'red';
   } else {
-    decideColor = "white";
+    decideColor = 'white';
   }
+
+  const handleTabChange = (event, newValue) => {
+    setTab(newValue);
+  };
+
+  function a11yProps(index) {
+    return {
+      id: `simple-tab-${index}`,
+      'aria-controls': `simple-tabpanel-${index}`,
+    };
+  }
+
+  useEffect(() => {
+    if (!location.state) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, []);
 
   return (
     <>
       <Box
-        className="mainHistoryPageBox"
+        className='mainHistoryPageBox'
         sx={{
-          marginTop: "2%",
-          padding: "0 10%",
-          display: "flex",
-          justifyContent: "space-between",
+          marginTop: '2%',
+          padding: '0 10%',
+          display: 'flex',
+          justifyContent: 'space-between',
         }}
       >
         <Box
-          className="leftHistoryPageBox"
+          className='leftHistoryPageBox'
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "75%",
-            height: "90vh",
-            marginRight: "2%",
-            backgroundColor: "#2a2e38",
+            display: 'flex',
+            flexDirection: 'column',
+            width: '75%',
+            height: '90vh',
+            marginRight: '2%',
+            backgroundColor: '#2a2e38',
           }}
         >
           <Box
-            className="historyPageQuestionInfo"
+            className='topBarHistoryPage'
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              padding: "2% 2%",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '2%',
             }}
           >
             <Box
-              className="historyPageCombinedInfo"
+              className='historyPageQuestionInfo'
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
               }}
             >
               <Box
-                className="historyPageTitleDifficulty"
-                sx={{ display: "flex", alignItems: "center" }}
+                className='historyPageCombinedInfo'
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                }}
               >
-                <Typography variant={"h5"}>{ptitle}&nbsp;</Typography>
-                <Typography color={decideColor}>{pdifficulty}</Typography>
+                <Box
+                  className='historyPageTitleDifficulty'
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Typography variant={'h5'}>{title}&nbsp;</Typography>
+                  <Typography color={decideColor}>{difficulty}</Typography>
+                </Box>
+                <Typography>{timestamp}</Typography>
               </Box>
-              <Typography>Interviewer: {pinterviewer}</Typography>
-              <Typography>
-                {ptime}, {pdate}
-              </Typography>
+            </Box>
+            <Box>
+              <Button color='secondary' variant='contained' onClick={onDashboardClick}>
+                Dashboard
+              </Button>
             </Box>
           </Box>
-          <Divider variant="middle" />
-          <Box className="historyPageCode" sx={{ padding: "2% 2%" }}>
-            <Typography>Code</Typography>
+          <Box
+            className='historyPageCode'
+            sx={{ paddingLeft: '2%', paddingRight: '2%', overflow: 'auto' }}
+          >
+            <Divider textAlign='left' sx={{ marginBottom: '1%' }}>
+              Code
+            </Divider>
+            <CodeMirror
+              value={code}
+              theme={githubDark}
+              height={'70vh'}
+              editable={false}
+            />
           </Box>
         </Box>
         <Box
-          className="historyPageInterviewerComments"
+          className='historyPageInterviewerComments'
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "25%",
-            height: "90vh",
-            borderColor: "divider",
-            backgroundColor: "#2a2e38",
+            display: 'flex',
+            flexDirection: 'column',
+            width: '25%',
+            height: '90vh',
+            borderColor: 'divider',
+            backgroundColor: '#2a2e38',
           }}
         >
-          <Typography sx={{ padding: "5% 2%" }} variant={"h5"}>
-            Interviewer comments
-          </Typography>
-          <Divider variant="middle" />
-          <Typography
-            style={{ wordWrap: "break-word" }}
-            sx={{ padding: "5% 2%" }}
+          <Tabs
+            value={tab}
+            variant={'fullWidth'}
+            onChange={handleTabChange}
+            aria-label='basic tabs example'
+            textColor={'secondary'}
+            indicatorColor={'secondary'}
           >
-            Aliquip amet in labore nostrud incididunt. Ad sit nisi mollit amet
-            velit officia eiusmod ut excepteur labore. Magna ut minim fugiat ea
-            laborum.
-          </Typography>
+            <Tab label='Question' wrapped {...a11yProps(0)} />
+            <Tab label='Notes' wrapped {...a11yProps(1)} />
+          </Tabs>
+
+          <TabPanel
+            children={
+              <Typography
+                style={{ wordWrap: 'break-word' }}
+                sx={{ marginTop: '2%', marginLeft: '2%', marginRight: '2%' }}
+              >
+                {question}
+              </Typography>
+            }
+            value={tab}
+            index={0}
+            height={tabPanelHeight}
+          />
+          <TabPanel
+            children={
+              <Typography
+                style={{ wordWrap: 'break-word' }}
+                sx={{ marginTop: '2%', marginLeft: '2%', marginRight: '2%' }}
+              >
+                {notes}
+              </Typography>
+            }
+            value={tab}
+            index={1}
+            height={tabPanelHeight}
+          />
         </Box>
       </Box>
     </>

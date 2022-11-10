@@ -27,3 +27,9 @@ export const questionProxy = createProxyMiddleware({
 export const historyProxy = createProxyMiddleware({
   target: process.env.HISTORY_URL,
 });
+
+export const roomProxy = createProxyMiddleware('/room', {
+  target: process.env.ROOM_URL,
+  changeOrigin: true,
+  ws: true,
+});

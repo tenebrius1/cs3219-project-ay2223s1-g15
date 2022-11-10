@@ -6,13 +6,13 @@ const AGORA_APP_ID = process.env.AGORA_APP_ID;
 const AGORA_APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE;
 
 export const generateAccessToken = (req, res) => {
-    const { channel } = req.body;
+    const channel = req.query.channel;
+    const uid = 0
     if (!channel) {
         return res.status(500).json({message:'Channel is missing!'});
     }
 
-    const role = RtcRole.PUBLISHER;
-    const uid = Math.floor(Math.random() * 100000);
+    const role = RtcRole.SUBSCRIBER;
     const expirationTimeInSeconds = 3600;
     const currentTimestamp = Math.floor(Date.now() / 1000);
     const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;

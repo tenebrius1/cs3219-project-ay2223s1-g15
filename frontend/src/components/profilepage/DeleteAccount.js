@@ -1,16 +1,16 @@
-import { useState } from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import { deleteAccount } from '../../api/user/user';
-import './profilepage.css';
-import DeleteSuccessModal from './DeleteSuccessModal';
+import { useState } from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import { deleteAccount } from "../../api/user/user";
+import "./profilepage.css";
+import DeleteSuccessModal from "./DeleteSuccessModal";
 
 const DeleteAccount = ({ setShowDeleteAccount }) => {
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const [showDeleteMsg, setShowDeleteMsg] = useState(false);
-  const [deleteMsg, setDeleteMsg] = useState('');
+  const [deleteMsg, setDeleteMsg] = useState("");
   const [isDeleteSuccess, setIsDeleteSuccess] = useState(false);
 
   const handleDeleteAccount = async () => {
@@ -26,30 +26,37 @@ const DeleteAccount = ({ setShowDeleteAccount }) => {
   };
   return (
     <>
+      <Typography>
+        Are you sure you want to delete your account?
+        <br />
+        This action is permanent and non-reversible!
+      </Typography>
       <TextField
-        className='profilePageTextField'
-        label='Password'
-        variant='outlined'
-        type='password'
-        size='small'
-        margin='dense'
+        className="profilePageTextField"
+        label="Enter password to confirm"
+        variant="outlined"
+        type="password"
+        size="small"
+        margin="dense"
+        required
+        fullWidth
         onChange={(e) => setPassword(e.target.value)}
       />
       {showDeleteMsg && (
-        <Typography sx={{ color: 'red', fontSize: 12 }}>{deleteMsg}</Typography>
+        <Typography sx={{ color: "red", fontSize: 12 }}>{deleteMsg}</Typography>
       )}
-      <Box className='profilePageConfirmationBox'>
+      <Box className="profilePageConfirmationBox">
         <Button
-          variant='outlined'
-          color='secondary'
+          variant="contained"
+          color="secondary"
           onClick={() => {
             setShowDeleteAccount((prev) => !prev);
-            setPassword('');
+            setPassword("");
           }}
         >
           Cancel
         </Button>
-        <Button variant='contained' color='error' onClick={handleDeleteAccount}>
+        <Button variant="outlined" color="error" onClick={handleDeleteAccount}>
           Delete
         </Button>
       </Box>

@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import morgan from 'morgan';
+// import morgan from 'morgan';
 import {
   createUser,
   deleteUser,
@@ -19,7 +19,8 @@ import authenticate from './middleware/auth.js';
 import cookieParser from 'cookie-parser';
 
 const app = express();
-const LIVE_URL = process.env.ENV  === "PROD" ? process.env.LIVE_URL : "http://localhost:3000";
+const LIVE_URL =
+  process.env.ENV === 'PROD' ? process.env.LIVE_URL : 'http://localhost:3000';
 app.use(cookieParser());
 
 app.use(express.urlencoded({ extended: true }));
@@ -33,7 +34,7 @@ app.use(
 ); // config cors so that front-end can use
 
 app.options('*', cors());
-app.use(morgan('combined'));
+// app.use(morgan('combined'));
 
 const router = express.Router();
 const authRouter = express.Router();
@@ -48,12 +49,6 @@ router.post('/resetPassword', resetPassword);
 
 //For api-gateway
 router.get('/checkAuth', authToken);
-
-// For frontend testing
-router.post('/python', (req, res) => {
-  console.log(req.body);
-  res.send('test');
-});
 
 app.use('/user', router);
 

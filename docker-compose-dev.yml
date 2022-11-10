@@ -10,6 +10,14 @@ x-common-variables:
   VIDEO_URL: http://video:8003
   QUESTION_URL: http://question:8004
   HISTORY_URL: http://history:8005
+  ROOM_URL: http://room:8006
+  JUDGE0_URL: http://server:2358
+
+x-logging: &default-logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100m
 
 services:
   gateway:
@@ -17,7 +25,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./api-gateway
-    image: cs3219.azurecr.io/gateway
+    image: cs3219g15.azurecr.io/gateway
     volumes:
       - ./gateway:/home/node/app/gateway
     ports:
@@ -31,19 +39,22 @@ services:
     build:
       dockerfile: Dockerfile-dev
       context: ./frontend
-    image: cs3219.azurecr.io/frontend
+    image: cs3219g15.azurecr.io/frontend
     volumes:
       - ./frontend:/home/node/app/frontend
     ports:
       - 3000:3000
     restart: on-failure
+    environment:
+      REACT_APP_AGORA_APP_ID: d98a05dd04294d1e8233eb34ccfae645
+      REACT_APP_AGORA_APP_CERTIFICATE: 49561092f8324742be88874a6b34e331
 
   user:
     container_name: user
     build:
       dockerfile: Dockerfile
       context: ./user-service
-    image: cs3219.azurecr.io/user
+    image: cs3219g15.azurecr.io/user
     volumes:
       - ./user-service:/home/node/app/user-service
     expose:
@@ -57,7 +68,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./matching-service
-    image: cs3219.azurecr.io/matching
+    image: cs3219g15.azurecr.io/matching
     volumes:
       - ./matching-service:/home/node/app/matching
     expose:
@@ -71,7 +82,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./coding-service
-    image: cs3219.azurecr.io/coding
+    image: cs3219g15.azurecr.io/coding
     volumes:
       - ./coding-service:/home/node/app/coding-service
     expose:
@@ -80,12 +91,28 @@ services:
     environment:
       <<: *common-backend-variables
 
+  video:
+    container_name: video
+    build:
+      dockerfile: Dockerfile
+      context: ./video-service
+    image: cs3219g15.azurecr.io/video
+    volumes:
+      - ./video-service:/home/node/app/video_service
+    expose:
+      - 8003
+    restart: on-failure
+    environment:
+      <<: *common-backend-variables
+      AGORA_APP_CERTIFICATE: 49561092f8324742be88874a6b34e331
+      AGORA_APP_ID: d98a05dd04294d1e8233eb34ccfae645
+
   question:
     container_name: question
     build:
       dockerfile: Dockerfile
       context: ./question-service
-    image: cs3219.azurecr.io/question
+    image: cs3219g15.azurecr.io/question
     volumes:
       - ./question-service:/home/node/app/question_service
     expose:
@@ -102,7 +129,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./history-service
-    image: cs3219.azurecr.io/history
+    image: cs3219g15.azurecr.io/history
     volumes:
       - ./history-service:/home/node/app/history_service
     expose:
@@ -112,14 +139,70 @@ services:
       <<: *common-backend-variables
       DB_CLOUD_URI: 'mongodb+srv://cs3219-history:cs3219-history@cs3219-history.u9n8v5t.mongodb.net/?retryWrites=true&w=majority'
 
+  room:
+    container_name: room
+    build:
+      dockerfile: Dockerfile
+      context: ./room-service
+    image: cs3219g15.azurecr.io/room
+    volumes:
+      - ./room-service:/home/node/app/room_service
+    expose:
+      - 8006
+    restart: on-failure
+    environment:
+      <<: *common-backend-variables
+
+  # Judge0
+  server:
+      image: judge0/judge0:1.13.0
+      volumes:
+        - ./judge0.conf:/judge0.conf:ro
+      expose:
+        - 2358
+      privileged: true
+      <<: *default-logging
+      restart: always
+
+  workers:
+    image: judge0/judge0:1.13.0
+    command: ["./scripts/workers"]
+    volumes:
+      - ./judge0.conf:/judge0.conf:ro
+    privileged: true
+    <<: *default-logging
+    restart: always
+
+  db:
+    image: postgres:13.0
+    env_file: judge0.conf
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+    <<: *default-logging
+    restart: always
+
+  redis:
+    image: redis:6.0
+    command: [
+      "bash", "-c",
+      'docker-entrypoint.sh --appendonly yes --requirepass "$$REDIS_PASSWORD"'
+    ]
+    env_file: judge0.conf
+    volumes:
+      - redis-data:/data
+    <<: *default-logging
+    restart: always
 volumes: 
   question-service:
   coding-service:
   matching-service: 
   user-service:
+  history-service:
   frontend:
   gateway:
   history:
+  postgres-data:
+  redis-data:
 
   # Used for local dev
   # mongo:

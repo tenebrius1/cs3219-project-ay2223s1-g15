@@ -110,3 +110,19 @@ spec:
   selector:
     app: history
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: video
+  labels:
+    app: video
+spec:
+  type: NodePort
+  ports:
+    - port: 8003
+      targetPort: 8003
+      protocol: TCP
+      name: video
+  selector:
+    app: video
+---

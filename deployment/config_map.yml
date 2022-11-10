@@ -11,4 +11,5 @@ data:
   VIDEO_URL: http://video:8003
   QUESTION_URL: http://question:8004
   HISTORY_URL: http://history:8005
+  ROOM_URL: http://room:8006
   LIVE_URL: https://peerprep.live
