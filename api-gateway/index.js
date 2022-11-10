@@ -15,7 +15,6 @@ import authenticate from './middleware/auth.js';
 
 const app = express();
 const LIVE_URL = process.env.ENV  === "PROD" ? process.env.LIVE_URL : "http://localhost:3000";
-const API_PREFIX = process.env.ENV  === "PROD" ? process.env.API_PREFIX : "";
 
 app.use(
   cors({
@@ -27,13 +26,13 @@ app.use(
 app.use(cookieParser());
 app.use(morgan('combined'));
 
-app.use(`${API_PREFIX}/user`, userProxy);
+app.use(`/user`, userProxy);
 app.use(matchingProxy);
 app.use(codingProxy);
 
-app.use(`${API_PREFIX}/video`, authenticate, videoProxy);
-app.use(`${API_PREFIX}/question`, authenticate, questionProxy);
-app.use(`${API_PREFIX}/history`, authenticate, historyProxy);
+app.use(`/video`, authenticate, videoProxy);
+app.use(`/question`, authenticate, questionProxy);
+app.use(`/history`, authenticate, historyProxy);
 
 const server = app.listen(8080, () => {
   console.log('api gateway running on port 8080');

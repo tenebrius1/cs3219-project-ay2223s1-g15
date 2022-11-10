@@ -6,12 +6,12 @@ export const userProxy = createProxyMiddleware({
   target: process.env.USER_URL,
 });
 
-export const matchingProxy = createProxyMiddleware(`${API_PREFIX}/matching`, {
+export const matchingProxy = createProxyMiddleware(`/matching`, {
   target: process.env.MATCHING_URL,
   ws: true,
 });
 
-export const codingProxy = createProxyMiddleware(`${API_PREFIX}/coding`, {
+export const codingProxy = createProxyMiddleware(`/coding`, {
   target: process.env.CODING_URL,
   ws: true,
 });

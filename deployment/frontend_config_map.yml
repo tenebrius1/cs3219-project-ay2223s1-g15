@@ -8,4 +8,4 @@ data:
   REACT_APP_ENV: PROD
   REACT_APP_URI_GATEWAY: https://peerprep.live/api
   REACT_APP_LIVE_URL: https://peerprep.live
-  REACT_APP_API_PREFIX: /api
+  # REACT_APP_API_PREFIX: /api
